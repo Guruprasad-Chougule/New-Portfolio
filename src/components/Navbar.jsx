@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { NAV_LINKS } from '../data/portfolioData';
+import { NAV_LINKS, PERSONAL } from '../data/portfolioData';
 
 // Sticky glassmorphism navbar with mobile menu
 const Navbar = ({ darkMode, setDarkMode }) => {
@@ -95,17 +95,23 @@ const Navbar = ({ darkMode, setDarkMode }) => {
               {darkMode ? '☀️' : '🌙'}
             </motion.button>
 
-            {/* Resume button */}
+            {/* Resume button — label & URL controlled from portfolioData.js */}
             <motion.a
-  href="https://drive.google.com/uc?export=download&id=1Sq7eMI4moIZf_V_D1nk1KRg8QKfXpda5"
-  download="Guruprasad_Chougule_Resume.pdf"
-  target="_blank"
-  rel="noreferrer"
-  className="hidden md:flex btn-primary text-xs px-4 py-2 items-center gap-2"
-  whileHover={{ scale: 1.02 }}
-  whileTap={{ scale: 0.98 }}
-  style={{ borderRadius: '8px', fontSize: '0.7rem' }}
->
+              href={PERSONAL.resumeUrl}
+              download="Guruprasad_Chougule_Resume.pdf"
+              target="_blank"
+              rel="noreferrer"
+              className="flex btn-primary text-xs px-4 py-2 items-center gap-2"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              style={{ borderRadius: '8px', fontSize: '0.7rem' }}
+            >
+              <span>{PERSONAL.resumeLabel}</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7,10 12,15 17,10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
             </motion.a>
 
             {/* Mobile menu button */}
@@ -143,17 +149,17 @@ const Navbar = ({ darkMode, setDarkMode }) => {
                 </motion.button>
               ))}
               <motion.a
-  href="https://drive.google.com/uc?export=download&id=1Sq7eMI4moIZf_V_D1nk1KRg8QKfXpda5"
-  download="Guruprasad_Chougule_Resume.pdf"
-  target="_blank"
-  rel="noreferrer"
-  className="btn-primary text-center text-xs mt-2"
-  initial={{ opacity: 0 }}
-  animate={{ opacity: 1 }}
-  transition={{ delay: 0.35 }}
->
-  Download Resume ↓
-</motion.a>
+                href={PERSONAL.resumeUrl}
+                download="Guruprasad_Chougule_Resume.pdf"
+                target="_blank"
+                rel="noreferrer"
+                className="btn-primary text-center text-xs mt-2"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.35 }}
+              >
+                {PERSONAL.resumeLabel} ↓
+              </motion.a>
             </div>
           </motion.div>
         )}
