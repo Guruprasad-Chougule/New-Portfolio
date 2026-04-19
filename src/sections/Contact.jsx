@@ -5,15 +5,22 @@ import emailjs from '@emailjs/browser';
 import { PERSONAL } from '../data/portfolioData';
 import SectionWrapper from '../components/SectionWrapper';
 
-// ─────────────────────────────────────────────
-//  ✅ REPLACE THESE 3 VALUES WITH YOUR OWN
-//  from emailjs.com dashboard
-// ─────────────────────────────────────────────
-const EMAILJS_SERVICE_ID  = 'service_zcydc4a';   // e.g. 'service_abc123'
-const EMAILJS_TEMPLATE_ID = 'template_vu7jzpo';  // e.g. 'template_xyz789'  ← sends to YOU
-const EMAILJS_AUTO_REPLY  = 'template_ulogh3j'; // e.g. 'template_reply01' ← sends to SENDER
-const EMAILJS_PUBLIC_KEY  = '5bVnCI-6X6y4hlKjT';   // e.g. 'aBcDeFgH1234'
-// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+//  ✅ PASTE YOUR EMAILJS IDs HERE — get them from emailjs.com/account
+// ─────────────────────────────────────────────────────────────────────────────
+const EMAILJS_SERVICE_ID  = 'service_zcydc4a';    // Dashboard → Email Services
+const EMAILJS_TEMPLATE_ID = 'template_ulogh3j';   // Email Templates → template ID
+const EMAILJS_AUTO_REPLY  = 'template_vu7jzpo';  // Second template for auto-reply (optional)
+const EMAILJS_PUBLIC_KEY  = '5bVnCI-6X6y4hlKjT';    // Account → General → Public Key
+// ─────────────────────────────────────────────────────────────────────────────
+//  ✅ YOUR EMAILJS TEMPLATE must contain these exact variable names:
+//     {{from_name}}   — sender's name
+//     {{from_email}}  — sender's email
+//     {{from_phone}}  — sender's phone
+//     {{message}}     — message body
+//     {{to_name}}     — your name (Guruprasad)
+//     {{reply_to}}    — set in template "Reply To" field as {{reply_to}}
+// ─────────────────────────────────────────────────────────────────────────────
 
 // ── Toast notification component ──────────────────────────────────────────────
 const Toast = ({ toast }) => {
@@ -151,70 +158,71 @@ const Contact = () => {
     e.preventDefault();
     if (status === 'sending') return;
 
+    // Basic validation
+    if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
+      showToast('error', 'Missing Fields', 'Please fill in Name, Email and Message.', 4000);
+      return;
+    }
+
     setStatus('sending');
 
-    // Request notification permission on first send
+    // Request browser notification permission
     await requestNotificationPermission();
 
-    // Template variables — must match your EmailJS template placeholders
-    const templateParams = {
-      from_name:    form.name,
-      from_email:   form.email,
-      from_phone:   form.phone || 'Not provided',
-      message:      form.message,
-      to_name:      'Guruprasad',
-      reply_to:     form.email,
-    };
-
     try {
-      // ── 1. Send notification email TO YOU ──────────────────────────────────
-      await emailjs.send(
+      // ── sendForm reads field values directly from the <form> DOM element ──
+      // This is the most reliable EmailJS method — no variable name mismatches
+      const result = await emailjs.sendForm(
         EMAILJS_SERVICE_ID,
         EMAILJS_TEMPLATE_ID,
-        templateParams,
+        formRef.current,    // ← the actual <form> element
         EMAILJS_PUBLIC_KEY
       );
 
-      // ── 2. Send auto-reply TO THE SENDER ──────────────────────────────────
-      //    (skip silently if auto-reply template not configured yet)
+      console.log('EmailJS success:', result.text);
+
+      // ── Optional auto-reply to sender ──────────────────────────────────────
       try {
-        await emailjs.send(
+        await emailjs.sendForm(
           EMAILJS_SERVICE_ID,
           EMAILJS_AUTO_REPLY,
-          templateParams,
+          formRef.current,
           EMAILJS_PUBLIC_KEY
         );
-      } catch (_) {
-        // Auto-reply template not set up yet — that's fine
+      } catch (autoReplyErr) {
+        // Auto-reply template not set up yet — silently skip
+        console.log('Auto-reply skipped:', autoReplyErr.text);
       }
 
-      // ── 3. Browser push notification ───────────────────────────────────────
+      // ── Browser push notification ───────────────────────────────────────────
       sendBrowserNotification(form.name);
 
-      // ── 4. In-app toast ────────────────────────────────────────────────────
+      // ── In-app success toast ────────────────────────────────────────────────
       showToast(
         'success',
         'Message Sent! 🎉',
-        `Thanks ${form.name}! Your message is received. I'll reply within 24 hours.`,
+        `Thanks ${form.name}! Your message was delivered. I'll reply within 24 hours.`,
         6000
       );
 
       setStatus('success');
       setForm({ name: '', email: '', phone: '', message: '' });
-
-      // Reset button after 4s
       setTimeout(() => setStatus('idle'), 4000);
 
     } catch (error) {
-      console.error('EmailJS error:', error);
+      // Log full error for debugging
+      console.error('EmailJS failed:', error);
+      const errMsg = error?.text || error?.message || 'Unknown error';
+      console.error('Error detail:', errMsg);
+
       setStatus('error');
       showToast(
         'error',
-        'Send Failed',
-        'Something went wrong. Please email me directly or try again.',
-        6000
+        'Send Failed ✕',
+        `Error: ${errMsg}. Check your Service ID, Template ID and Public Key.`,
+        8000
       );
-      setTimeout(() => setStatus('idle'), 4000);
+      setTimeout(() => setStatus('idle'), 5000);
     }
   };
 
@@ -354,11 +362,15 @@ const Contact = () => {
             <div className="glass-card-strong border border-neon-blue/10 p-8">
               <form ref={formRef} onSubmit={handleSubmit} className="space-y-6" noValidate>
 
+                {/* Hidden fields — read by EmailJS sendForm automatically */}
+                <input type="hidden" name="to_name"   value="Guruprasad" />
+                <input type="hidden" name="reply_to"  value={form.email} />
+
                 {/* Row 1: Name + Email */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <FormField
                     label="Your Name"
-                    name="name"
+                    name="from_name"
                     value={form.name}
                     onChange={handleChange}
                     required
@@ -366,7 +378,7 @@ const Contact = () => {
                   <FormField
                     label="Email Address"
                     type="email"
-                    name="email"
+                    name="from_email"
                     value={form.email}
                     onChange={handleChange}
                     required
@@ -377,7 +389,7 @@ const Contact = () => {
                 <FormField
                   label="Phone Number (optional)"
                   type="tel"
-                  name="phone"
+                  name="from_phone"
                   value={form.phone}
                   onChange={handleChange}
                 />
