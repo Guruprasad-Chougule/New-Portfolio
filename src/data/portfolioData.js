@@ -1,215 +1,171 @@
-// ===================== PORTFOLIO DATA =====================
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { NAV_LINKS, PERSONAL } from '../data/portfolioData';
 
-export const PERSONAL = {
-  name: "Guruprasad Chougule",
-  firstName: "Guruprasad",
-  role: "Quality Assurance Engineer",
-  tagline: "QA Engineer | Automation | GxP Specialist",
-  summary: "Quality Assurance Engineer with 3+ years of experience in Computer System Validation (CSV/CSA), GxP Life Sciences, PeopleSoft HCM testing, Power Apps, Selenium automation, and API testing. Strong in Agile, JIRA, and compliance (21 CFR Part 11). Aspires to become QA Lead in Healthcare domain.",
-  experience: "3+",
-  domain: "Life Sciences & GxP",
-  email: "guruprasad@example.com",
-  linkedin: "https://linkedin.com/in/guruprasad-chougule",
-  location: "Bengaluru, India",
+// Sticky glassmorphism navbar with mobile menu
+const Navbar = ({ darkMode, setDarkMode }) => {
+  const [scrolled, setScrolled] = useState(false);
+  const [active, setActive] = useState('hero');
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  // ── Resume config ── update ONLY these two lines whenever needed ──
-  resumeUrl: "https://drive.google.com/uc?export=download&id=1Sq7eMI4moIZf_V_D1nk1KRg8QKfXpda5",
-  resumeLabel: "Download Resume",
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+      
+      // Detect active section
+      const sections = ['hero', 'about', 'skills', 'experience', 'projects', 'certifications', 'achievements', 'contact'];
+      for (const id of sections.reverse()) {
+        const el = document.getElementById(id);
+        if (el && window.scrollY >= el.offsetTop - 200) {
+          setActive(id);
+          break;
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollTo = (href) => {
+    const id = href.replace('#', '');
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    setMobileOpen(false);
+  };
+
+  return (
+    <>
+      <motion.nav
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.8, delay: 0.5 }}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+          scrolled
+            ? 'glass-card-strong py-3 border-b border-neon-blue/10'
+            : 'bg-transparent py-5'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+          {/* Logo */}
+          <motion.button
+            onClick={() => scrollTo('#hero')}
+            className="font-display font-bold text-lg gradient-text cursor-pointer"
+            whileHover={{ scale: 1.05 }}
+            style={{ letterSpacing: '0.1em' }}
+          >
+            GC<span className="text-neon-blue">.</span>
+          </motion.button>
+
+          {/* Desktop nav links */}
+          <div className="hidden md:flex items-center gap-1">
+            {NAV_LINKS.map((link) => {
+              const id = link.href.replace('#', '');
+              const isActive = active === id;
+              return (
+                <motion.button
+                  key={link.label}
+                  onClick={() => scrollTo(link.href)}
+                  className={`relative px-4 py-2 font-mono text-xs tracking-widest uppercase transition-all duration-300 ${
+                    isActive ? 'text-neon-blue' : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                  whileHover={{ y: -1 }}
+                >
+                  {isActive && (
+                    <motion.span
+                      layoutId="nav-active"
+                      className="absolute inset-0 rounded-lg bg-neon-blue/10 border border-neon-blue/20"
+                      transition={{ type: 'spring', bounce: 0.3 }}
+                    />
+                  )}
+                  <span className="relative">{link.label}</span>
+                </motion.button>
+              );
+            })}
+          </div>
+
+          {/* Right actions */}
+          <div className="flex items-center gap-3">
+            {/* Dark/Light toggle */}
+            <motion.button
+              onClick={() => setDarkMode(!darkMode)}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className="w-9 h-9 rounded-lg glass-card flex items-center justify-center text-lg border border-neon-blue/20"
+            >
+              {darkMode ? '☀️' : '🌙'}
+            </motion.button>
+
+            {/* Resume button — label & URL controlled from portfolioData.js */}
+            <motion.a
+              href={PERSONAL.resumeUrl}
+              download="Guruprasad_Chougule_Resume.pdf"
+              target="_blank"
+              rel="noreferrer"
+              className="flex btn-primary text-xs px-4 py-2 items-center gap-2"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              style={{ borderRadius: '8px', fontSize: '0.7rem' }}
+            >
+              <span>{PERSONAL.resumeLabel}</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7,10 12,15 17,10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+            </motion.a>
+
+            {/* Mobile menu button */}
+            <button
+              className="md:hidden w-9 h-9 rounded-lg glass-card flex items-center justify-center border border-neon-blue/20"
+              onClick={() => setMobileOpen(!mobileOpen)}
+            >
+              <span className="text-neon-blue">{mobileOpen ? '✕' : '☰'}</span>
+            </button>
+          </div>
+        </div>
+      </motion.nav>
+
+      {/* Mobile menu */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-16 left-4 right-4 z-40 glass-card-strong rounded-2xl p-6 border border-neon-blue/20"
+          >
+            <div className="flex flex-col gap-3">
+              {NAV_LINKS.map((link, i) => (
+                <motion.button
+                  key={link.label}
+                  onClick={() => scrollTo(link.href)}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  className="text-left py-3 px-4 rounded-lg font-mono text-sm text-slate-300 hover:text-neon-blue hover:bg-neon-blue/10 transition-all border border-transparent hover:border-neon-blue/20"
+                  style={{ letterSpacing: '0.15em' }}
+                >
+                  {link.label}
+                </motion.button>
+              ))}
+              <motion.a
+                href={PERSONAL.resumeUrl}
+                download="Guruprasad_Chougule_Resume.pdf"
+                target="_blank"
+                rel="noreferrer"
+                className="btn-primary text-center text-xs mt-2"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.35 }}
+              >
+                {PERSONAL.resumeLabel} ↓
+              </motion.a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
 };
 
-export const SKILLS = [
-  {
-    category: "Testing",
-    icon: "🧪",
-    color: "#00d4ff",
-    items: [
-      { name: "Manual Testing", level: 95 },
-      { name: "Regression Testing", level: 90 },
-      { name: "UAT / SIT", level: 88 },
-      { name: "CSV / CSA Validation", level: 92 },
-      { name: "API Testing", level: 80 },
-    ],
-  },
-  {
-    category: "Automation",
-    icon: "⚙️",
-    color: "#7b2fff",
-    items: [
-      { name: "Selenium WebDriver", level: 85 },
-      { name: "Java", level: 80 },
-      { name: "TestNG", level: 82 },
-      { name: "Maven", level: 78 },
-    ],
-  },
-  {
-    category: "Tools & Platforms",
-    icon: "🛠️",
-    color: "#00fff5",
-    items: [
-      { name: "JIRA / Azure DevOps", level: 90 },
-      { name: "Power Apps", level: 75 },
-      { name: "Power BI", level: 70 },
-      { name: "PeopleSoft HCM", level: 72 },
-    ],
-  },
-  {
-    category: "GxP Compliance",
-    icon: "🔬",
-    color: "#ff0080",
-    items: [
-      { name: "GxP / 21 CFR Part 11", level: 92 },
-      { name: "GAMP 5", level: 88 },
-      { name: "CAPA / NCR", level: 85 },
-      { name: "IQ / OQ / PQ", level: 87 },
-    ],
-  },
-  {
-    category: "AI Tools",
-    icon: "🤖",
-    color: "#00d4ff",
-    items: [
-      { name: "Generative AI", level: 72 },
-      { name: "GitHub Copilot", level: 68 },
-    ],
-  },
-];
-
-export const EXPERIENCE = [
-  {
-    company: "Cognizant Technology Solutions",
-    role: "Product Test Specialist",
-    period: "Aug 2022 – Present",
-    duration: "3 Years",
-    location: "Bengaluru, India",
-    client: "Olympus Corporation",
-    domain: "Life Sciences / GxP",
-    highlights: [
-      "Primary QA Owner for 5+ GxP-regulated projects including GSHC, FCAT Tool, and HxGN EAM",
-      "Executed 400+ test scripts across SIT, UAT, and Regression cycles with zero critical escapes",
-      "Led RCA investigations and resolved 15+ production defects with documented corrective actions",
-      "Collaborated with global stakeholders across US, EU, and APAC for compliance sign-off",
-      "Authored and reviewed IQ/OQ/PQ protocols, test plans, and CSV documentation per GAMP 5",
-      "Managed CAPA and NCR processes in alignment with 21 CFR Part 11 regulatory requirements",
-    ],
-  },
-];
-
-export const PROJECTS = [
-  {
-    id: 1,
-    title: "GSHC",
-    subtitle: "Global Service Hub Compliance",
-    role: "Primary QA Owner",
-    color: "#00d4ff",
-    icon: "🏥",
-    description: "End-to-end QA ownership of GxP-regulated healthcare service management system for global Olympus operations.",
-    details: "Led validation activities including IQ/OQ/PQ protocol authoring, test execution, and compliance documentation for a mission-critical GxP application serving 8+ global sites.",
-    tech: ["CSV", "GxP", "JIRA", "Selenium", "21 CFR Part 11"],
-    achievements: ["Zero critical defects post go-live", "100% compliance with regulatory requirements", "Reduced test cycle time by 25%"],
-  },
-  {
-    id: 2,
-    title: "FCAT Tool",
-    subtitle: "Field Corrective Action Tracking",
-    role: "QA Lead",
-    color: "#7b2fff",
-    icon: "🔧",
-    description: "Validation and testing of a critical field corrective action tracking system for medical device post-market surveillance.",
-    details: "Designed comprehensive test strategy covering regulatory workflows, audit trails, and electronic signatures in compliance with FDA 21 CFR Part 11 requirements.",
-    tech: ["Power Apps", "UAT", "GAMP 5", "CAPA", "Azure DevOps"],
-    achievements: ["Validated 200+ test cases", "E-signature compliance verified", "Passed FDA audit requirements"],
-  },
-  {
-    id: 3,
-    title: "JIRA Enhancements",
-    subtitle: "QA Process Optimization",
-    role: "QA Automation Engineer",
-    color: "#00fff5",
-    icon: "📋",
-    description: "Enhanced JIRA workflows and dashboards to improve defect tracking, sprint velocity, and reporting for QA teams.",
-    details: "Implemented custom JIRA workflows, automated report generation, and integrated with Azure DevOps for seamless CI/CD pipeline defect tracking across 6 global teams.",
-    tech: ["JIRA", "Automation", "Power BI", "API Testing", "Agile"],
-    achievements: ["50% faster defect reporting", "Custom dashboards for 6 teams", "Real-time compliance metrics"],
-  },
-  {
-    id: 4,
-    title: "HxGN EAM",
-    subtitle: "Enterprise Asset Management",
-    role: "QA Engineer",
-    color: "#ff0080",
-    icon: "🏭",
-    description: "System testing and validation of HxGN Enterprise Asset Management system for Life Sciences manufacturing.",
-    details: "Executed SIT and UAT for complex asset management workflows, equipment qualification, and maintenance scheduling modules in GxP manufacturing environment.",
-    tech: ["SIT", "UAT", "GxP", "Regression", "TestNG"],
-    achievements: ["400+ test scripts executed", "Cross-module integration verified", "Production-ready certification"],
-  },
-  {
-    id: 5,
-    title: "CAPA/NCR Enhancement",
-    subtitle: "Corrective Action Management",
-    role: "QA Specialist",
-    color: "#00d4ff",
-    icon: "⚡",
-    description: "Enhancement and re-validation of CAPA and Non-Conformance Report management system for regulatory compliance.",
-    details: "Managed complete re-validation lifecycle including risk assessment, protocol design, and execution for enhanced CAPA workflows meeting ISO 13485 and GMP requirements.",
-    tech: ["CAPA", "NCR", "CSV", "Risk Assessment", "GAMP 5"],
-    achievements: ["Full regulatory compliance", "Streamlined investigation workflows", "Audit trail integrity verified"],
-  },
-];
-
-export const CERTIFICATIONS = [
-  {
-    title: "Microsoft Azure AZ-900",
-    subtitle: "Azure Fundamentals",
-    issuer: "Microsoft",
-    color: "#0078d4",
-    icon: "☁️",
-    year: "2023",
-    badge: "AZ-900",
-  },
-  {
-    title: "Google Cloud Digital Leader",
-    subtitle: "Cloud Fundamentals",
-    issuer: "Google Cloud",
-    color: "#4285f4",
-    icon: "🌐",
-    year: "2023",
-    badge: "CDL",
-  },
-  {
-    title: "Oracle AI Foundations",
-    subtitle: "AI & Machine Learning",
-    issuer: "Oracle",
-    color: "#f80000",
-    icon: "🤖",
-    year: "2024",
-    badge: "OAI",
-  },
-];
-
-export const ACHIEVEMENTS = [
-  {
-    title: "Hackathon Top Performer",
-    description: "Ranked among top performers in Cognizant's internal innovation hackathon for developing an AI-powered QA automation framework.",
-    icon: "🏆",
-    color: "#f59e0b",
-    year: "2024",
-  },
-  {
-    title: "Best Project Award",
-    description: "Recognized for excellence in delivery and quality compliance on the GSHC project, achieving zero critical defects post go-live.",
-    icon: "⭐",
-    color: "#00d4ff",
-    year: "2023",
-  },
-];
-
-export const NAV_LINKS = [
-  { label: "Home", href: "#hero" },
-  { label: "About", href: "#about" },
-  { label: "Skills", href: "#skills" },
-  { label: "Experience", href: "#experience" },
-  { label: "Projects", href: "#projects" },
-  { label: "Certs", href: "#certifications" },
-  { label: "Contact", href: "#contact" },
-];
+export default Navbar;
