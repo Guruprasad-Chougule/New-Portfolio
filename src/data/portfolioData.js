@@ -75,7 +75,7 @@ export const EXPERIENCE = [
     company: "Cognizant Technology Solutions",
     role: "Product Test Specialist",
     period: "Aug 2022 – Present",
-    duration: "2.9 Years",
+    duration: "3+ Years",
     location: "Bengaluru, India",
     client: "Olympus Corporation",
     domain: "Life Sciences / GxP",
