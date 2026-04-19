@@ -9,7 +9,7 @@ import SectionWrapper from '../components/SectionWrapper';
 //  ✅ PASTE YOUR EMAILJS IDs HERE
 //  Get them from: https://www.emailjs.com/account
 // ─────────────────────────────────────────────────────────────────────────────
-const EMAILJS_SERVICE_ID  = 'service_6cjcowm';
+const EMAILJS_SERVICE_ID  = 'service_5yifgp5';
 const EMAILJS_TEMPLATE_ID = 'template_ulogh3j';
 const EMAILJS_AUTO_REPLY  = 'template_vu7jzpo';  // optional
 const EMAILJS_PUBLIC_KEY  = '5bVnCI-6X6y4hlKjT';
