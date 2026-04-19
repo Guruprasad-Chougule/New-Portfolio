@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NAV_LINKS, PERSONAL } from '../data/portfolioData';
- 
+
 // Sticky glassmorphism navbar with mobile menu
 const Navbar = ({ darkMode, setDarkMode }) => {
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState('hero');
   const [mobileOpen, setMobileOpen] = useState(false);
- 
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
@@ -22,17 +22,17 @@ const Navbar = ({ darkMode, setDarkMode }) => {
         }
       }
     };
- 
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
- 
+
   const scrollTo = (href) => {
     const id = href.replace('#', '');
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
     setMobileOpen(false);
   };
- 
+
   return (
     <>
       <motion.nav
@@ -55,7 +55,7 @@ const Navbar = ({ darkMode, setDarkMode }) => {
           >
             GC<span className="text-neon-blue">.</span>
           </motion.button>
- 
+
           {/* Desktop nav links */}
           <div className="hidden md:flex items-center gap-1">
             {NAV_LINKS.map((link) => {
@@ -82,7 +82,7 @@ const Navbar = ({ darkMode, setDarkMode }) => {
               );
             })}
           </div>
- 
+
           {/* Right actions */}
           <div className="flex items-center gap-3">
             {/* Dark/Light toggle */}
@@ -94,29 +94,10 @@ const Navbar = ({ darkMode, setDarkMode }) => {
             >
               {darkMode ? '☀️' : '🌙'}
             </motion.button>
- 
-            {/* View Resume — opens Google Drive preview in new tab */}
+
+            {/* Single Resume button — opens Drive preview in new tab, downloadable from there */}
             <motion.a
               href={PERSONAL.resumeViewUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="flex btn-outline text-xs px-4 py-2 items-center gap-2"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              style={{ borderRadius: '8px', fontSize: '0.7rem' }}
-            >
-              <span>View Resume</span>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                <polyline points="15,3 21,3 21,9" />
-                <line x1="10" y1="14" x2="21" y2="3" />
-              </svg>
-            </motion.a>
- 
-            {/* Download Resume — controlled from portfolioData.js */}
-            <motion.a
-              href={PERSONAL.resumeUrl}
-              download="Guruprasad_Chougule_Resume.pdf"
               target="_blank"
               rel="noreferrer"
               className="flex btn-primary text-xs px-4 py-2 items-center gap-2"
@@ -124,14 +105,14 @@ const Navbar = ({ darkMode, setDarkMode }) => {
               whileTap={{ scale: 0.98 }}
               style={{ borderRadius: '8px', fontSize: '0.7rem' }}
             >
-              <span>{PERSONAL.resumeLabel}</span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="7,10 12,15 17,10" />
-                <line x1="12" y1="15" x2="12" y2="3" />
+              <span>Resume</span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15,3 21,3 21,9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
               </svg>
             </motion.a>
- 
+
             {/* Mobile menu button */}
             <button
               className="md:hidden w-9 h-9 rounded-lg glass-card flex items-center justify-center border border-neon-blue/20"
@@ -142,7 +123,7 @@ const Navbar = ({ darkMode, setDarkMode }) => {
           </div>
         </div>
       </motion.nav>
- 
+
       {/* Mobile menu */}
       <AnimatePresence>
         {mobileOpen && (
@@ -166,31 +147,17 @@ const Navbar = ({ darkMode, setDarkMode }) => {
                   {link.label}
                 </motion.button>
               ))}
-              {/* View Resume button — opens in new tab */}
+              {/* Single Resume button — opens Drive in new tab, downloadable from there */}
               <motion.a
                 href={PERSONAL.resumeViewUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="btn-outline text-center text-xs mt-2"
+                className="btn-primary text-center text-xs mt-2"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.35 }}
               >
-                View Resume ↗
-              </motion.a>
- 
-              {/* Download Resume button — triggers download */}
-              <motion.a
-                href={PERSONAL.resumeUrl}
-                download="Guruprasad_Chougule_Resume.pdf"
-                target="_blank"
-                rel="noreferrer"
-                className="btn-primary text-center text-xs"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-              >
-                {PERSONAL.resumeLabel} ↓
+                Resume ↗
               </motion.a>
             </div>
           </motion.div>
@@ -199,5 +166,5 @@ const Navbar = ({ darkMode, setDarkMode }) => {
     </>
   );
 };
- 
+
 export default Navbar;
