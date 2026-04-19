@@ -8,13 +8,13 @@ export const PERSONAL = {
   summary: "Quality Assurance Engineer with 3+ years of experience in Computer System Validation (CSV/CSA), GxP Life Sciences, PeopleSoft HCM testing, Power Apps, Selenium automation, and API testing. Strong in Agile, JIRA, and compliance (21 CFR Part 11). Aspires to become QA Lead in Healthcare domain.",
   experience: "3+",
   domain: "Life Sciences & GxP",
-  email: "guruprasad@example.com",
-  linkedin: "https://linkedin.com/in/guruprasad-chougule",
+  email: "guruprasadyc20@gmail.com.com",
+  linkedin: "https://in.linkedin.com/in/guruprasadchougule",
   location: "Bengaluru, India",
 
   // ── Resume config ── update ONLY these two lines whenever needed ──
-  resumeUrl: "https://drive.google.com/uc?export=download&id=1Sq7eMI4moIZf_V_D1nk1KRg8QKfXpda5",
-  resumeLabel: "Download Resume",
+  resumeUrl: "https://drive.google.com/file/d/1Sq7eMI4moIZf_V_D1nk1KRg8QKfXpda5/view?usp=drivesdk",
+  resumeLabel: "View Resume",
 };
 
 export const SKILLS = [
