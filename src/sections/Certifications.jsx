@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { CERTIFICATIONS } from '../data/portfolioData';
@@ -5,78 +6,121 @@ import SectionWrapper from '../components/SectionWrapper';
 
 const CertCard = ({ cert, index }) => {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.2 });
+  const [hovered, setHovered] = useState(false);
 
   return (
     <motion.div
       ref={ref}
-      className="relative group"
-      initial={{ opacity: 0, y: 40 }}
+      className="relative"
+      initial={{ opacity: 0, y: 50 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.7, delay: index * 0.15 }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      whileHover={{ y: -8 }}
     >
-      {/* Rotating border animation wrapper */}
-      <div className="cert-badge rounded-2xl p-0.5 overflow-hidden">
-        {/* Animated conic gradient border */}
-        <motion.div
-          className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+      {/* Outer glow ring on hover */}
+      <motion.div
+        className="absolute -inset-0.5 rounded-2xl blur-sm"
+        style={{ background: `linear-gradient(135deg, ${cert.color}, #7b2fff)` }}
+        animate={{ opacity: hovered ? 0.4 : 0 }}
+        transition={{ duration: 0.3 }}
+      />
+
+      {/* Card */}
+      <div
+        className="relative rounded-2xl p-8 text-center overflow-hidden h-full flex flex-col items-center"
+        style={{
+          background: 'var(--glass-bg, rgba(10,22,40,0.7))',
+          backdropFilter: 'blur(20px)',
+          border: `1px solid ${hovered ? cert.color + '50' : cert.color + '20'}`,
+          transition: 'border-color 0.3s ease',
+        }}
+      >
+        {/* Top color bar */}
+        <div
+          className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl"
           style={{
-            background: `conic-gradient(from 0deg, transparent 0deg, ${cert.color} 60deg, transparent 120deg)`,
+            background: `linear-gradient(90deg, transparent, ${cert.color}, transparent)`,
+            opacity: hovered ? 1 : 0.4,
+            transition: 'opacity 0.3s ease',
           }}
-          animate={{ rotate: 360 }}
-          transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
         />
 
-        {/* Card inner */}
+        {/* Background glow */}
         <div
-          className="relative z-10 glass-card-strong rounded-2xl p-8 text-center overflow-hidden"
-          style={{ border: `1px solid ${cert.color}20` }}
+          className="absolute inset-0 pointer-events-none rounded-2xl"
+          style={{
+            background: `radial-gradient(ellipse at 50% 0%, ${cert.color}10 0%, transparent 65%)`,
+            opacity: hovered ? 1 : 0,
+            transition: 'opacity 0.4s ease',
+          }}
+        />
+
+        {/* Icon */}
+        <motion.div
+          className="relative z-10 w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mb-5"
+          style={{
+            background: `${cert.color}12`,
+            border: `1.5px solid ${cert.color}35`,
+          }}
+          animate={hovered ? { scale: 1.08 } : { scale: 1 }}
+          transition={{ duration: 0.3 }}
         >
-          {/* Background glow */}
+          {cert.icon}
+        </motion.div>
+
+        {/* Badge pill */}
+        <div
+          className="relative z-10 inline-flex items-center px-4 py-1.5 rounded-full font-display font-bold text-xs mb-4"
+          style={{
+            background: `${cert.color}15`,
+            border: `1px solid ${cert.color}40`,
+            color: cert.color,
+            letterSpacing: '0.12em',
+          }}
+        >
+          {cert.badge}
+        </div>
+
+        {/* Title */}
+        <h3 className="relative z-10 font-display font-bold text-sm text-slate-100 mb-1 leading-snug">
+          {cert.title}
+        </h3>
+
+        {/* Subtitle */}
+        <p className="relative z-10 font-body text-xs text-slate-400 mb-5">
+          {cert.subtitle}
+        </p>
+
+        {/* Divider */}
+        <div
+          className="w-full h-px mb-4"
+          style={{ background: `linear-gradient(90deg, transparent, ${cert.color}30, transparent)` }}
+        />
+
+        {/* Footer: issuer + year */}
+        <div className="relative z-10 flex justify-between items-center w-full">
+          <span className="font-mono text-xs text-slate-500">{cert.issuer}</span>
+          <span className="font-mono text-xs font-bold" style={{ color: cert.color }}>
+            {cert.year}
+          </span>
+        </div>
+
+        {/* Certified tag */}
+        <div className="relative z-10 flex items-center justify-center gap-1.5 mt-3">
           <div
-            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-            style={{ background: `radial-gradient(circle at 50% 0%, ${cert.color}08, transparent 70%)` }}
-          />
-
-          {/* Icon */}
-          <motion.div
-            className="text-5xl mb-4 inline-block"
-            animate={inView ? { rotateY: [0, 360] } : {}}
-            transition={{ duration: 1, delay: index * 0.2 + 0.5 }}
+            className="w-4 h-4 rounded-full flex items-center justify-center"
+            style={{ background: 'rgba(74,222,128,0.15)', border: '1px solid rgba(74,222,128,0.3)' }}
           >
-            {cert.icon}
-          </motion.div>
-
-          {/* Badge pill */}
-          <div
-            className="inline-block px-4 py-1 rounded-full font-display font-bold text-sm mb-4"
-            style={{
-              background: `${cert.color}15`,
-              border: `1px solid ${cert.color}40`,
-              color: cert.color,
-              letterSpacing: '0.1em',
-            }}
+            <span className="text-green-400" style={{ fontSize: '9px' }}>✓</span>
+          </div>
+          <span
+            className="font-mono text-green-400/70"
+            style={{ fontSize: '0.65rem', letterSpacing: '0.12em' }}
           >
-            {cert.badge}
-          </div>
-
-          {/* Title */}
-          <h3 className="font-display font-bold text-base text-slate-100 mb-1 leading-tight">
-            {cert.title}
-          </h3>
-          <p className="font-body text-sm text-slate-400 mb-3">{cert.subtitle}</p>
-
-          {/* Issuer + year */}
-          <div className="flex justify-center items-center gap-3 mt-4 pt-4 border-t border-white/5">
-            <span className="font-mono text-xs text-slate-500">{cert.issuer}</span>
-            <span className="w-1 h-1 rounded-full bg-slate-600" />
-            <span className="font-mono text-xs" style={{ color: cert.color }}>{cert.year}</span>
-          </div>
-
-          {/* Verified badge */}
-          <div className="flex justify-center items-center gap-1.5 mt-3">
-            <span className="text-green-400 text-xs">✓</span>
-            <span className="font-mono text-xs text-green-400/70">Verified</span>
-          </div>
+            CERTIFIED
+          </span>
         </div>
       </div>
     </motion.div>
@@ -96,28 +140,58 @@ const Certifications = () => {
           className="text-center mb-20"
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7 }}
         >
           <p className="section-subtitle">// Credentials</p>
           <h2 className="section-title gradient-text">Certifications</h2>
           <div className="w-24 h-px bg-gradient-to-r from-transparent via-neon-blue to-transparent mx-auto mt-4" />
+          <p className="text-slate-500 mt-4 text-sm font-body">
+            Cloud and AI certifications validating technical depth
+          </p>
         </motion.div>
 
-        {/* Cert cards */}
-        <div className="grid md:grid-cols-3 gap-8">
+        {/* Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {CERTIFICATIONS.map((cert, i) => (
             <CertCard key={cert.title} cert={cert} index={i} />
           ))}
         </div>
 
-        {/* Bottom note */}
-        <motion.p
-          className="text-center font-mono text-xs text-slate-600 mt-12 tracking-wider"
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.8 }}
+        {/* In-progress banner */}
+        <motion.div
+          className="mt-12 rounded-xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4"
+          style={{
+            background: 'var(--glass-bg, rgba(10,22,40,0.6))',
+            backdropFilter: 'blur(16px)',
+            border: '1px solid rgba(0,212,255,0.1)',
+          }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.7 }}
         >
-          MORE CERTIFICATIONS IN PROGRESS — POSTMAN API | ISTQB CTFL
-        </motion.p>
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🎯</span>
+            <div>
+              <p className="font-display font-bold text-sm text-slate-200">In Progress</p>
+              <p className="font-mono text-xs text-slate-500 mt-0.5">Currently pursuing next certifications</p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2 justify-center sm:justify-end">
+            {['Postman API', 'ISTQB CTFL', 'AWS Cloud Practitioner'].map(cert => (
+              <span
+                key={cert}
+                className="font-mono text-xs px-3 py-1.5 rounded-full"
+                style={{
+                  border: '1px solid rgba(0,212,255,0.2)',
+                  color: 'rgba(0,212,255,0.6)',
+                  background: 'rgba(0,212,255,0.05)',
+                }}
+              >
+                {cert}
+              </span>
+            ))}
+          </div>
+        </motion.div>
       </div>
     </SectionWrapper>
   );
