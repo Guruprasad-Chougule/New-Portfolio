@@ -97,18 +97,15 @@ const Navbar = ({ darkMode, setDarkMode }) => {
 
             {/* Resume button */}
             <motion.a
-              href="#"
-              className="hidden md:flex btn-primary text-xs px-4 py-2 items-center gap-2"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              style={{ borderRadius: '8px', fontSize: '0.7rem' }}
-            >
-              <span>Resume</span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="7,10 12,15 17,10" />
-                <line x1="12" y1="15" x2="12" y2="3" />
-              </svg>
+  href="https://drive.google.com/uc?export=download&id=1Sq7eMI4moIZf_V_D1nk1KRg8QKfXpda5"
+  download="Guruprasad_Chougule_Resume.pdf"
+  target="_blank"
+  rel="noreferrer"
+  className="hidden md:flex btn-primary text-xs px-4 py-2 items-center gap-2"
+  whileHover={{ scale: 1.02 }}
+  whileTap={{ scale: 0.98 }}
+  style={{ borderRadius: '8px', fontSize: '0.7rem' }}
+>
             </motion.a>
 
             {/* Mobile menu button */}
