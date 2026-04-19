@@ -8,7 +8,7 @@ export const PERSONAL = {
   summary: "Quality Assurance Engineer with 3+ years of experience in Computer System Validation (CSV/CSA), GxP Life Sciences, PeopleSoft HCM testing, Power Apps, Selenium automation, and API testing. Strong in Agile, JIRA, and compliance (21 CFR Part 11). Aspires to become QA Lead in Healthcare domain.",
   experience: "3+",
   domain: "Life Sciences & GxP",
-  email: "guruprasadyc20@gmail.com.com",
+  email: "guruprasadyc20@gmail.com",
   linkedin: "https://in.linkedin.com/in/guruprasadchougule",
   location: "Bengaluru, India",
 
