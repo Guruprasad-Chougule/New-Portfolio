@@ -215,13 +215,14 @@ const Hero = () => {
             View Projects
           </motion.button>
           <motion.a
-            href="#"
-            className="btn-outline"
-            whileHover={{ scale: 1.03, y: -2 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            Download Resume ↓
-          </motion.a>
+  href="https://drive.google.com/uc?export=download&id=1Sq7eMI4moIZf_V_D1nk1KRg8QKfXpda5"
+  download="Guruprasad_Chougule_Resume.pdf"
+  target="_blank"
+  rel="noreferrer"
+  className="btn-outline"
+>
+  Download Resume ↓
+</motion.a>
         </motion.div>
 
         {/* Stats row */}
