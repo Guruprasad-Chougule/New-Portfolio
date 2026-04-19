@@ -9,10 +9,10 @@ import SectionWrapper from '../components/SectionWrapper';
 //  ✅ PASTE YOUR EMAILJS IDs HERE
 //  Get them from: https://www.emailjs.com/account
 // ─────────────────────────────────────────────────────────────────────────────
-const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';
-const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
-const EMAILJS_AUTO_REPLY  = 'YOUR_AUTOREPLY_ID';  // optional
-const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';
+const EMAILJS_SERVICE_ID  = 'service_zcydc4a';
+const EMAILJS_TEMPLATE_ID = 'template_ulogh3j';
+const EMAILJS_AUTO_REPLY  = 'template_vu7jzpo';  // optional
+const EMAILJS_PUBLIC_KEY  = '5bVnCI-6X6y4hlKjT';
 // ─────────────────────────────────────────────────────────────────────────────
 //  ✅ Your EmailJS template must use these variable names exactly:
 //     {{from_name}}  {{from_email}}  {{from_phone}}  {{message}}  {{to_name}}
