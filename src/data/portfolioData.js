@@ -6,7 +6,7 @@ export const PERSONAL = {
   role: "Quality Assurance Engineer",
   tagline: "QA Engineer | Automation | GxP Specialist",
   summary: "Quality Assurance Engineer with 2.9 years of experience in Computer System Validation (CSV/CSA), GxP Life Sciences, PeopleSoft HCM testing, Power Apps, Selenium automation, and API testing. Strong in Agile, JIRA, and compliance (21 CFR Part 11). Aspires to become QA Lead in Healthcare domain.",
-  experience: "2.9",
+  experience: "3+",
   domain: "Life Sciences & GxP",
   email: "guruprasad@example.com",
   linkedin: "https://linkedin.com/in/guruprasad-chougule",
