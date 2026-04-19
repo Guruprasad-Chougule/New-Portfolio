@@ -215,7 +215,7 @@ const Hero = () => {
             View Projects
           </motion.button>
 
-          {/* View Resume — opens in new tab */}
+          {/* Single Resume button — opens in new tab, downloadable from there */}
           <motion.a
             href={PERSONAL.resumeViewUrl}
             target="_blank"
@@ -225,19 +225,6 @@ const Hero = () => {
             whileTap={{ scale: 0.97 }}
           >
             View Resume ↗
-          </motion.a>
-
-          {/* Download Resume — triggers file download */}
-          <motion.a
-            href={PERSONAL.resumeUrl}
-            download="Guruprasad_Chougule_Resume.pdf"
-            target="_blank"
-            rel="noreferrer"
-            className="btn-outline"
-            whileHover={{ scale: 1.03, y: -2 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            Download Resume ↓
           </motion.a>
         </motion.div>
 
