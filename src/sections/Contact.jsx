@@ -9,7 +9,7 @@ import SectionWrapper from '../components/SectionWrapper';
 //  ✅ REPLACE THESE 3 VALUES WITH YOUR OWN
 //  from emailjs.com dashboard
 // ─────────────────────────────────────────────
-const EMAILJS_SERVICE_ID  = 'service_xwvqinw';   // e.g. 'service_abc123'
+const EMAILJS_SERVICE_ID  = 'service_zcydc4a';   // e.g. 'service_abc123'
 const EMAILJS_TEMPLATE_ID = 'template_vu7jzpo';  // e.g. 'template_xyz789'  ← sends to YOU
 const EMAILJS_AUTO_REPLY  = 'template_ulogh3j'; // e.g. 'template_reply01' ← sends to SENDER
 const EMAILJS_PUBLIC_KEY  = '5bVnCI-6X6y4hlKjT';   // e.g. 'aBcDeFgH1234'
