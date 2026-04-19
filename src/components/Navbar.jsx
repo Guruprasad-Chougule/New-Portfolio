@@ -143,14 +143,17 @@ const Navbar = ({ darkMode, setDarkMode }) => {
                 </motion.button>
               ))}
               <motion.a
-                href="#"
-                className="btn-primary text-center text-xs mt-2"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.35 }}
-              >
-                Download Resume ↓
-              </motion.a>
+  href="https://drive.google.com/uc?export=download&id=1Sq7eMI4moIZf_V_D1nk1KRg8QKfXpda5"
+  download="Guruprasad_Chougule_Resume.pdf"
+  target="_blank"
+  rel="noreferrer"
+  className="btn-primary text-center text-xs mt-2"
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  transition={{ delay: 0.35 }}
+>
+  Download Resume ↓
+</motion.a>
             </div>
           </motion.div>
         )}
