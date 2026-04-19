@@ -1,22 +1,24 @@
 // ===================== PORTFOLIO DATA =====================
-
+ 
 export const PERSONAL = {
   name: "Guruprasad Chougule",
   firstName: "Guruprasad",
   role: "Quality Assurance Engineer",
-  tagline: "QA Engineer | Automation | GxP Specialist",
+  tagline: "QA Engineer | Automation| GxP Validation Engineer",
   summary: "Quality Assurance Engineer with 3+ years of experience in Computer System Validation (CSV/CSA), GxP Life Sciences, PeopleSoft HCM testing, Power Apps, Selenium automation, and API testing. Strong in Agile, JIRA, and compliance (21 CFR Part 11). Aspires to become QA Lead in Healthcare domain.",
   experience: "3+",
   domain: "Life Sciences & GxP",
   email: "guruprasadyc20@gmail.com",
+  phone: "+91 8217703368",
   linkedin: "https://in.linkedin.com/in/guruprasadchougule",
   location: "Bengaluru, India",
-
-  // ── Resume config ── update ONLY these two lines whenever needed ──
-  resumeUrl: "https://drive.google.com/file/d/1Sq7eMI4moIZf_V_D1nk1KRg8QKfXpda5/view?usp=drivesdk",
-  resumeLabel: "View Resume",
+ 
+  // ── Resume config ── update ONLY these lines whenever needed ──
+  resumeUrl:     "https://drive.google.com/uc?export=download&id=1Sq7eMI4moIZf_V_D1nk1KRg8QKfXpda5",
+  resumeViewUrl: "https://drive.google.com/file/d/1Sq7eMI4moIZf_V_D1nk1KRg8QKfXpda5/view",
+  resumeLabel:   "Download Resume",
 };
-
+ 
 export const SKILLS = [
   {
     category: "Testing",
@@ -73,7 +75,7 @@ export const SKILLS = [
     ],
   },
 ];
-
+ 
 export const EXPERIENCE = [
   {
     company: "Cognizant Technology Solutions",
@@ -93,7 +95,7 @@ export const EXPERIENCE = [
     ],
   },
 ];
-
+ 
 export const PROJECTS = [
   {
     id: 1,
@@ -156,7 +158,7 @@ export const PROJECTS = [
     achievements: ["Full regulatory compliance", "Streamlined investigation workflows", "Audit trail integrity verified"],
   },
 ];
-
+ 
 export const CERTIFICATIONS = [
   {
     title: "Microsoft Azure AZ-900",
@@ -186,7 +188,7 @@ export const CERTIFICATIONS = [
     badge: "OAI",
   },
 ];
-
+ 
 export const ACHIEVEMENTS = [
   {
     title: "Hackathon Top Performer",
@@ -203,7 +205,7 @@ export const ACHIEVEMENTS = [
     year: "2023",
   },
 ];
-
+ 
 export const NAV_LINKS = [
   { label: "Home", href: "#hero" },
   { label: "About", href: "#about" },
