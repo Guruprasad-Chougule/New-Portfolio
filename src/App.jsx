@@ -42,7 +42,13 @@ function App() {
 
       {/* Main app — hidden behind loading screen */}
       {!loading && (
-        <div className={`relative min-h-screen scanline-overlay ${darkMode ? '' : 'bg-slate-100'}`}>
+        <div
+          className="relative min-h-screen scanline-overlay"
+          style={{
+            backgroundColor: darkMode ? 'var(--dark-900)' : '#f0f6ff',
+            transition: 'background-color 0.5s ease, color 0.5s ease',
+          }}
+        >
 
           {/* Animated particle background */}
           <ParticleField />
