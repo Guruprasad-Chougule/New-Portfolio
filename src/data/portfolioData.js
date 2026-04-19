@@ -11,6 +11,10 @@ export const PERSONAL = {
   email: "guruprasad@example.com",
   linkedin: "https://linkedin.com/in/guruprasad-chougule",
   location: "Bengaluru, India",
+
+  // ── Resume config ── update ONLY these two lines whenever needed ──
+  resumeUrl: "https://drive.google.com/uc?export=download&id=1Sq7eMI4moIZf_V_D1nk1KRg8QKfXpda5",
+  resumeLabel: "Download Resume",
 };
 
 export const SKILLS = [
