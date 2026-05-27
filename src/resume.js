@@ -1,0 +1,249 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  RESUME.JS — Single source of truth for the entire portfolio
+//
+//  This file is imported by BOTH the React UI and the chatbot API.
+//  Update this file → the website updates AND the chatbot updates.
+//  No code changes needed. Commit & push → Vercel redeploys → done.
+// ════════════════════════════════════════════════════════════════════════════
+
+export const CONTACT = {
+  name: "Guruprasad Chougule",
+  title: "Quality Assurance, Test Automation & CSV Engineer",
+  tagline: "GxP CSV Validation Engineer · 3 Years · Life Sciences IT",
+  email: "guruprasadyc20@gmail.com",
+  phone: "+91 8217703368",
+  phoneRaw: "+918217703368",
+  linkedin: "https://linkedin.com/in/guruprasadchougule",
+  github: "https://github.com/Guruprasad-Chougule",
+  portfolio: "https://guruprasadchougule.vercel.app",
+  resume: "/resume.pdf",
+  location: "Bangalore, India",
+  status: "Open to opportunities",
+};
+
+export const SUMMARY = `Quality Assurance and Test Automation Engineer with 3 years of hands-on experience delivering software testing for Life Sciences ERP, Microsoft Power Apps, and Web platforms. Proficient in Selenium WebDriver, Core Java, TestNG, Maven, SQL, and REST API testing with Postman across Functional, Regression, SIT, UAT, and Smoke cycles. Specialized expertise in compliance-driven testing such as 21 CFR Part 11, GAMP 5, ALCOA Plus, and the qualification lifecycle including Installation, Operational, and Performance Qualification, Requirements Traceability, and Validation Summary Reports. Currently serving as Primary QA Owner on the Olympus Global Ship Hold Center program, where I have authored 400+ test scripts and achieved 100% on-time Go-Live over four major releases with zero release slippage. Strong in JIRA defect handling, Risk-Based Methodology, Root Cause Analysis, and cross-functional collaboration with global teams. Seeking QA Engineer, Senior QA Engineer, QA Lead, Test Automation Engineer, and Senior Validation Engineer roles across regulated and product-driven organizations including Pharma, Healthcare, Finance, and Insurance domains.`;
+
+export const STATS = [
+  { val: "3+", label: "Years Experience" },
+  { val: "400+", label: "Test Scripts Authored" },
+  { val: "100%", label: "On-Time Go-Live" },
+  { val: "60%", label: "Manual Effort Reduction" },
+  { val: "15+", label: "Compliance Gaps Closed" },
+  { val: "5", label: "Global Regions Supported" },
+];
+
+export const SKILLS = {
+  "Automation & Programming": [
+    "Selenium WebDriver", "Core Java", "Python", "TestNG", "Maven",
+    "Pytest", "SQL", "REST API Testing", "Postman",
+  ],
+  "Testing Types": [
+    "Manual Testing", "Automation Testing", "Functional", "Regression",
+    "Smoke", "Sanity", "SIT", "UAT", "Test Case Design", "Defect Management",
+  ],
+  "Platforms & Applications": [
+    "Microsoft Power Apps", "PeopleSoft HCM", "Hexagon EAM",
+    "Microsoft Power BI", "Web Applications", "ERP Systems", "Agile PLM",
+  ],
+  "Compliance & Validation": [
+    "21 CFR Part 11", "GAMP 5", "ALCOA Plus", "EU Annex 11",
+    "Computer System Validation", "IQ / OQ / PQ", "CAPA", "NCR",
+    "Audit Readiness", "Validation Summary Report",
+  ],
+  "Tools": [
+    "JIRA", "Microsoft Office Suite", "Microsoft Copilot",
+    "Git", "GitHub", "E-Signature Platforms",
+  ],
+  "Methodologies": [
+    "Agile Scrum", "Waterfall", "V-Model", "STLC", "SDLC",
+    "Risk-Based Testing", "BTM-based Test Design",
+  ],
+};
+
+export const EXPERIENCE = [
+  {
+    role: "Product Test Specialist",
+    company: "Cognizant Technology Solutions",
+    client: "Olympus · Life Sciences",
+    period: "June 2023 — Present",
+    location: "Bangalore, India",
+    grade: "Service Line: Quality Engineering & Assurance · Sub-Track: Product Testing · Grade A",
+    points: [
+      "Owned end-to-end QA and CSV deliverables for 5 GxP-governed projects across four major releases (v1.0 through v4.0), achieving 100% on-time Go-Live with zero compliance escalations.",
+      "Authored and ran 400+ test scripts covering Functional, Regression, SIT, UAT, OQ, and Risk-Based scenarios on Power Apps, ERP, and Web layers while sustaining 100% traceability in JIRA.",
+      "Designed Selenium WebDriver + TestNG automation suites for regression cycles, reducing manual testing effort by ~60% over 4 major release cycles.",
+      "Executed REST API testing with Postman to validate backend service integrations, JSON response payloads, and authentication flows for shipment and CAPA workflows.",
+      "Remediated NCRs and closed 15+ compliance gaps aligned to 21 CFR Part 11, GAMP 5, and ALCOA Plus principles.",
+      "Resolved P1 production defects involving electronic signature integration and workflow failures through structured RCA, enabling Go-Live within 1-2 days and preventing release slippage.",
+      "Led KT sessions on data migration practices and partnered with global stakeholders in Americas, APAC, and EMEA under Agile delivery cadence.",
+    ],
+  },
+];
+
+export const PROJECTS = [
+  { title: "Global Ship Hold Center", tag: "Power Apps · JIRA · Selenium · 21 CFR Part 11",
+    period: "Mar 2024 — Present", role: "Primary QA Owner",
+    achievement: "100% on-time Go-Live across 4 releases (v1.0–v4.0)",
+    color: "#7af0c8", icon: "⚓",
+    desc: "Microsoft Power Apps platform managing shipment holds for medical devices across global regions, validated under 21 CFR Part 11 and GAMP 5 standards. Drove regulatory adherence and NCR remediation with 100% audit readiness across JIRA workflows and qualification artifacts." },
+  { title: "Field Corrective Action Tracker (FCAT)", tag: "Power Apps · JIRA · CAPA · NCR",
+    period: "Apr 2025 — May 2025", role: "QA Engineer",
+    achievement: "Validated across 5 global regions",
+    color: "#8b7fe5", icon: "🛡️",
+    desc: "Power Apps tool for monitoring Field Corrective Actions and Non-Conformance workflows across Americas, APAC, EMEA, China, and Japan. Built end-to-end test scripts and managed full defect lifecycle in JIRA." },
+  { title: "Agile NCR & CAPA 2.0 Enhancement", tag: "JIRA · Agile · Regression Testing",
+    period: "Aug 2024 — Mar 2025", role: "QA Engineer",
+    achievement: "Zero impact on legacy process flows",
+    color: "#d4af37", icon: "⚙️",
+    desc: "Validated CAPA 2.0 enhancements covering new fields, workflows, and role configurations — ensuring zero impact on legacy process flows. Delivered functional and regression coverage for the complete NCR and CAPA journey." },
+  { title: "Hexagon EAM Data Migration", tag: "JIRA · OQ · SQL · Data Migration",
+    period: "Mar 2025 — Apr 2025", role: "QA Engineer",
+    achievement: "100% data integrity validation",
+    color: "#f06b8b", icon: "🗄️",
+    desc: "Operational Qualification testing across multiple Enterprise Asset Management modules to verify system functionality against regulatory expectations." },
+  { title: "JIRA Platform Enhancement", tag: "JIRA · Workflow Configuration · Test Management",
+    period: "Mar 2025 — Apr 2025", role: "QA Engineer",
+    achievement: "Formal qualification cycle delivered",
+    color: "#5ec8ff", icon: "🔧",
+    desc: "Custom field configurations and workflow updates qualified through formal qualification cycles, ensuring traceability across change control." },
+];
+
+export const CERTIFICATIONS = [
+  { name: "Microsoft Azure Fundamentals AZ-900", issuer: "Microsoft", year: "2023", note: "Cloud Concepts & Services", icon: "☁️" },
+  { name: "Google Cloud Digital Leader", issuer: "Google Cloud", year: "2023", note: "Digital Transformation Strategy", icon: "🌐" },
+  { name: "Oracle AI Foundations Associate", issuer: "Oracle", year: "2023", note: "Ranked Top 150 of 3000+ participants", icon: "🧠" },
+  { name: "OSP Product Testing with Selenium", issuer: "Cognizant", year: "2023", note: "Product-level automation training", icon: "🧪" },
+  { name: "Selenium WebDriver with Java", issuer: "Online Learning", year: "2023", note: "Basic, Advanced & Framework training", icon: "⚡" },
+];
+
+export const LEARNING = [
+  { phase: "Phase 1", item: "Python + Pytest", status: "Active" },
+  { phase: "Phase 2", item: "Playwright Automation", status: "Next" },
+  { phase: "Phase 2", item: "ISTQB AI Testing Certification", status: "Next" },
+  { phase: "Phase 3", item: "LangChain + OpenAI API for Test Generation", status: "Planned" },
+  { phase: "Phase 4", item: "AWS Cloud Practitioner", status: "Planned" },
+];
+
+export const AWARDS = [
+  { title: "Top Performer", event: "Cognizant Hackathon 2023", note: "Recognized for Selenium, Java, and SQL automation solutions", icon: "🏆" },
+  { title: "Best Project of the Year", event: "College Project Exhibition 2022", note: "Innovative IoT-based Smart Agriculture System", icon: "🌾" },
+];
+
+export const EDUCATION = {
+  degree: "Bachelor of Engineering — Mechanical Engineering",
+  school: "BLDEA V. P. Dr. P. G. Halakatti College of Engineering and Technology, Vijayapura",
+  affiliation: "Affiliated to Visvesvaraya Technological University (VTU)",
+  year: "Graduated 2022",
+  cgpa: "CGPA: 7.54 / 10",
+};
+
+export const BLOG_POSTS = [
+  { id: 1, tag: "GxP · CSV", date: "Mar 2024", readTime: "6 min read", icon: "🔬", color: "#7af0c8",
+    title: "How I Caught a Critical IQ Protocol Gap Before FDA Audit",
+    problem: "During a pre-audit review of a Power Apps Global Ship Hold system, I discovered that the Installation Qualification protocol had been executed against a staging environment — not production. This meant the entire IQ evidence package was invalid under 21 CFR Part 11.",
+    root: "The root cause was a missing environment tag in the test execution checklist. The team assumed 'current system' referred to production, but the Selenium scripts were pointing to a staging URL hardcoded months earlier.",
+    fix: "I introduced an environment-assertion step at the very top of every automation script — it reads the active system URL, validates it against a config-driven allowlist, and fails loudly with a blocking error if there's a mismatch. The client passed their audit with zero observations related to CSV.",
+    tags: ["21 CFR Part 11", "IQ/OQ/PQ", "GxP", "Selenium"] },
+  { id: 2, tag: "Automation · Stability", date: "Jan 2024", readTime: "5 min read", icon: "⚡", color: "#8b7fe5",
+    title: "Killing Flaky Tests in a Legacy Selenium Suite",
+    problem: "A regression suite had a 35% flakiness rate — tests were randomly failing on CI but passing locally. The team had lost trust in the suite and was manually re-running pipelines 3-4 times per deployment.",
+    root: "Three compounding issues: implicit waits mixed with explicit waits, tests sharing mutable global state through static session objects, and hardcoded pixel-based locators breaking when the UI was responsive.",
+    fix: "I replaced all implicit waits with a custom ExpectedConditions wrapper using exponential backoff. Shared state was eliminated via a ThreadLocal WebDriver factory. Locators migrated to data-testid attributes. Flakiness dropped from 35% to under 2% in three weeks.",
+    tags: ["Selenium", "TestNG", "CI/CD", "WebDriver"] },
+  { id: 3, tag: "API · Security", date: "Nov 2023", readTime: "4 min read", icon: "🔒", color: "#d4af37",
+    title: "Catching an Auth Token Leakage in an API Payload",
+    problem: "During REST API regression testing with Postman, I noticed that a history endpoint was returning a full JWT access token in the response body — not just the booking data. This token had a 24-hour TTL and could be used to impersonate any user.",
+    root: "A developer had added the token to the response during a debugging session, and the field was never removed before the PR merged. No automated test was asserting the shape of the response payload.",
+    fix: "I added a negative assertion layer to every API test: alongside verifying expected fields, tests now explicitly assert that sensitive fields are absent from responses. A JSON schema validation step was introduced in Postman/Newman. The security fix was patched same-day.",
+    tags: ["API Security", "Postman", "JWT", "Schema Validation"] },
+  { id: 4, tag: "P1 Defect · E-Signature", date: "Sep 2023", readTime: "7 min read", icon: "✍️", color: "#5ec8ff",
+    title: "Resolving a P1 E-Signature Failure 24 Hours Before Go-Live",
+    problem: "A Priority-1 production defect surfaced 24 hours before Go-Live: electronic signature submission was silently failing for ~8% of users under load. Without a fix, the release would have slipped, breaking compliance commitments to the client.",
+    root: "Through structured RCA with developers and Functional SMEs, we traced it to a race condition in the signature-verification microservice — under high concurrency, the cert validation call timed out but the front-end treated the timeout as success.",
+    fix: "I drafted a reproducible load-condition test script that triggered the bug 9/10 times. The dev team patched the timeout handling and added an explicit retry. I re-ran the script post-fix to confirm 0% failure across 500 concurrent users. Go-Live happened on schedule with zero release slippage.",
+    tags: ["RCA", "E-Signature", "21 CFR Part 11", "P1 Resolution"] },
+];
+
+// ════════════════════════════════════════════════════════════════════════════
+//  buildSystemPrompt() — feeds the LLM ALL of Guru's info as context
+//  Called by /api/chat.js — anytime you update the data above, the bot
+//  automatically knows the new info on the next deploy.
+// ════════════════════════════════════════════════════════════════════════════
+
+export function buildSystemPrompt() {
+  const skillLines = Object.entries(SKILLS)
+    .map(([cat, items]) => `- ${cat}: ${items.join(", ")}`)
+    .join("\n");
+
+  const expLines = EXPERIENCE.map((e) =>
+    `- ${e.role} at ${e.company} (${e.client}) | ${e.period} | ${e.location}\n  ${e.points.map(p => "  • " + p).join("\n")}`
+  ).join("\n\n");
+
+  const projectLines = PROJECTS.map((p, i) =>
+    `${i + 1}. ${p.title} (${p.period}, role: ${p.role}) — ${p.desc} Tech: ${p.tag}. Achievement: ${p.achievement}`
+  ).join("\n");
+
+  const certLines = CERTIFICATIONS.map((c) =>
+    `- ${c.name} (${c.issuer}, ${c.year}) — ${c.note}`
+  ).join("\n");
+
+  const learningLines = LEARNING.map((l) => `- ${l.phase}: ${l.item} (${l.status})`).join("\n");
+  const awardLines = AWARDS.map((a) => `- ${a.title} — ${a.event}. ${a.note}`).join("\n");
+  const blogLines = BLOG_POSTS.map((b, i) =>
+    `${i + 1}. "${b.title}" (${b.date}) — Problem: ${b.problem} Root cause: ${b.root} Fix: ${b.fix}`
+  ).join("\n\n");
+
+  return `You are QAIX, an AI assistant living inside ${CONTACT.name}'s portfolio website. Your sole purpose is to answer visitor questions about ${CONTACT.name} accurately, helpfully, and conversationally.
+
+# ABOUT GURUPRASAD
+Name: ${CONTACT.name}
+Title: ${CONTACT.title}
+Location: ${CONTACT.location}
+Status: ${CONTACT.status}
+Email: ${CONTACT.email}
+Phone: ${CONTACT.phone}
+LinkedIn: ${CONTACT.linkedin}
+GitHub: ${CONTACT.github}
+
+# PROFESSIONAL SUMMARY
+${SUMMARY}
+
+# KEY METRICS
+${STATS.map(s => `- ${s.val} ${s.label}`).join("\n")}
+
+# SKILLS
+${skillLines}
+
+# EXPERIENCE
+${expLines}
+
+# PROJECTS
+${projectLines}
+
+# CERTIFICATIONS
+${certLines}
+
+# CURRENTLY LEARNING (Roadmap to AI-Augmented QA Engineer)
+${learningLines}
+
+# AWARDS
+${awardLines}
+
+# EDUCATION
+${EDUCATION.degree}
+${EDUCATION.school} (${EDUCATION.affiliation})
+${EDUCATION.year} · ${EDUCATION.cgpa}
+
+# BLOG POSTS (Problem → Root Cause → Fix breakdowns)
+${blogLines}
+
+# RULES FOR YOUR RESPONSES
+1. Always answer as if you ARE QAIX — Guruprasad's AI assistant. Refer to him as "Guru" or "Guruprasad" (never "I" or "me").
+2. Keep responses CONCISE — 2-4 sentences for simple questions, up to 6-8 sentences for complex ones. Never write essays.
+3. Use **bold** to highlight key terms, technologies, and numbers. Use bullet points for lists.
+4. If asked something not in your knowledge above (e.g. salary, personal life, opinions on competitors), politely redirect: "Best to ask Guru directly — drop an email at ${CONTACT.email} or message on LinkedIn."
+5. If asked something completely unrelated to Guru (e.g. "what's the weather", "write me code"), politely decline: "I'm focused on helping people learn about Guru. I can tell you about his work, skills, projects, or how to reach him."
+6. Be warm and conversational. Use emojis sparingly (1 per message max, optional).
+7. Never invent facts. If you don't know, say so and suggest the visitor contact him directly.
+8. End responses with a helpful nudge when appropriate (e.g. "Want me to tell you about his projects?").`;
+}
