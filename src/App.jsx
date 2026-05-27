@@ -2,8 +2,8 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from "framer-motion";
 
 // ════════════════════════════════════════════════════════════════════════════
-//  GURUPRASAD CHOUGULE · PORTFOLIO 2026
-//  Premium edition — refined typography, voice intro, editorial layout
+//  GURUPRASAD CHOUGULE · PORTFOLIO 2026 · v4
+//  Clean tech aesthetic — Sora + Inter + JetBrains Mono
 // ════════════════════════════════════════════════════════════════════════════
 
 const CONTACT = {
@@ -81,51 +81,31 @@ const EXPERIENCE = [
 ];
 
 const PROJECTS = [
-  {
-    title: "Global Ship Hold Center",
-    tag: "Power Apps · JIRA · Selenium · 21 CFR Part 11",
-    period: "Mar 2024 — Present",
-    role: "Primary QA Owner",
+  { title: "Global Ship Hold Center", tag: "Power Apps · JIRA · Selenium · 21 CFR Part 11",
+    period: "Mar 2024 — Present", role: "Primary QA Owner",
     achievement: "100% on-time Go-Live across 4 releases (v1.0–v4.0)",
     color: "#7af0c8", icon: "⚓",
-    desc: "A Microsoft Power Apps platform managing shipment holds for medical devices across global regions, validated under 21 CFR Part 11 and GAMP 5 standards. Drove regulatory adherence and NCR remediation with 100% audit readiness across JIRA workflows and qualification artifacts.",
-  },
-  {
-    title: "Field Corrective Action Tracker (FCAT)",
-    tag: "Power Apps · JIRA · CAPA · NCR",
-    period: "Apr 2025 — May 2025",
-    role: "QA Engineer",
+    desc: "Microsoft Power Apps platform managing shipment holds for medical devices across global regions, validated under 21 CFR Part 11 and GAMP 5 standards. Drove regulatory adherence and NCR remediation with 100% audit readiness across JIRA workflows and qualification artifacts." },
+  { title: "Field Corrective Action Tracker (FCAT)", tag: "Power Apps · JIRA · CAPA · NCR",
+    period: "Apr 2025 — May 2025", role: "QA Engineer",
     achievement: "Validated across 5 global regions",
     color: "#8b7fe5", icon: "🛡️",
-    desc: "Power Apps tool for monitoring Field Corrective Actions and Non-Conformance workflows across Americas, APAC, EMEA, China, and Japan. Built end-to-end test scripts and managed full defect lifecycle in JIRA.",
-  },
-  {
-    title: "Agile NCR & CAPA 2.0 Enhancement",
-    tag: "JIRA · Agile · Regression Testing",
-    period: "Aug 2024 — Mar 2025",
-    role: "QA Engineer",
+    desc: "Power Apps tool for monitoring Field Corrective Actions and Non-Conformance workflows across Americas, APAC, EMEA, China, and Japan. Built end-to-end test scripts and managed full defect lifecycle in JIRA." },
+  { title: "Agile NCR & CAPA 2.0 Enhancement", tag: "JIRA · Agile · Regression Testing",
+    period: "Aug 2024 — Mar 2025", role: "QA Engineer",
     achievement: "Zero impact on legacy process flows",
     color: "#d4af37", icon: "⚙️",
-    desc: "Validated CAPA 2.0 enhancements covering new fields, workflows, and role configurations — ensuring zero impact on legacy process flows. Delivered functional and regression coverage for the complete NCR and CAPA journey.",
-  },
-  {
-    title: "Hexagon EAM Data Migration",
-    tag: "JIRA · OQ · SQL · Data Migration",
-    period: "Mar 2025 — Apr 2025",
-    role: "QA Engineer",
+    desc: "Validated CAPA 2.0 enhancements covering new fields, workflows, and role configurations — ensuring zero impact on legacy process flows. Delivered functional and regression coverage for the complete NCR and CAPA journey." },
+  { title: "Hexagon EAM Data Migration", tag: "JIRA · OQ · SQL · Data Migration",
+    period: "Mar 2025 — Apr 2025", role: "QA Engineer",
     achievement: "100% data integrity validation",
     color: "#f06b8b", icon: "🗄️",
-    desc: "Operational Qualification testing across multiple Enterprise Asset Management modules to verify system functionality against regulatory expectations.",
-  },
-  {
-    title: "JIRA Platform Enhancement",
-    tag: "JIRA · Workflow Configuration · Test Management",
-    period: "Mar 2025 — Apr 2025",
-    role: "QA Engineer",
+    desc: "Operational Qualification testing across multiple Enterprise Asset Management modules to verify system functionality against regulatory expectations." },
+  { title: "JIRA Platform Enhancement", tag: "JIRA · Workflow Configuration · Test Management",
+    period: "Mar 2025 — Apr 2025", role: "QA Engineer",
     achievement: "Formal qualification cycle delivered",
     color: "#5ec8ff", icon: "🔧",
-    desc: "Custom field configurations and workflow updates qualified through formal qualification cycles, ensuring traceability across change control.",
-  },
+    desc: "Custom field configurations and workflow updates qualified through formal qualification cycles, ensuring traceability across change control." },
 ];
 
 const CERTIFICATIONS = [
@@ -184,8 +164,6 @@ const BLOG_POSTS = [
     tags: ["RCA", "E-Signature", "21 CFR Part 11", "P1 Resolution"] },
 ];
 
-// ─── QAIX VOICE SCRIPT (synced subtitles + Web Speech API) ───────────────────
-
 const QAIX_SCRIPT = [
   { t: 0,     text: "Initializing QAIX.", voice: "Initializing." },
   { t: 1600,  text: "Hello. I am QAIX.", voice: "Hello. I am QAIX." },
@@ -227,7 +205,143 @@ function getQaixResponse(input) {
   return QAIX_RESPONSES.default;
 }
 
-// ─── HOOKS & PRIMITIVES ──────────────────────────────────────────────────────
+// ─── GLOBAL STYLES (injected once at the top of body) ────────────────────────
+// Using a real <style> element guarantees keyframes are registered
+
+function GlobalStyles() {
+  return (
+    <style>{`
+      :root {
+        --bg: #0a0a0c;
+        --bg-card: #13141a;
+        --bg-card-2: #0c0d11;
+        --mint: #7af0c8;
+        --gold: #d4af37;
+        --violet: #8b7fe5;
+        --text: #ffffff;
+        --text-muted: #9ca3af;
+        --text-dim: #6b7280;
+      }
+
+      * { cursor: auto; }
+      html, body { cursor: auto !important; }
+      a, button, [role="button"], input, textarea, select { cursor: pointer; }
+      input, textarea { cursor: text; }
+
+      html { scroll-behavior: smooth; }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .font-display {
+        font-family: 'Sora', 'Inter', system-ui, sans-serif;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+      .font-sans { font-family: 'Inter', system-ui, sans-serif; }
+      .font-mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; }
+
+      /* Cursor blink — THE FIX */
+      @keyframes cursorBlink {
+        0%, 49% { opacity: 1; }
+        50%, 100% { opacity: 0; }
+      }
+      .cursor-blink {
+        display: inline-block;
+        width: 3px;
+        height: 1.1em;
+        background: var(--mint);
+        margin-left: 4px;
+        vertical-align: text-bottom;
+        animation: cursorBlink 1s steps(2) infinite;
+        box-shadow: 0 0 8px rgba(122, 240, 200, 0.6);
+      }
+
+      @keyframes dotPulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.4; transform: scale(1.3); }
+      }
+      .dot-pulse { animation: dotPulse 1.5s ease-in-out infinite; }
+
+      @keyframes marquee {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+      }
+      .marquee-track { animation: marquee 40s linear infinite; }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar { width: 8px; height: 8px; }
+      ::-webkit-scrollbar-track { background: var(--bg); }
+      ::-webkit-scrollbar-thumb { background: #1f2128; border-radius: 4px; }
+      ::-webkit-scrollbar-thumb:hover { background: #2a2d36; }
+
+      ::selection { background: rgba(122,240,200,0.25); color: white; }
+    `}</style>
+  );
+}
+
+// ─── CUSTOM CURSOR FOLLOWER ──────────────────────────────────────────────────
+// Renders a small glowing dot that follows the mouse — like premium sites
+
+function CursorFollower() {
+  const dotRef = useRef(null);
+  const ringRef = useRef(null);
+  const [isPointer, setIsPointer] = useState(false);
+  const pos = useRef({ x: -100, y: -100 });
+  const target = useRef({ x: -100, y: -100 });
+
+  useEffect(() => {
+    const isTouchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    if (isTouchDevice) return;
+
+    const move = (e) => {
+      target.current = { x: e.clientX, y: e.clientY };
+      // Detect interactive element
+      const el = e.target;
+      const interactive = el?.closest?.("a, button, input, textarea, [role='button']");
+      setIsPointer(!!interactive);
+    };
+
+    let raf;
+    const animate = () => {
+      // Smooth follow with lerp
+      pos.current.x += (target.current.x - pos.current.x) * 0.18;
+      pos.current.y += (target.current.y - pos.current.y) * 0.18;
+      if (dotRef.current) {
+        dotRef.current.style.transform = `translate3d(${target.current.x}px, ${target.current.y}px, 0)`;
+      }
+      if (ringRef.current) {
+        ringRef.current.style.transform = `translate3d(${pos.current.x}px, ${pos.current.y}px, 0)`;
+      }
+      raf = requestAnimationFrame(animate);
+    };
+
+    window.addEventListener("mousemove", move);
+    raf = requestAnimationFrame(animate);
+    return () => { window.removeEventListener("mousemove", move); cancelAnimationFrame(raf); };
+  }, []);
+
+  return (
+    <>
+      <div ref={dotRef}
+        className="fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-difference"
+        style={{ transition: "width 0.2s, height 0.2s" }}>
+        <div className={`rounded-full bg-[#7af0c8] ${isPointer ? "w-3 h-3" : "w-2 h-2"} -translate-x-1/2 -translate-y-1/2`} />
+      </div>
+      <div ref={ringRef}
+        className="fixed top-0 left-0 pointer-events-none z-[9998]"
+        style={{ transition: "width 0.25s, height 0.25s, opacity 0.25s" }}>
+        <div className={`rounded-full border border-[#7af0c8]/40 ${isPointer ? "w-12 h-12 opacity-100" : "w-8 h-8 opacity-60"} -translate-x-1/2 -translate-y-1/2`} />
+      </div>
+    </>
+  );
+}
+
+// ─── HOOKS ───────────────────────────────────────────────────────────────────
 
 function useTypewriter(words, speed = 80, pause = 1800) {
   const [idx, setIdx] = useState(0);
@@ -246,24 +360,11 @@ function useTypewriter(words, speed = 80, pause = 1800) {
   return text;
 }
 
-function BlinkCursor({ color = "#7af0c8" }) {
-  return (
-    <span
-      className="inline-block w-[2px] h-[0.9em] ml-1 align-middle"
-      style={{ backgroundColor: color, animation: "qaixBlink 1s steps(2) infinite" }}
-    />
-  );
-}
-
-// Web Speech API voice — speaks intro lines aloud
 function speakVoice(text, onEnd) {
   if (!("speechSynthesis" in window)) { onEnd?.(); return; }
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  u.rate = 0.92;
-  u.pitch = 0.85;
-  u.volume = 1;
-  // Pick a deeper / English voice if available
+  u.rate = 0.92; u.pitch = 0.85; u.volume = 1;
   const voices = window.speechSynthesis.getVoices();
   const preferred = voices.find((v) => /Google.*English|Microsoft.*English|Daniel|Alex|Samantha/i.test(v.name))
                  || voices.find((v) => v.lang?.startsWith("en"));
@@ -272,18 +373,7 @@ function speakVoice(text, onEnd) {
   window.speechSynthesis.speak(u);
 }
 
-// ─── GRAIN OVERLAY (premium texture) ─────────────────────────────────────────
-
-function GrainOverlay() {
-  return (
-    <div className="pointer-events-none fixed inset-0 z-[5] opacity-[0.035] mix-blend-overlay"
-      style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`
-      }} />
-  );
-}
-
-// ─── AMBIENT GRADIENT MESH (premium background) ──────────────────────────────
+// ─── AMBIENT BACKGROUND ──────────────────────────────────────────────────────
 
 function AmbientMesh() {
   return (
@@ -295,6 +385,15 @@ function AmbientMesh() {
       <div className="absolute top-[40%] right-[30%] w-[30vw] h-[30vw] rounded-full opacity-[0.04]"
         style={{ background: "radial-gradient(circle, #d4af37 0%, transparent 60%)", filter: "blur(60px)" }} />
     </div>
+  );
+}
+
+function GrainOverlay() {
+  return (
+    <div className="pointer-events-none fixed inset-0 z-[5] opacity-[0.03] mix-blend-overlay"
+      style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`
+      }} />
   );
 }
 
@@ -360,7 +459,7 @@ function RobotCharacter({ speaking }) {
   );
 }
 
-// ─── CINEMATIC INTRO with REAL VOICE ─────────────────────────────────────────
+// ─── CINEMATIC INTRO ─────────────────────────────────────────────────────────
 
 function CinematicIntro({ onEnd }) {
   const [started, setStarted] = useState(false);
@@ -369,18 +468,14 @@ function CinematicIntro({ onEnd }) {
   const [muted, setMuted] = useState(false);
   const mutedRef = useRef(false);
 
-  // Keep ref synced for closures
   useEffect(() => { mutedRef.current = muted; }, [muted]);
 
-  // Warm up voices list (some browsers need this)
   useEffect(() => {
     if ("speechSynthesis" in window) {
       window.speechSynthesis.getVoices();
       window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
     }
   }, []);
-
-  const handleStart = () => setStarted(true);
 
   const handleEnd = useCallback(() => {
     if ("speechSynthesis" in window) window.speechSynthesis.cancel();
@@ -404,7 +499,6 @@ function CinematicIntro({ onEnd }) {
     };
   }, [started, handleEnd]);
 
-  // Toggle mute mid-intro
   const toggleMute = () => {
     setMuted((m) => {
       const next = !m;
@@ -420,14 +514,10 @@ function CinematicIntro({ onEnd }) {
       <GrainOverlay />
       <div className="absolute inset-0 pointer-events-none"
         style={{ background: "radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.85) 100%)" }} />
-      <div className="absolute inset-0 pointer-events-none opacity-[0.035]"
-        style={{ backgroundImage: "repeating-linear-gradient(0deg, #7af0c8 0px, #7af0c8 1px, transparent 1px, transparent 4px)" }} />
 
-      {/* Top HUD */}
       <div className="absolute top-6 left-6 right-6 flex justify-between items-center font-mono text-[10px] text-[#7af0c8] z-10 tracking-[0.3em]">
         <div className="flex items-center gap-3">
-          <motion.div animate={{ opacity: [1, 0.3, 1] }} transition={{ repeat: Infinity, duration: 1.5 }}
-            className="w-1.5 h-1.5 bg-[#7af0c8] rounded-full" />
+          <span className="w-1.5 h-1.5 bg-[#7af0c8] rounded-full dot-pulse" />
           <span>REC · QAIX.SYS</span>
         </div>
         <span className="hidden sm:block">PORTFOLIO_2026 · GURUPRASAD.C</span>
@@ -444,12 +534,12 @@ function CinematicIntro({ onEnd }) {
               className="font-mono text-[10px] text-[#7af0c8] tracking-[0.5em] mb-8">PORTFOLIO · 2026</motion.p>
             <motion.h1
               initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3, duration: 0.9 }}
-              className="font-display text-6xl md:text-8xl text-white leading-[0.9] mb-3 tracking-tight">
+              className="font-display text-5xl md:text-7xl text-white leading-[0.95] mb-3">
               Guruprasad
               <br />
-              <em className="font-display italic text-transparent bg-clip-text bg-gradient-to-br from-[#7af0c8] via-[#d4af37] to-[#8b7fe5]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-br from-[#7af0c8] via-[#d4af37] to-[#8b7fe5]">
                 Chougule
-              </em>
+              </span>
             </motion.h1>
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
               className="font-mono text-xs text-[#9ca3af] tracking-[0.3em] mb-12">
@@ -457,10 +547,9 @@ function CinematicIntro({ onEnd }) {
             </motion.p>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1 }}
               className="flex flex-col items-center gap-4">
-              <motion.button onClick={handleStart} whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-                className="group inline-flex items-center gap-3 px-10 py-4 bg-gradient-to-br from-[#7af0c8] to-[#5dd9b0] text-[#0a0a0c] font-mono font-bold text-xs tracking-[0.4em] rounded-full hover:shadow-[0_0_60px_rgba(122,240,200,0.4)] transition-shadow">
-                <motion.span animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1.5 }}
-                  className="w-1.5 h-1.5 rounded-full bg-[#0a0a0c]" />
+              <motion.button onClick={() => setStarted(true)} whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
+                className="group inline-flex items-center gap-3 px-10 py-4 bg-gradient-to-br from-[#7af0c8] to-[#5dd9b0] text-[#0a0a0c] font-display font-bold text-xs tracking-[0.4em] rounded-full hover:shadow-[0_0_60px_rgba(122,240,200,0.4)] transition-shadow">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#0a0a0c] dot-pulse" />
                 BEGIN INTRO
                 <span className="group-hover:translate-x-1 transition-transform">→</span>
               </motion.button>
@@ -485,7 +574,7 @@ function CinematicIntro({ onEnd }) {
                 {currentLine >= 0 && (
                   <motion.p key={currentLine} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -14 }} transition={{ duration: 0.5 }}
-                    className="font-display text-2xl md:text-4xl text-white leading-tight tracking-tight">
+                    className="font-display text-2xl md:text-3xl text-white leading-tight">
                     {QAIX_SCRIPT[currentLine].text}
                   </motion.p>
                 )}
@@ -503,7 +592,6 @@ function CinematicIntro({ onEnd }) {
         )}
       </AnimatePresence>
 
-      {/* Mute & Skip controls */}
       <AnimatePresence>
         {started && showSkip && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -540,7 +628,7 @@ function CornerBrackets() {
   );
 }
 
-// ─── QAIX FLOATING CHAT ──────────────────────────────────────────────────────
+// ─── QAIX CHAT ───────────────────────────────────────────────────────────────
 
 function QaixChat({ open, onClose }) {
   const [chatInput, setChatInput] = useState("");
@@ -574,9 +662,9 @@ function QaixChat({ open, onClose }) {
             <div className="flex items-center gap-3">
               <motion.div animate={{ y: [0, -3, 0] }} transition={{ repeat: Infinity, duration: 2 }} className="text-xl">🤖</motion.div>
               <div>
-                <p className="font-display text-white text-sm tracking-wide">QAIX</p>
+                <p className="font-display text-white text-sm">QAIX</p>
                 <div className="flex items-center gap-1.5 mt-0.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#7af0c8]" style={{ animation: "qaixPulse 1.5s ease-in-out infinite" }} />
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#7af0c8] dot-pulse" />
                   <span className="font-mono text-[9px] text-[#7af0c8] tracking-[0.3em]">ONLINE</span>
                 </div>
               </div>
@@ -632,7 +720,7 @@ function Section({ id, children, className = "" }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   return (
-    <section id={id} ref={ref} className={`relative z-10 py-28 md:py-36 px-6 md:px-16 lg:px-24 xl:px-32 ${className}`}>
+    <section id={id} ref={ref} className={`relative z-10 py-24 md:py-32 px-6 md:px-16 lg:px-24 xl:px-32 ${className}`}>
       <motion.div initial={{ opacity: 0, y: 48 }} animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}>{children}</motion.div>
     </section>
@@ -641,15 +729,15 @@ function Section({ id, children, className = "" }) {
 
 function Heading({ label, title, subtitle }) {
   return (
-    <div className="mb-16 md:mb-20 max-w-3xl">
+    <div className="mb-14 md:mb-20 max-w-3xl">
       <div className="flex items-center gap-3 mb-5">
         <div className="h-px w-10 bg-[#7af0c8]" />
         <p className="text-[#7af0c8] font-mono text-[10px] tracking-[0.4em] uppercase">{label}</p>
       </div>
-      <h2 className="font-display text-5xl md:text-6xl text-white leading-[0.95] tracking-tight">
+      <h2 className="font-display text-4xl md:text-5xl text-white leading-[1.05]">
         {title}
       </h2>
-      {subtitle && <p className="mt-5 text-[#9ca3af] text-base leading-relaxed">{subtitle}</p>}
+      {subtitle && <p className="mt-5 text-[#9ca3af] text-base leading-relaxed font-sans">{subtitle}</p>}
     </div>
   );
 }
@@ -668,10 +756,10 @@ function Navbar() {
   return (
     <motion.nav initial={{ y: -60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6, delay: 0.2 }}
       className={`fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-6 md:px-16 py-4 transition-all duration-300 ${scrolled ? "bg-[#0a0a0c]/85 backdrop-blur-xl border-b border-white/5" : ""}`}>
-      <a href="#hero" className="font-display text-xl text-white tracking-tight">
-        Guru<em className="text-[#7af0c8]">.</em>
+      <a href="#hero" className="font-display text-lg text-white">
+        Guru<span className="text-[#7af0c8]">.</span>
       </a>
-      <div className="hidden md:flex items-center gap-7">
+      <div className="hidden md:flex items-center gap-6">
         {NAV_LINKS.map((l) => (
           <button key={l} onClick={() => scrollTo(l)}
             className="font-mono text-[11px] text-[#9ca3af] hover:text-[#7af0c8] transition-colors tracking-[0.2em] uppercase">{l}</button>
@@ -720,21 +808,22 @@ function Hero() {
 
         <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="font-display text-6xl sm:text-8xl md:text-9xl text-white leading-[0.88] tracking-tight mb-6">
+          className="font-display text-5xl sm:text-7xl md:text-8xl text-white leading-[0.9] mb-6">
           Guruprasad
           <br />
-          <em className="font-display italic text-transparent bg-clip-text bg-gradient-to-br from-[#7af0c8] via-[#d4af37] to-[#8b7fe5]">
+          <span className="text-transparent bg-clip-text bg-gradient-to-br from-[#7af0c8] via-[#d4af37] to-[#8b7fe5]">
             Chougule.
-          </em>
+          </span>
         </motion.h1>
 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}
-          className="flex items-center gap-3 mb-10">
-          <span className="font-mono text-base md:text-lg text-[#d1d5db]">{typed}<BlinkCursor /></span>
+          className="flex items-baseline gap-1 mb-10">
+          <span className="font-mono text-base md:text-lg text-[#d1d5db]">{typed}</span>
+          <span className="cursor-blink" />
         </motion.div>
 
         <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.2, duration: 0.6 }}
-          className="font-sans text-[#9ca3af] text-lg md:text-xl max-w-2xl leading-relaxed mb-12">
+          className="font-sans text-[#9ca3af] text-base md:text-lg max-w-2xl leading-relaxed mb-12">
           Building reliable software through compliance-driven testing, automation, and AI-augmented QA practices.
           <span className="block mt-2 text-[#7af0c8] font-mono text-xs tracking-wider">
             {CONTACT.tagline}
@@ -784,21 +873,19 @@ function Hero() {
   );
 }
 
-// ─── MARQUEE TICKER ──────────────────────────────────────────────────────────
+// ─── MARQUEE ─────────────────────────────────────────────────────────────────
 
 function Marquee() {
   const items = ["Selenium WebDriver", "21 CFR Part 11", "Core Java", "GAMP 5", "TestNG", "ALCOA Plus", "REST API", "Postman", "JIRA", "Power Apps", "Python", "SQL", "Agile"];
   return (
     <div className="relative z-10 border-y border-white/5 py-6 overflow-hidden bg-[#0c0d11]/40">
-      <motion.div className="flex gap-12 whitespace-nowrap"
-        animate={{ x: ["0%", "-50%"] }}
-        transition={{ duration: 40, ease: "linear", repeat: Infinity }}>
+      <div className="flex gap-12 whitespace-nowrap marquee-track">
         {[...items, ...items, ...items].map((it, i) => (
-          <span key={i} className="font-display text-3xl md:text-4xl text-[#1f2128] tracking-tight">
+          <span key={i} className="font-display text-2xl md:text-3xl text-[#1f2128]">
             {it} <span className="text-[#7af0c8]">✦</span>
           </span>
         ))}
-      </motion.div>
+      </div>
     </div>
   );
 }
@@ -812,7 +899,7 @@ function About() {
       <div className="grid md:grid-cols-5 gap-12 items-start">
         <div className="md:col-span-3 space-y-5 text-[#9ca3af] leading-relaxed font-sans">
           <p className="text-lg md:text-xl text-white/85 font-display leading-snug">
-            I'm a QA & Test Automation Engineer with <em className="text-[#7af0c8] italic">3 years</em> of hands-on experience delivering software testing across Web applications, ERP platforms, and Microsoft Power Apps.
+            I'm a QA & Test Automation Engineer with <span className="text-[#7af0c8]">3 years</span> of hands-on experience delivering software testing across Web applications, ERP platforms, and Microsoft Power Apps.
           </p>
           <p>
             Currently a <span className="text-white">Product Test Specialist at Cognizant Technology Solutions</span>, working on the <span className="text-white">Olympus Life Sciences</span> account. As Primary QA Owner on the Global Ship Hold Center program, I've authored 400+ test scripts and achieved 100% on-time Go-Live across 4 major releases.
@@ -827,7 +914,7 @@ function About() {
             <motion.div key={label} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }} transition={{ delay: i * 0.08 }}
               className="group p-5 bg-gradient-to-br from-[#13141a] to-[#0c0d11] border border-white/5 rounded-2xl hover:border-[#7af0c8]/30 transition-all">
-              <p className="font-display text-4xl text-[#7af0c8] group-hover:scale-105 transition-transform origin-left">{val}</p>
+              <p className="font-display text-3xl text-[#7af0c8]">{val}</p>
               <p className="text-[10px] text-[#9ca3af] mt-2 font-mono tracking-wider uppercase">{label}</p>
             </motion.div>
           ))}
@@ -845,7 +932,6 @@ function Skills() {
   return (
     <Section id="skills">
       <Heading label="02 — Skills" title="Tools of the trade." />
-
       <div className="flex flex-wrap gap-2 mb-10">
         {categories.map((cat) => (
           <button key={cat} onClick={() => setActive(cat)}
@@ -856,7 +942,6 @@ function Skills() {
           </button>
         ))}
       </div>
-
       <AnimatePresence mode="wait">
         <motion.div key={active} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -16 }} transition={{ duration: 0.3 }}
@@ -864,7 +949,7 @@ function Skills() {
           {SKILLS[active].map((skill, i) => (
             <motion.span key={skill}
               initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.025 }}
-              className="px-4 py-2.5 bg-gradient-to-br from-[#13141a] to-[#0c0d11] border border-white/5 hover:border-[#7af0c8]/30 rounded-full text-sm text-[#d1d5db] font-sans transition-colors cursor-default">
+              className="px-4 py-2.5 bg-gradient-to-br from-[#13141a] to-[#0c0d11] border border-white/5 hover:border-[#7af0c8]/30 rounded-full text-sm text-[#d1d5db] font-sans transition-colors">
               {skill}
             </motion.span>
           ))}
@@ -885,8 +970,8 @@ function Experience() {
           className="bg-gradient-to-br from-[#13141a] to-[#0c0d11] border border-white/5 rounded-3xl p-8 md:p-10">
           <div className="flex flex-wrap justify-between items-start gap-4 mb-6">
             <div>
-              <h3 className="font-display text-2xl md:text-3xl text-white tracking-tight">
-                {exp.role} <em className="text-[#7af0c8] italic">@ {exp.company}</em>
+              <h3 className="font-display text-xl md:text-2xl text-white">
+                {exp.role} <span className="text-[#7af0c8]">@ {exp.company}</span>
               </h3>
               <p className="font-mono text-xs text-[#9ca3af] mt-2 tracking-wider">{exp.client}</p>
             </div>
@@ -926,7 +1011,7 @@ function Projects() {
               <span className="text-3xl">{p.icon}</span>
               <span className="font-mono text-[10px] text-[#6b7280] tracking-[0.2em]">{p.period}</span>
             </div>
-            <h3 className="font-display text-xl text-white mb-2 group-hover:text-[var(--accent)] transition-colors tracking-tight">{p.title}</h3>
+            <h3 className="font-display text-lg text-white mb-2 group-hover:text-[var(--accent)] transition-colors">{p.title}</h3>
             <p className="font-mono text-[10px] mb-4 tracking-[0.15em] uppercase" style={{ color: p.color }}>{p.tag}</p>
             <p className="text-[#9ca3af] text-sm leading-relaxed mb-5 font-sans">{p.desc}</p>
             <div className="flex flex-col gap-1.5 pt-4 border-t border-white/5">
@@ -940,13 +1025,12 @@ function Projects() {
   );
 }
 
-// ─── CERTIFICATIONS + EDUCATION + AWARDS + LEARNING ──────────────────────────
+// ─── CERTIFICATIONS / EDUCATION / AWARDS / LEARNING ──────────────────────────
 
 function Certifications() {
   return (
     <Section id="certifications">
       <Heading label="05 — Credentials" title="Certifications & education." />
-
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
         {CERTIFICATIONS.map((c, i) => (
           <motion.div key={c.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
@@ -963,12 +1047,11 @@ function Certifications() {
         ))}
       </div>
 
-      {/* Education + Awards */}
       <div className="grid md:grid-cols-2 gap-5 mb-16">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
           className="p-7 bg-gradient-to-br from-[#13141a] to-[#0c0d11] border border-white/5 rounded-2xl">
           <p className="font-mono text-[10px] text-[#7af0c8] tracking-[0.3em] uppercase mb-4">◆ Education</p>
-          <h4 className="font-display text-xl text-white leading-snug mb-2">{EDUCATION.degree}</h4>
+          <h4 className="font-display text-lg text-white leading-snug mb-2">{EDUCATION.degree}</h4>
           <p className="text-sm text-[#9ca3af] mb-1 font-sans">{EDUCATION.school}</p>
           <p className="font-mono text-[10px] text-[#6b7280] tracking-wider">{EDUCATION.affiliation}</p>
           <div className="flex gap-4 mt-4 pt-4 border-t border-white/5">
@@ -981,7 +1064,7 @@ function Certifications() {
           className="p-7 bg-gradient-to-br from-[#13141a] to-[#0c0d11] border border-white/5 rounded-2xl">
           <p className="font-mono text-[10px] text-[#d4af37] tracking-[0.3em] uppercase mb-4">◆ Awards</p>
           <div className="space-y-4">
-            {AWARDS.map((a, i) => (
+            {AWARDS.map((a) => (
               <div key={a.title} className="flex gap-4 items-start">
                 <span className="text-2xl mt-0.5">{a.icon}</span>
                 <div>
@@ -995,13 +1078,12 @@ function Certifications() {
         </motion.div>
       </div>
 
-      {/* Currently Learning */}
       <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
         className="p-7 md:p-9 bg-gradient-to-br from-[#13141a] to-[#0c0d11] border border-[#8b7fe5]/15 rounded-3xl">
         <div className="flex items-start justify-between flex-wrap gap-3 mb-6">
           <div>
             <p className="font-mono text-[10px] text-[#8b7fe5] tracking-[0.3em] uppercase mb-2">◆ Currently Learning</p>
-            <h4 className="font-display text-2xl text-white tracking-tight">The road to <em className="italic text-[#8b7fe5]">AI-Augmented QA</em></h4>
+            <h4 className="font-display text-xl text-white">The road to <span className="text-[#8b7fe5]">AI-Augmented QA</span></h4>
           </div>
           <span className="font-mono text-[10px] text-[#6b7280] tracking-[0.2em] uppercase">In progress · 2025-26</span>
         </div>
@@ -1041,7 +1123,7 @@ function BlogCard({ post, index }) {
             </div>
           </div>
         </div>
-        <h3 className="font-display text-xl text-white leading-snug mb-4 tracking-tight">{post.title}</h3>
+        <h3 className="font-display text-lg text-white leading-snug mb-4">{post.title}</h3>
         <div className="flex items-center gap-2 mb-2"><span className="font-mono text-[10px] text-[#f06b8b] tracking-wider">⚠ PROBLEM</span></div>
         <p className="text-[#9ca3af] text-sm leading-relaxed line-clamp-2 font-sans">{post.problem}</p>
 
@@ -1193,14 +1275,9 @@ export default function App() {
   }, [introDone]);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0c] text-white overflow-x-hidden font-sans">
-      <style>{`
-        @keyframes qaixBlink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
-        @keyframes qaixPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.3); } }
-        .font-display { font-family: 'Instrument Serif', 'Cormorant Garamond', Georgia, serif; font-weight: 400; }
-        .font-sans { font-family: 'Geist', 'Inter', system-ui, sans-serif; }
-        .font-mono { font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace; }
-      `}</style>
+    <div className="min-h-screen bg-[#0a0a0c] text-white overflow-x-hidden">
+      <GlobalStyles />
+      <CursorFollower />
 
       <AnimatePresence>
         {!introDone && <CinematicIntro onEnd={() => setIntroDone(true)} />}
