@@ -177,32 +177,148 @@ const QAIX_SCRIPT = [
 const INTRO_DURATION = 24000;
 
 const QAIX_RESPONSES = {
-  tools: "Guru's core toolkit: Selenium WebDriver, Core Java, TestNG, Maven, Python, Pytest, SQL, and Postman. He's equally at home with manual exploratory testing and full automation frameworks. 🛠️",
-  projects: "His standout work: Global Ship Hold Center (4 releases, 100% on-time Go-Live), FCAT validated across 5 global regions, Agile NCR & CAPA 2.0, Hexagon EAM Data Migration, and JIRA Platform Enhancement. Check the Projects section! 🚀",
-  hire: "Guru is open to QA Engineer, Senior QA, QA Lead, Test Automation, and Senior Validation Engineer roles — especially in Pharma, Healthcare, Finance, and Insurance. Email or LinkedIn from the Contact section. 📬",
-  experience: "3 years at Cognizant Technology Solutions, working on the Olympus Life Sciences account as Product Test Specialist. Primary QA Owner on the Global Ship Hold Center program. 📈",
-  gxp: "GxP is Guru's deep specialty — 21 CFR Part 11, GAMP 5, ALCOA Plus, EU Annex 11, IQ/OQ/PQ, CAPA, NCR, Validation Summary Reports, and audit readiness. He's closed 15+ compliance gaps. ⚗️",
-  blog: "The Blog section has real war stories: catching an IQ protocol gap before audit, killing flaky tests, finding a JWT token leakage in an API, and resolving a P1 e-signature failure 24 hours before Go-Live. 📝",
-  resume: "Hit the 'Download Resume' button in the hero or contact section — it's a PDF. 📄",
-  contact: `Reach Guru at ${CONTACT.email} or ${CONTACT.phone}. LinkedIn and GitHub links are also in the Contact section. 📞`,
-  certs: "Microsoft Azure AZ-900, Google Cloud Digital Leader, Oracle AI Foundations (Top 150 of 3000+), Cognizant OSP Selenium, and Selenium WebDriver with Java. 🎓",
-  learning: "Currently upskilling toward AI-Augmented QA: Python + Pytest, Playwright, ISTQB AI Testing, LangChain + OpenAI for test generation, and AWS Cloud Practitioner. 🚀",
-  default: "Ask me about tools, projects, GxP expertise, experience, certifications, what he's currently learning, or how to reach him. What would you like to know? 🤔",
+  about: {
+    text: "Guruprasad Chougule is a Quality Assurance & Test Automation Engineer based in Bangalore, India. He has 3 years of hands-on experience at Cognizant working on the Olympus Life Sciences account — specializing in GxP compliance, CSV, and automation. As Primary QA Owner on the Global Ship Hold Center program, he's shipped 4 major releases with 100% on-time Go-Live and zero compliance escalations. 🎯",
+    suggestions: ["What does he do day to day?", "What's his specialty?", "How can I reach him?"],
+  },
+  tools: {
+    text: "Guru's core stack:\n• **Automation**: Selenium WebDriver, Core Java, TestNG, Maven, Python, Pytest\n• **API**: REST API testing with Postman\n• **DB**: SQL across multiple platforms\n• **Tracking**: JIRA, Zephyr\n• **CI/CD**: Git, GitHub\n\nHe's equally comfortable with manual exploratory testing and full automation frameworks. 🛠️",
+    suggestions: ["Show me his projects", "What about compliance?", "His certifications?"],
+  },
+  projects: {
+    text: "Five real-world projects on his resume:\n\n1. **Global Ship Hold Center** — 4 releases, 100% on-time Go-Live (his flagship work)\n2. **FCAT** — Power Apps tool, validated across 5 global regions\n3. **Agile NCR & CAPA 2.0** — workflow enhancement, zero legacy impact\n4. **Hexagon EAM Data Migration** — OQ across multiple modules\n5. **JIRA Platform Enhancement** — formal qualification cycles\n\nScroll to the Projects section for full details. 🚀",
+    suggestions: ["Tell me about Global Ship Hold", "What is FCAT?", "What's GxP?"],
+  },
+  hire: {
+    text: "Yes — he's actively open to opportunities! 🟢\n\nLooking for: QA Engineer, Senior QA, QA Lead, Test Automation Engineer, or Senior Validation Engineer roles. Especially strong fit in Pharma, Healthcare, Finance, and Insurance — anywhere compliance matters.\n\nFastest way to reach him: drop an email at " + CONTACT.email + " or message on LinkedIn.",
+    suggestions: ["Get his email & phone", "Download his resume", "What roles does he target?"],
+  },
+  experience: {
+    text: "3 years at **Cognizant Technology Solutions** (June 2023 — Present), on the **Olympus Life Sciences** account.\n\nRole: Product Test Specialist · Service Line: Quality Engineering & Assurance · Grade A.\n\nAs Primary QA Owner on Global Ship Hold Center, he's authored 400+ test scripts, closed 15+ compliance gaps, and led KT sessions for global stakeholders in Americas, APAC, and EMEA. 📈",
+    suggestions: ["What tech does he use?", "His biggest project?", "Show me his blog"],
+  },
+  gxp: {
+    text: "GxP / Compliance is Guru's deep specialty:\n• **21 CFR Part 11** (US FDA)\n• **GAMP 5** (Good Automated Manufacturing Practice)\n• **ALCOA Plus** (Data Integrity)\n• **EU Annex 11**\n• **Computer System Validation** (full IQ / OQ / PQ lifecycle)\n• **CAPA**, **NCR**, Validation Summary Reports, Audit Readiness\n\nHe's closed 15+ compliance gaps and ensured 100% audit readiness across JIRA workflows and qualification artifacts. ⚗️",
+    suggestions: ["What's his automation experience?", "Tell me about his releases", "Hire him?"],
+  },
+  blog: {
+    text: "His blog has 4 real war stories with full breakdowns (problem → root cause → fix):\n\n1. Catching an IQ protocol gap **before** an FDA-style audit\n2. Killing flaky tests in a Selenium suite (35% → 2% flakiness)\n3. Finding a JWT token leakage in an API response\n4. Resolving a P1 e-signature failure 24h before Go-Live\n\nScroll to the Blog section to read them. 📝",
+    suggestions: ["His tech stack?", "His projects?", "Contact him"],
+  },
+  resume: {
+    text: "Sure! Hit the **\"Download Resume ↓\"** button — it's in the top navbar, the hero section, and the contact section. The PDF includes his full work history, skills, certifications, education, and project details. 📄",
+    suggestions: ["What's in his stack?", "His experience?", "How to contact him"],
+  },
+  contact: {
+    text: `Here's how to reach Guru:\n\n📧 **Email**: ${CONTACT.email}\n📱 **Phone**: ${CONTACT.phone}\n💼 **LinkedIn**: linkedin.com/in/guruprasadchougule\n💻 **GitHub**: github.com/Guruprasad-Chougule\n📍 **Location**: ${CONTACT.location}\n\nStatus: 🟢 ${CONTACT.status}`,
+    suggestions: ["What roles is he open to?", "Download his resume", "His best project?"],
+  },
+  certs: {
+    text: "Five certifications on his profile:\n\n☁️ **Microsoft Azure AZ-900** (2023)\n🌐 **Google Cloud Digital Leader** (2023)\n🧠 **Oracle AI Foundations Associate** — Top 150 of 3,000+ participants (2023)\n🧪 **Cognizant OSP Product Testing with Selenium** (2023)\n⚡ **Selenium WebDriver with Java** — Advanced framework training\n\nPlus he's currently pursuing ISTQB AI Testing + AWS Cloud Practitioner. 🎓",
+    suggestions: ["What's he currently learning?", "His tech stack?", "Education background?"],
+  },
+  learning: {
+    text: "Guru's on a 4-phase roadmap toward **AI-Augmented QA Engineer**:\n\n• **Phase 1** (Active): Python + Pytest\n• **Phase 2**: Playwright Automation + ISTQB AI Testing Certification\n• **Phase 3**: LangChain + OpenAI API for AI-driven test generation\n• **Phase 4**: AWS Cloud Practitioner\n\nThe future of QA is AI-augmented, and he's investing in it now. 🚀",
+    suggestions: ["His current certifications?", "What tools does he use?", "Contact him"],
+  },
+  education: {
+    text: "🎓 **Bachelor of Engineering — Mechanical Engineering**\n\nBLDEA V. P. Dr. P. G. Halakatti College of Engineering and Technology, Vijayapura (affiliated to VTU, Karnataka).\n\nGraduated 2022 · CGPA: 7.54 / 10\n\nFun fact: he won 'Best Project of the Year' at the College Project Exhibition 2022 for an IoT-based Smart Agriculture System. 🌾",
+    suggestions: ["His certifications?", "His career path?", "Contact him"],
+  },
+  awards: {
+    text: "🏆 **Top Performer · Cognizant Hackathon 2023** — recognized for Selenium, Java, and SQL automation solutions.\n\n🌾 **Best Project of the Year · College Project Exhibition 2022** — for an IoT-based Smart Agriculture System.",
+    suggestions: ["His current role?", "His certifications?", "Hire him?"],
+  },
+  location: {
+    text: `📍 Based in **${CONTACT.location}**.\n\nHe's open to remote roles, hybrid arrangements in Bangalore, or relocation for the right opportunity — especially in regulated industries.`,
+    suggestions: ["Is he hiring-ready?", "His tech stack?", "Reach him"],
+  },
+  salary: {
+    text: "Best to ask Guru directly — compensation depends on role, level, location, and scope. Drop him an email at " + CONTACT.email + " or reach out on LinkedIn and he'll respond. 💼",
+    suggestions: ["What roles is he open to?", "His experience?", "Get his contact"],
+  },
+  about_qaix: {
+    text: "I'm **QAIX** — an AI assistant built into Guru's portfolio to help visitors learn about him quickly. I can tell you about his work, tools, projects, certifications, experience, and how to reach him. I'm not a general-purpose chatbot, just Guru-focused. 🤖",
+    suggestions: ["Who is Guru?", "What does he do?", "Show me his projects"],
+  },
+  greeting: {
+    text: "Hey there! 👋 I'm QAIX — Guru's AI assistant. I can answer pretty much anything about his work, skills, projects, or how to reach him. What would you like to know?",
+    suggestions: ["Who is Guru?", "Show me his projects", "Is he available for hire?", "His tech stack"],
+  },
+  thanks: {
+    text: "You're welcome! Anything else you'd like to know about Guru? 😊",
+    suggestions: ["His best project?", "His certifications?", "How to contact him"],
+  },
+  bye: {
+    text: "Take care! 👋 If you'd like to reach out to Guru directly, his email is " + CONTACT.email + " and his LinkedIn is in the Contact section. Have a great day!",
+    suggestions: ["Actually, one more question...", "Download his resume"],
+  },
+  default: {
+    text: "Hmm, I'm not sure I understood that — but I can definitely help! Try asking about his **projects**, **tools**, **experience**, **GxP/compliance work**, **certifications**, or **how to reach him**. What would you like to explore? 🤔",
+    suggestions: ["Who is Guru?", "His tech stack", "His projects", "Hire him?"],
+  },
 };
 
-function getQaixResponse(input) {
-  const q = input.toLowerCase();
-  if (q.match(/tool|stack|selenium|java|python|language|framework|automation/)) return QAIX_RESPONSES.tools;
-  if (q.match(/project|ship|fcat|hexagon|capa|ncr/)) return QAIX_RESPONSES.projects;
-  if (q.match(/hire|available|job|work|opportunity|role/)) return QAIX_RESPONSES.hire;
-  if (q.match(/experience|career|year|history|cognizant|olympus/)) return QAIX_RESPONSES.experience;
-  if (q.match(/gxp|fda|pharma|compliance|validation|gamp|21 cfr|alcoa/)) return QAIX_RESPONSES.gxp;
-  if (q.match(/blog|problem|fix|bug|issue|story/)) return QAIX_RESPONSES.blog;
-  if (q.match(/resume|cv|download/)) return QAIX_RESPONSES.resume;
-  if (q.match(/contact|email|phone|reach|call|linkedin/)) return QAIX_RESPONSES.contact;
-  if (q.match(/cert|azure|aws|oracle|google cloud/)) return QAIX_RESPONSES.certs;
-  if (q.match(/learning|study|playwright|langchain|istqb/)) return QAIX_RESPONSES.learning;
-  return QAIX_RESPONSES.default;
+// Scoring-based intent matcher — each intent has weighted keywords
+const INTENTS = [
+  { key: "greeting", keywords: ["hi", "hello", "hey", "yo", "hola", "namaste", "good morning", "good evening", "good afternoon", "sup", "howdy"], strict: true },
+  { key: "thanks", keywords: ["thanks", "thank you", "thx", "ty", "appreciate", "cheers"], strict: true },
+  { key: "bye", keywords: ["bye", "goodbye", "see you", "cya", "later", "ok bye", "okay bye"], strict: true },
+  { key: "about_qaix", keywords: ["who are you", "what are you", "what's qaix", "what is qaix", "tell me about you", "tell me about yourself", "are you a bot", "are you ai", "are you human", "who built you"] },
+  { key: "about", keywords: ["who is guru", "who's guru", "about guru", "about him", "tell me about", "introduce", "bio", "background", "summary", "story", "who is he", "what does he do"] },
+  { key: "tools", keywords: ["tool", "tools", "stack", "tech stack", "technology", "technologies", "selenium", "java", "python", "language", "languages", "framework", "frameworks", "automation tool", "what does he use", "skills", "programming", "testng", "maven", "postman", "sql"] },
+  { key: "projects", keywords: ["project", "projects", "work", "portfolio", "what has he built", "ship hold", "shiphold", "fcat", "hexagon", "capa", "ncr", "global ship", "what's he built", "his work"] },
+  { key: "hire", keywords: ["hire", "hiring", "available", "availability", "job", "jobs", "opportunity", "opportunities", "freelance", "role", "roles", "looking for", "open to work", "open for work", "recruit", "vacancy"] },
+  { key: "experience", keywords: ["experience", "career", "years", "history", "cognizant", "olympus", "where does he work", "where is he", "current job", "current role", "previous", "background", "how long", "since when"] },
+  { key: "gxp", keywords: ["gxp", "fda", "pharma", "pharmaceutical", "compliance", "validation", "gamp", "21 cfr", "cfr", "alcoa", "regulated", "iq", "oq", "pq", "qualification", "csv", "computer system validation", "audit", "data integrity", "annex 11"] },
+  { key: "blog", keywords: ["blog", "blogs", "article", "articles", "post", "posts", "problem", "problems", "fix", "fixed", "bug", "bugs", "issue", "issues", "story", "stories", "war story"] },
+  { key: "resume", keywords: ["resume", "cv", "download", "pdf", "curriculum", "vitae"] },
+  { key: "contact", keywords: ["contact", "email", "phone", "mobile", "reach", "call", "linkedin", "github", "social", "connect", "message", "dm"] },
+  { key: "certs", keywords: ["certification", "certifications", "certified", "certificate", "azure", "aws", "oracle", "google cloud", "az-900", "gcp"] },
+  { key: "learning", keywords: ["learning", "learn", "studying", "study", "upskilling", "playwright", "langchain", "istqb", "ai testing", "what's next", "future", "roadmap", "plans"] },
+  { key: "education", keywords: ["education", "college", "university", "degree", "graduate", "graduated", "btech", "be", "bachelor", "mechanical", "vtu", "bldea", "school", "cgpa", "studied"] },
+  { key: "awards", keywords: ["award", "awards", "achievement", "achievements", "hackathon", "recognition", "won", "winner", "top performer"] },
+  { key: "location", keywords: ["location", "where", "based", "city", "bangalore", "bengaluru", "india", "country", "remote", "relocation"] },
+  { key: "salary", keywords: ["salary", "ctc", "package", "compensation", "pay", "rate", "lpa", "expected salary", "how much"] },
+];
+
+function scoreIntent(input, intent) {
+  let score = 0;
+  for (const kw of intent.keywords) {
+    if (intent.strict) {
+      // Exact / boundary match for short signals like "hi", "thanks"
+      const escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const re = new RegExp(`(^|\\b)${escaped}(\\b|$|[!.?])`, "i");
+      if (re.test(input)) score += 10;
+    } else {
+      if (input.includes(kw)) {
+        // Multi-word matches score higher (more specific)
+        score += kw.split(" ").length * 2;
+      }
+    }
+  }
+  return score;
+}
+
+function getQaixResponse(input, history = []) {
+  const q = input.toLowerCase().trim();
+  if (!q) return { ...QAIX_RESPONSES.default, intent: "default" };
+
+  const scored = INTENTS.map((intent) => ({ key: intent.key, score: scoreIntent(q, intent) }))
+    .filter((s) => s.score > 0)
+    .sort((a, b) => b.score - a.score);
+
+  if (scored.length > 0) {
+    const best = scored[0].key;
+    // Avoid repeating the same answer twice in a row — fall to runner-up
+    const lastBot = [...history].reverse().find((m) => m.from === "qaix");
+    if (lastBot && lastBot.intent === best && scored.length > 1) {
+      return { ...QAIX_RESPONSES[scored[1].key], intent: scored[1].key };
+    }
+    return { ...QAIX_RESPONSES[best], intent: best };
+  }
+
+  return { ...QAIX_RESPONSES.default, intent: "default" };
 }
 
 // ─── GLOBAL STYLES (injected once at the top of body) ────────────────────────
@@ -630,55 +746,117 @@ function CornerBrackets() {
 
 // ─── QAIX CHAT ───────────────────────────────────────────────────────────────
 
+// Render text with **bold** + line breaks
+function FormattedMessage({ text }) {
+  const lines = text.split("\n");
+  return (
+    <>
+      {lines.map((line, i) => {
+        const parts = line.split(/(\*\*[^*]+\*\*)/g);
+        return (
+          <div key={i} className={i > 0 ? "mt-1.5" : ""}>
+            {parts.map((part, j) => {
+              if (part.startsWith("**") && part.endsWith("**")) {
+                return <strong key={j} className="text-white font-semibold">{part.slice(2, -2)}</strong>;
+              }
+              return <span key={j}>{part}</span>;
+            })}
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
 function QaixChat({ open, onClose }) {
   const [chatInput, setChatInput] = useState("");
   const [chatHistory, setChatHistory] = useState([
-    { from: "qaix", text: "Hello! I'm QAIX. Ask me anything about Guru — his tools, projects, GxP work, resume, or contact info." }
+    {
+      from: "qaix",
+      intent: "greeting",
+      text: "Hi! I'm **QAIX** — Guru's AI assistant. 👋\n\nAsk me anything about his work, skills, projects, or how to reach him. Try one of these to get started:",
+      suggestions: ["Who is Guru?", "Show me his projects", "Is he available for hire?", "His tech stack"],
+    },
   ]);
   const [typing, setTyping] = useState(false);
   const chatEndRef = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [chatHistory, typing]);
 
-  const sendChat = useCallback(() => {
-    const q = chatInput.trim(); if (!q) return;
+  // Send a message (typed or from a suggestion chip)
+  const sendMessage = useCallback((text) => {
+    const q = text.trim(); if (!q) return;
     setChatHistory((h) => [...h, { from: "user", text: q }]);
-    setChatInput(""); setTyping(true);
-    setTimeout(() => {
-      setTyping(false);
-      setChatHistory((h) => [...h, { from: "qaix", text: getQaixResponse(q) }]);
-    }, 900 + Math.random() * 600);
-  }, [chatInput]);
+    setChatInput("");
+    setTyping(true);
 
+    // Use functional state so we always read the latest history when responding
+    setTimeout(() => {
+      setChatHistory((prev) => {
+        const response = getQaixResponse(q, prev);
+        return [...prev, { from: "qaix", ...response }];
+      });
+      setTyping(false);
+    }, 700 + Math.random() * 500);
+  }, []);
+
+  const sendChat = () => sendMessage(chatInput);
   const handleKey = (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendChat(); } };
+
+  const lastBotIdx = (() => {
+    for (let i = chatHistory.length - 1; i >= 0; i--) if (chatHistory[i].from === "qaix") return i;
+    return -1;
+  })();
 
   return (
     <AnimatePresence>
       {open && (
         <motion.div initial={{ opacity: 0, y: 30, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 30, scale: 0.95 }} transition={{ type: "spring", stiffness: 260, damping: 22 }}
-          className="fixed bottom-24 right-4 md:right-8 z-50 w-[calc(100%-2rem)] md:w-[400px] bg-[#0a0a0c]/95 backdrop-blur-xl border border-[#7af0c8]/20 rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(122,240,200,0.15)]">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-white/5 bg-gradient-to-r from-[#13141a] to-[#0a0a0c]">
+          className="fixed bottom-24 right-4 md:right-8 z-50 w-[calc(100%-2rem)] md:w-[420px] bg-[#0a0a0c]/95 backdrop-blur-xl border border-[#7af0c8]/20 rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(122,240,200,0.15)] flex flex-col" style={{ maxHeight: "min(640px, calc(100vh - 8rem))" }}>
+
+          {/* Header */}
+          <div className="flex items-center justify-between px-4 py-3 border-b border-white/5 bg-gradient-to-r from-[#13141a] to-[#0a0a0c] shrink-0">
             <div className="flex items-center gap-3">
               <motion.div animate={{ y: [0, -3, 0] }} transition={{ repeat: Infinity, duration: 2 }} className="text-xl">🤖</motion.div>
               <div>
                 <p className="font-display text-white text-sm">QAIX</p>
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <div className="w-1.5 h-1.5 rounded-full bg-[#7af0c8] dot-pulse" />
-                  <span className="font-mono text-[9px] text-[#7af0c8] tracking-[0.3em]">ONLINE</span>
+                  <span className="font-mono text-[9px] text-[#7af0c8] tracking-[0.3em]">ONLINE · Guru's AI</span>
                 </div>
               </div>
             </div>
-            <button onClick={onClose} className="text-[#9ca3af] hover:text-white transition-colors font-mono text-xl leading-none">×</button>
+            <button onClick={onClose} className="text-[#9ca3af] hover:text-white transition-colors font-mono text-xl leading-none w-7 h-7 flex items-center justify-center">×</button>
           </div>
-          <div className="h-80 overflow-y-auto px-4 py-3 space-y-3">
+
+          {/* Messages — scrollable */}
+          <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 min-h-0">
             {chatHistory.map((m, i) => (
-              <motion.div key={i} initial={{ opacity: 0, x: m.from === "user" ? 16 : -16 }} animate={{ opacity: 1, x: 0 }}
-                className={`flex gap-2 items-start ${m.from === "user" ? "flex-row-reverse" : ""}`}>
-                <span className="text-base shrink-0 mt-0.5">{m.from === "user" ? "👤" : "🤖"}</span>
-                <div className={`rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed max-w-[80%] ${m.from === "user"
-                  ? "bg-[#7af0c8]/10 border border-[#7af0c8]/20 text-white rounded-tr-sm"
-                  : "bg-[#13141a] border border-white/5 text-[#d1d5db] rounded-tl-sm"}`}>{m.text}</div>
+              <motion.div key={i}
+                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+                <div className={`flex gap-2 items-start ${m.from === "user" ? "flex-row-reverse" : ""}`}>
+                  <span className="text-base shrink-0 mt-0.5">{m.from === "user" ? "👤" : "🤖"}</span>
+                  <div className={`rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed max-w-[85%] ${m.from === "user"
+                    ? "bg-[#7af0c8]/10 border border-[#7af0c8]/20 text-white rounded-tr-sm"
+                    : "bg-[#13141a] border border-white/5 text-[#d1d5db] rounded-tl-sm"}`}>
+                    <FormattedMessage text={m.text} />
+                  </div>
+                </div>
+
+                {/* Suggestion chips — render under the LAST bot message only */}
+                {m.from === "qaix" && i === lastBotIdx && m.suggestions && !typing && (
+                  <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+                    className="flex flex-wrap gap-1.5 mt-2.5 ml-7">
+                    {m.suggestions.map((s, idx) => (
+                      <button key={idx} onClick={() => sendMessage(s)}
+                        className="px-3 py-1.5 bg-[#7af0c8]/5 border border-[#7af0c8]/20 text-[#7af0c8] hover:bg-[#7af0c8]/15 hover:border-[#7af0c8]/40 rounded-full text-[11px] font-sans transition-all">
+                        {s}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
               </motion.div>
             ))}
             {typing && (
@@ -691,12 +869,14 @@ function QaixChat({ open, onClose }) {
             )}
             <div ref={chatEndRef} />
           </div>
-          <div className="px-3 py-3 border-t border-white/5 bg-[#13141a]/60 flex gap-2">
-            <input value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyDown={handleKey}
-              placeholder="Ask QAIX about Guru..."
+
+          {/* Input */}
+          <div className="px-3 py-3 border-t border-white/5 bg-[#13141a]/60 flex gap-2 shrink-0">
+            <input ref={inputRef} value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyDown={handleKey}
+              placeholder="Ask anything about Guru..."
               className="flex-1 bg-[#06070a] border border-white/10 rounded-full px-4 py-2 text-white font-sans text-xs placeholder-white/30 focus:outline-none focus:border-[#7af0c8]/50 transition-colors" />
-            <button onClick={sendChat}
-              className="px-4 py-2 bg-[#7af0c8] text-[#0a0a0c] font-mono font-bold text-xs rounded-full hover:shadow-[0_0_20px_rgba(122,240,200,0.3)] transition-all">→</button>
+            <button onClick={sendChat} disabled={!chatInput.trim()}
+              className="px-4 py-2 bg-[#7af0c8] text-[#0a0a0c] font-mono font-bold text-xs rounded-full hover:shadow-[0_0_20px_rgba(122,240,200,0.3)] transition-all disabled:opacity-40 disabled:cursor-not-allowed">→</button>
           </div>
         </motion.div>
       )}
