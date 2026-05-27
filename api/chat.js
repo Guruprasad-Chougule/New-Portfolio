@@ -1,22 +1,24 @@
 // ════════════════════════════════════════════════════════════════════════════
-//  /api/chat.js — Vercel Serverless Function
+//  /api/chat.js — Vercel Serverless Function (v2 — better error reporting)
 //
-//  Receives chat messages from the React frontend, sends them to Google
-//  Gemini with Guru's resume baked in as system instructions, returns reply.
+//  Receives chat messages from the frontend, sends them to Google Gemini
+//  with Guru's resume as system instructions, returns the AI's reply.
 //
-//  Requires env var GEMINI_API_KEY set in Vercel project settings.
+//  Requires env var GEMINI_API_KEY (exact name, all caps, with underscores).
 //  Get one for free: https://aistudio.google.com/app/apikey
 // ════════════════════════════════════════════════════════════════════════════
 
 import { buildSystemPrompt } from "../src/resume.js";
 
-const GEMINI_MODEL = "gemini-2.0-flash";
+// Using a stable, widely-available model. If this errors, try:
+//   gemini-1.5-flash-latest  (good fallback)
+//   gemini-1.5-flash         (older but reliable)
+const GEMINI_MODEL = "gemini-1.5-flash-latest";
 const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
-// Simple in-memory rate limit per IP (resets on cold start, prevents abuse)
 const requestsByIp = new Map();
-const RATE_LIMIT_WINDOW = 60_000; // 1 minute
-const RATE_LIMIT_MAX = 15;        // 15 messages / minute / IP
+const RATE_LIMIT_WINDOW = 60_000;
+const RATE_LIMIT_MAX = 15;
 
 function rateLimit(ip) {
   const now = Date.now();
@@ -28,7 +30,6 @@ function rateLimit(ip) {
 }
 
 export default async function handler(req, res) {
-  // CORS — same-origin from your portfolio
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -36,7 +37,6 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  // Rate limit by IP
   const ip = req.headers["x-forwarded-for"]?.split(",")[0] || req.socket?.remoteAddress || "unknown";
   if (!rateLimit(ip)) {
     return res.status(429).json({ error: "Too many requests — please slow down." });
@@ -47,23 +47,20 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Missing 'messages' array in body." });
   }
 
-  // Validate env var
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    console.error("GEMINI_API_KEY not set");
+    console.error("[QAIX] GEMINI_API_KEY env var not set");
     return res.status(500).json({ error: "Server not configured. Set GEMINI_API_KEY in Vercel env vars." });
   }
 
   try {
     const systemPrompt = buildSystemPrompt();
 
-    // Convert our { role, content } pairs into Gemini's expected format
-    // Roles: 'user' or 'model' (Gemini doesn't use 'assistant')
     const contents = messages
       .filter((m) => m.role === "user" || m.role === "assistant")
       .map((m) => ({
         role: m.role === "assistant" ? "model" : "user",
-        parts: [{ text: String(m.content || "").slice(0, 2000) }], // safety: cap each message
+        parts: [{ text: String(m.content || "").slice(0, 2000) }],
       }));
 
     const body = {
@@ -82,29 +79,57 @@ export default async function handler(req, res) {
       ],
     };
 
+    console.log("[QAIX] Calling Gemini with", contents.length, "messages");
+
     const geminiRes = await fetch(`${GEMINI_ENDPOINT}?key=${apiKey}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
 
+    const responseText = await geminiRes.text();
+
     if (!geminiRes.ok) {
-      const errText = await geminiRes.text();
-      console.error("Gemini error:", geminiRes.status, errText);
-      return res.status(502).json({ error: "AI service is having a moment. Try again in a few seconds." });
+      console.error("[QAIX] Gemini error:", geminiRes.status, responseText);
+
+      // Surface a more useful error message to the user
+      let detail = "Try again in a few seconds.";
+      try {
+        const errJson = JSON.parse(responseText);
+        const errMsg = errJson?.error?.message || "";
+        if (errMsg.includes("API key not valid")) {
+          detail = "Invalid API key. Check GEMINI_API_KEY in Vercel.";
+        } else if (errMsg.includes("quota") || errMsg.includes("limit")) {
+          detail = "Daily free-tier quota exceeded. Try again tomorrow.";
+        } else if (errMsg.includes("not found") || errMsg.includes("not supported")) {
+          detail = "Model not available. Try a different Gemini model.";
+        } else if (errMsg) {
+          detail = errMsg.slice(0, 150);
+        }
+      } catch { /* ignore parse errors */ }
+
+      return res.status(502).json({ error: detail, debug: responseText.slice(0, 500) });
     }
 
-    const data = await geminiRes.json();
-    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+    const data = JSON.parse(responseText);
+
+    // Check for blocked responses
+    const candidate = data?.candidates?.[0];
+    if (candidate?.finishReason === "SAFETY") {
+      return res.status(200).json({ reply: "I can't answer that one — let's stick to questions about Guru's work. Try asking about his projects, skills, or experience! 🛡️" });
+    }
+
+    const reply = candidate?.content?.parts?.[0]?.text?.trim();
 
     if (!reply) {
-      console.warn("Empty Gemini response:", JSON.stringify(data));
+      console.warn("[QAIX] Empty response:", JSON.stringify(data).slice(0, 500));
       return res.status(502).json({ error: "Couldn't generate a response. Try rephrasing your question." });
     }
 
+    console.log("[QAIX] Success, reply length:", reply.length);
     return res.status(200).json({ reply });
   } catch (err) {
-    console.error("Chat handler crashed:", err);
-    return res.status(500).json({ error: "Something went wrong on the server. Try again." });
+    console.error("[QAIX] Handler crashed:", err.message, err.stack);
+    return res.status(500).json({ error: "Server error: " + (err.message || "unknown") });
   }
 }
