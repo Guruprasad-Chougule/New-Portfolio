@@ -1,168 +1,16 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import {
+  CONTACT, STATS, SKILLS, EXPERIENCE, PROJECTS,
+  CERTIFICATIONS, LEARNING, AWARDS, EDUCATION, BLOG_POSTS,
+} from "./resume.js";
 
 // ════════════════════════════════════════════════════════════════════════════
-//  GURUPRASAD CHOUGULE · PORTFOLIO 2026 · v4
-//  Clean tech aesthetic — Sora + Inter + JetBrains Mono
+//  GURUPRASAD CHOUGULE · PORTFOLIO 2026 · v5 (LLM-powered chat)
+//  All resume data lives in src/resume.js — update there, redeploy, done.
 // ════════════════════════════════════════════════════════════════════════════
-
-const CONTACT = {
-  name: "Guruprasad Chougule",
-  title: "Quality Assurance, Test Automation & CSV Engineer",
-  tagline: "GxP CSV Validation Engineer · 3 Years · Life Sciences IT",
-  email: "guruprasadyc20@gmail.com",
-  phone: "+91 8217703368",
-  phoneRaw: "+918217703368",
-  linkedin: "https://linkedin.com/in/guruprasadchougule",
-  github: "https://github.com/Guruprasad-Chougule",
-  portfolio: "https://guruprasadchougule.vercel.app",
-  resume: "/resume.pdf",
-  location: "Bangalore, India",
-  status: "Open to opportunities",
-};
 
 const NAV_LINKS = ["About", "Skills", "Experience", "Projects", "Certifications", "Blog", "Contact"];
-
-const STATS = [
-  { val: "3+", label: "Years Experience" },
-  { val: "400+", label: "Test Scripts Authored" },
-  { val: "100%", label: "On-Time Go-Live" },
-  { val: "60%", label: "Manual Effort Reduction" },
-  { val: "15+", label: "Compliance Gaps Closed" },
-  { val: "5", label: "Global Regions Supported" },
-];
-
-const SKILLS = {
-  "Automation & Programming": [
-    "Selenium WebDriver", "Core Java", "Python", "TestNG", "Maven",
-    "Pytest", "SQL", "REST API Testing", "Postman",
-  ],
-  "Testing Types": [
-    "Manual Testing", "Automation Testing", "Functional", "Regression",
-    "Smoke", "Sanity", "SIT", "UAT", "Test Case Design", "Defect Management",
-  ],
-  "Platforms & Applications": [
-    "Microsoft Power Apps", "PeopleSoft HCM", "Hexagon EAM",
-    "Microsoft Power BI", "Web Applications", "ERP Systems", "Agile PLM",
-  ],
-  "Compliance & Validation": [
-    "21 CFR Part 11", "GAMP 5", "ALCOA Plus", "EU Annex 11",
-    "Computer System Validation", "IQ / OQ / PQ", "CAPA", "NCR",
-    "Audit Readiness", "Validation Summary Report",
-  ],
-  "Tools": [
-    "JIRA", "Microsoft Office Suite", "Microsoft Copilot",
-    "Git", "GitHub", "E-Signature Platforms",
-  ],
-  "Methodologies": [
-    "Agile Scrum", "Waterfall", "V-Model", "STLC", "SDLC",
-    "Risk-Based Testing", "BTM-based Test Design",
-  ],
-};
-
-const EXPERIENCE = [
-  {
-    role: "Product Test Specialist",
-    company: "Cognizant Technology Solutions",
-    client: "Olympus · Life Sciences",
-    period: "June 2023 — Present",
-    location: "Bangalore, India",
-    grade: "Service Line: Quality Engineering & Assurance · Sub-Track: Product Testing · Grade A",
-    points: [
-      "Owned end-to-end QA and CSV deliverables for 5 GxP-governed projects across four major releases (v1.0 through v4.0), achieving 100% on-time Go-Live with zero compliance escalations.",
-      "Authored and ran 400+ test scripts covering Functional, Regression, SIT, UAT, OQ, and Risk-Based scenarios on Power Apps, ERP, and Web layers while sustaining 100% traceability in JIRA.",
-      "Designed Selenium WebDriver + TestNG automation suites for regression cycles, reducing manual testing effort by ~60% over 4 major release cycles.",
-      "Executed REST API testing with Postman to validate backend service integrations, JSON response payloads, and authentication flows for shipment and CAPA workflows.",
-      "Remediated NCRs and closed 15+ compliance gaps aligned to 21 CFR Part 11, GAMP 5, and ALCOA Plus principles.",
-      "Resolved P1 production defects involving electronic signature integration and workflow failures through structured RCA, enabling Go-Live within 1-2 days and preventing release slippage.",
-      "Led KT sessions on data migration practices and partnered with global stakeholders in Americas, APAC, and EMEA under Agile delivery cadence.",
-    ],
-  },
-];
-
-const PROJECTS = [
-  { title: "Global Ship Hold Center", tag: "Power Apps · JIRA · Selenium · 21 CFR Part 11",
-    period: "Mar 2024 — Present", role: "Primary QA Owner",
-    achievement: "100% on-time Go-Live across 4 releases (v1.0–v4.0)",
-    color: "#7af0c8", icon: "⚓",
-    desc: "Microsoft Power Apps platform managing shipment holds for medical devices across global regions, validated under 21 CFR Part 11 and GAMP 5 standards. Drove regulatory adherence and NCR remediation with 100% audit readiness across JIRA workflows and qualification artifacts." },
-  { title: "Field Corrective Action Tracker (FCAT)", tag: "Power Apps · JIRA · CAPA · NCR",
-    period: "Apr 2025 — May 2025", role: "QA Engineer",
-    achievement: "Validated across 5 global regions",
-    color: "#8b7fe5", icon: "🛡️",
-    desc: "Power Apps tool for monitoring Field Corrective Actions and Non-Conformance workflows across Americas, APAC, EMEA, China, and Japan. Built end-to-end test scripts and managed full defect lifecycle in JIRA." },
-  { title: "Agile NCR & CAPA 2.0 Enhancement", tag: "JIRA · Agile · Regression Testing",
-    period: "Aug 2024 — Mar 2025", role: "QA Engineer",
-    achievement: "Zero impact on legacy process flows",
-    color: "#d4af37", icon: "⚙️",
-    desc: "Validated CAPA 2.0 enhancements covering new fields, workflows, and role configurations — ensuring zero impact on legacy process flows. Delivered functional and regression coverage for the complete NCR and CAPA journey." },
-  { title: "Hexagon EAM Data Migration", tag: "JIRA · OQ · SQL · Data Migration",
-    period: "Mar 2025 — Apr 2025", role: "QA Engineer",
-    achievement: "100% data integrity validation",
-    color: "#f06b8b", icon: "🗄️",
-    desc: "Operational Qualification testing across multiple Enterprise Asset Management modules to verify system functionality against regulatory expectations." },
-  { title: "JIRA Platform Enhancement", tag: "JIRA · Workflow Configuration · Test Management",
-    period: "Mar 2025 — Apr 2025", role: "QA Engineer",
-    achievement: "Formal qualification cycle delivered",
-    color: "#5ec8ff", icon: "🔧",
-    desc: "Custom field configurations and workflow updates qualified through formal qualification cycles, ensuring traceability across change control." },
-];
-
-const CERTIFICATIONS = [
-  { name: "Microsoft Azure Fundamentals AZ-900", issuer: "Microsoft", year: "2023", note: "Cloud Concepts & Services", icon: "☁️" },
-  { name: "Google Cloud Digital Leader", issuer: "Google Cloud", year: "2023", note: "Digital Transformation Strategy", icon: "🌐" },
-  { name: "Oracle AI Foundations Associate", issuer: "Oracle", year: "2023", note: "Ranked Top 150 of 3000+ participants", icon: "🧠" },
-  { name: "OSP Product Testing with Selenium", issuer: "Cognizant", year: "2023", note: "Product-level automation training", icon: "🧪" },
-  { name: "Selenium WebDriver with Java", issuer: "Online Learning", year: "2023", note: "Basic, Advanced & Framework training", icon: "⚡" },
-];
-
-const LEARNING = [
-  { phase: "Phase 1", item: "Python + Pytest", status: "Active" },
-  { phase: "Phase 2", item: "Playwright Automation", status: "Next" },
-  { phase: "Phase 2", item: "ISTQB AI Testing Certification", status: "Next" },
-  { phase: "Phase 3", item: "LangChain + OpenAI API for Test Generation", status: "Planned" },
-  { phase: "Phase 4", item: "AWS Cloud Practitioner", status: "Planned" },
-];
-
-const AWARDS = [
-  { title: "Top Performer", event: "Cognizant Hackathon 2023", note: "Recognized for Selenium, Java, and SQL automation solutions", icon: "🏆" },
-  { title: "Best Project of the Year", event: "College Project Exhibition 2022", note: "Innovative IoT-based Smart Agriculture System", icon: "🌾" },
-];
-
-const EDUCATION = {
-  degree: "Bachelor of Engineering — Mechanical Engineering",
-  school: "BLDEA V. P. Dr. P. G. Halakatti College of Engineering and Technology, Vijayapura",
-  affiliation: "Affiliated to Visvesvaraya Technological University (VTU)",
-  year: "Graduated 2022",
-  cgpa: "CGPA: 7.54 / 10",
-};
-
-const BLOG_POSTS = [
-  { id: 1, tag: "GxP · CSV", date: "Mar 2024", readTime: "6 min read", icon: "🔬", color: "#7af0c8",
-    title: "How I Caught a Critical IQ Protocol Gap Before FDA Audit",
-    problem: "During a pre-audit review of a Power Apps Global Ship Hold system, I discovered that the Installation Qualification protocol had been executed against a staging environment — not production. This meant the entire IQ evidence package was invalid under 21 CFR Part 11.",
-    root: "The root cause was a missing environment tag in the test execution checklist. The team assumed 'current system' referred to production, but the Selenium scripts were pointing to a staging URL hardcoded months earlier.",
-    fix: "I introduced an environment-assertion step at the very top of every automation script — it reads the active system URL, validates it against a config-driven allowlist, and fails loudly with a blocking error if there's a mismatch. The client passed their audit with zero observations related to CSV.",
-    tags: ["21 CFR Part 11", "IQ/OQ/PQ", "GxP", "Selenium"] },
-  { id: 2, tag: "Automation · Stability", date: "Jan 2024", readTime: "5 min read", icon: "⚡", color: "#8b7fe5",
-    title: "Killing Flaky Tests in a Legacy Selenium Suite",
-    problem: "A regression suite had a 35% flakiness rate — tests were randomly failing on CI but passing locally. The team had lost trust in the suite and was manually re-running pipelines 3-4 times per deployment.",
-    root: "Three compounding issues: implicit waits mixed with explicit waits, tests sharing mutable global state through static session objects, and hardcoded pixel-based locators breaking when the UI was responsive.",
-    fix: "I replaced all implicit waits with a custom ExpectedConditions wrapper using exponential backoff. Shared state was eliminated via a ThreadLocal WebDriver factory. Locators migrated to data-testid attributes. Flakiness dropped from 35% to under 2% in three weeks.",
-    tags: ["Selenium", "TestNG", "CI/CD", "WebDriver"] },
-  { id: 3, tag: "API · Security", date: "Nov 2023", readTime: "4 min read", icon: "🔒", color: "#d4af37",
-    title: "Catching an Auth Token Leakage in an API Payload",
-    problem: "During REST API regression testing with Postman, I noticed that a history endpoint was returning a full JWT access token in the response body — not just the booking data. This token had a 24-hour TTL and could be used to impersonate any user.",
-    root: "A developer had added the token to the response during a debugging session, and the field was never removed before the PR merged. No automated test was asserting the shape of the response payload.",
-    fix: "I added a negative assertion layer to every API test: alongside verifying expected fields, tests now explicitly assert that sensitive fields are absent from responses. A JSON schema validation step was introduced in Postman/Newman. The security fix was patched same-day.",
-    tags: ["API Security", "Postman", "JWT", "Schema Validation"] },
-  { id: 4, tag: "P1 Defect · E-Signature", date: "Sep 2023", readTime: "7 min read", icon: "✍️", color: "#5ec8ff",
-    title: "Resolving a P1 E-Signature Failure 24 Hours Before Go-Live",
-    problem: "A Priority-1 production defect surfaced 24 hours before Go-Live: electronic signature submission was silently failing for ~8% of users under load. Without a fix, the release would have slipped, breaking compliance commitments to the client.",
-    root: "Through structured RCA with developers and Functional SMEs, we traced it to a race condition in the signature-verification microservice — under high concurrency, the cert validation call timed out but the front-end treated the timeout as success.",
-    fix: "I drafted a reproducible load-condition test script that triggered the bug 9/10 times. The dev team patched the timeout handling and added an explicit retry. I re-ran the script post-fix to confirm 0% failure across 500 concurrent users. Go-Live happened on schedule with zero release slippage.",
-    tags: ["RCA", "E-Signature", "21 CFR Part 11", "P1 Resolution"] },
-];
 
 const QAIX_SCRIPT = [
   { t: 0,     text: "Initializing QAIX.", voice: "Initializing." },
@@ -176,232 +24,50 @@ const QAIX_SCRIPT = [
 ];
 const INTRO_DURATION = 24000;
 
-const QAIX_RESPONSES = {
-  about: {
-    text: "Guruprasad Chougule is a Quality Assurance & Test Automation Engineer based in Bangalore, India. He has 3 years of hands-on experience at Cognizant working on the Olympus Life Sciences account — specializing in GxP compliance, CSV, and automation. As Primary QA Owner on the Global Ship Hold Center program, he's shipped 4 major releases with 100% on-time Go-Live and zero compliance escalations. 🎯",
-    suggestions: ["What does he do day to day?", "What's his specialty?", "How can I reach him?"],
-  },
-  tools: {
-    text: "Guru's core stack:\n• **Automation**: Selenium WebDriver, Core Java, TestNG, Maven, Python, Pytest\n• **API**: REST API testing with Postman\n• **DB**: SQL across multiple platforms\n• **Tracking**: JIRA, Zephyr\n• **CI/CD**: Git, GitHub\n\nHe's equally comfortable with manual exploratory testing and full automation frameworks. 🛠️",
-    suggestions: ["Show me his projects", "What about compliance?", "His certifications?"],
-  },
-  projects: {
-    text: "Five real-world projects on his resume:\n\n1. **Global Ship Hold Center** — 4 releases, 100% on-time Go-Live (his flagship work)\n2. **FCAT** — Power Apps tool, validated across 5 global regions\n3. **Agile NCR & CAPA 2.0** — workflow enhancement, zero legacy impact\n4. **Hexagon EAM Data Migration** — OQ across multiple modules\n5. **JIRA Platform Enhancement** — formal qualification cycles\n\nScroll to the Projects section for full details. 🚀",
-    suggestions: ["Tell me about Global Ship Hold", "What is FCAT?", "What's GxP?"],
-  },
-  hire: {
-    text: "Yes — he's actively open to opportunities! 🟢\n\nLooking for: QA Engineer, Senior QA, QA Lead, Test Automation Engineer, or Senior Validation Engineer roles. Especially strong fit in Pharma, Healthcare, Finance, and Insurance — anywhere compliance matters.\n\nFastest way to reach him: drop an email at " + CONTACT.email + " or message on LinkedIn.",
-    suggestions: ["Get his email & phone", "Download his resume", "What roles does he target?"],
-  },
-  experience: {
-    text: "3 years at **Cognizant Technology Solutions** (June 2023 — Present), on the **Olympus Life Sciences** account.\n\nRole: Product Test Specialist · Service Line: Quality Engineering & Assurance · Grade A.\n\nAs Primary QA Owner on Global Ship Hold Center, he's authored 400+ test scripts, closed 15+ compliance gaps, and led KT sessions for global stakeholders in Americas, APAC, and EMEA. 📈",
-    suggestions: ["What tech does he use?", "His biggest project?", "Show me his blog"],
-  },
-  gxp: {
-    text: "GxP / Compliance is Guru's deep specialty:\n• **21 CFR Part 11** (US FDA)\n• **GAMP 5** (Good Automated Manufacturing Practice)\n• **ALCOA Plus** (Data Integrity)\n• **EU Annex 11**\n• **Computer System Validation** (full IQ / OQ / PQ lifecycle)\n• **CAPA**, **NCR**, Validation Summary Reports, Audit Readiness\n\nHe's closed 15+ compliance gaps and ensured 100% audit readiness across JIRA workflows and qualification artifacts. ⚗️",
-    suggestions: ["What's his automation experience?", "Tell me about his releases", "Hire him?"],
-  },
-  blog: {
-    text: "His blog has 4 real war stories with full breakdowns (problem → root cause → fix):\n\n1. Catching an IQ protocol gap **before** an FDA-style audit\n2. Killing flaky tests in a Selenium suite (35% → 2% flakiness)\n3. Finding a JWT token leakage in an API response\n4. Resolving a P1 e-signature failure 24h before Go-Live\n\nScroll to the Blog section to read them. 📝",
-    suggestions: ["His tech stack?", "His projects?", "Contact him"],
-  },
-  resume: {
-    text: "Sure! Hit the **\"Download Resume ↓\"** button — it's in the top navbar, the hero section, and the contact section. The PDF includes his full work history, skills, certifications, education, and project details. 📄",
-    suggestions: ["What's in his stack?", "His experience?", "How to contact him"],
-  },
-  contact: {
-    text: `Here's how to reach Guru:\n\n📧 **Email**: ${CONTACT.email}\n📱 **Phone**: ${CONTACT.phone}\n💼 **LinkedIn**: linkedin.com/in/guruprasadchougule\n💻 **GitHub**: github.com/Guruprasad-Chougule\n📍 **Location**: ${CONTACT.location}\n\nStatus: 🟢 ${CONTACT.status}`,
-    suggestions: ["What roles is he open to?", "Download his resume", "His best project?"],
-  },
-  certs: {
-    text: "Five certifications on his profile:\n\n☁️ **Microsoft Azure AZ-900** (2023)\n🌐 **Google Cloud Digital Leader** (2023)\n🧠 **Oracle AI Foundations Associate** — Top 150 of 3,000+ participants (2023)\n🧪 **Cognizant OSP Product Testing with Selenium** (2023)\n⚡ **Selenium WebDriver with Java** — Advanced framework training\n\nPlus he's currently pursuing ISTQB AI Testing + AWS Cloud Practitioner. 🎓",
-    suggestions: ["What's he currently learning?", "His tech stack?", "Education background?"],
-  },
-  learning: {
-    text: "Guru's on a 4-phase roadmap toward **AI-Augmented QA Engineer**:\n\n• **Phase 1** (Active): Python + Pytest\n• **Phase 2**: Playwright Automation + ISTQB AI Testing Certification\n• **Phase 3**: LangChain + OpenAI API for AI-driven test generation\n• **Phase 4**: AWS Cloud Practitioner\n\nThe future of QA is AI-augmented, and he's investing in it now. 🚀",
-    suggestions: ["His current certifications?", "What tools does he use?", "Contact him"],
-  },
-  education: {
-    text: "🎓 **Bachelor of Engineering — Mechanical Engineering**\n\nBLDEA V. P. Dr. P. G. Halakatti College of Engineering and Technology, Vijayapura (affiliated to VTU, Karnataka).\n\nGraduated 2022 · CGPA: 7.54 / 10\n\nFun fact: he won 'Best Project of the Year' at the College Project Exhibition 2022 for an IoT-based Smart Agriculture System. 🌾",
-    suggestions: ["His certifications?", "His career path?", "Contact him"],
-  },
-  awards: {
-    text: "🏆 **Top Performer · Cognizant Hackathon 2023** — recognized for Selenium, Java, and SQL automation solutions.\n\n🌾 **Best Project of the Year · College Project Exhibition 2022** — for an IoT-based Smart Agriculture System.",
-    suggestions: ["His current role?", "His certifications?", "Hire him?"],
-  },
-  location: {
-    text: `📍 Based in **${CONTACT.location}**.\n\nHe's open to remote roles, hybrid arrangements in Bangalore, or relocation for the right opportunity — especially in regulated industries.`,
-    suggestions: ["Is he hiring-ready?", "His tech stack?", "Reach him"],
-  },
-  salary: {
-    text: "Best to ask Guru directly — compensation depends on role, level, location, and scope. Drop him an email at " + CONTACT.email + " or reach out on LinkedIn and he'll respond. 💼",
-    suggestions: ["What roles is he open to?", "His experience?", "Get his contact"],
-  },
-  about_qaix: {
-    text: "I'm **QAIX** — an AI assistant built into Guru's portfolio to help visitors learn about him quickly. I can tell you about his work, tools, projects, certifications, experience, and how to reach him. I'm not a general-purpose chatbot, just Guru-focused. 🤖",
-    suggestions: ["Who is Guru?", "What does he do?", "Show me his projects"],
-  },
-  greeting: {
-    text: "Hey there! 👋 I'm QAIX — Guru's AI assistant. I can answer pretty much anything about his work, skills, projects, or how to reach him. What would you like to know?",
-    suggestions: ["Who is Guru?", "Show me his projects", "Is he available for hire?", "His tech stack"],
-  },
-  thanks: {
-    text: "You're welcome! Anything else you'd like to know about Guru? 😊",
-    suggestions: ["His best project?", "His certifications?", "How to contact him"],
-  },
-  bye: {
-    text: "Take care! 👋 If you'd like to reach out to Guru directly, his email is " + CONTACT.email + " and his LinkedIn is in the Contact section. Have a great day!",
-    suggestions: ["Actually, one more question...", "Download his resume"],
-  },
-  default: {
-    text: "Hmm, I'm not sure I understood that — but I can definitely help! Try asking about his **projects**, **tools**, **experience**, **GxP/compliance work**, **certifications**, or **how to reach him**. What would you like to explore? 🤔",
-    suggestions: ["Who is Guru?", "His tech stack", "His projects", "Hire him?"],
-  },
-};
-
-// Scoring-based intent matcher — each intent has weighted keywords
-const INTENTS = [
-  { key: "greeting", keywords: ["hi", "hello", "hey", "yo", "hola", "namaste", "good morning", "good evening", "good afternoon", "sup", "howdy"], strict: true },
-  { key: "thanks", keywords: ["thanks", "thank you", "thx", "ty", "appreciate", "cheers"], strict: true },
-  { key: "bye", keywords: ["bye", "goodbye", "see you", "cya", "later", "ok bye", "okay bye"], strict: true },
-  { key: "about_qaix", keywords: ["who are you", "what are you", "what's qaix", "what is qaix", "tell me about you", "tell me about yourself", "are you a bot", "are you ai", "are you human", "who built you"] },
-  { key: "about", keywords: ["who is guru", "who's guru", "about guru", "about him", "tell me about", "introduce", "bio", "background", "summary", "story", "who is he", "what does he do"] },
-  { key: "tools", keywords: ["tool", "tools", "stack", "tech stack", "technology", "technologies", "selenium", "java", "python", "language", "languages", "framework", "frameworks", "automation tool", "what does he use", "skills", "programming", "testng", "maven", "postman", "sql"] },
-  { key: "projects", keywords: ["project", "projects", "work", "portfolio", "what has he built", "ship hold", "shiphold", "fcat", "hexagon", "capa", "ncr", "global ship", "what's he built", "his work"] },
-  { key: "hire", keywords: ["hire", "hiring", "available", "availability", "job", "jobs", "opportunity", "opportunities", "freelance", "role", "roles", "looking for", "open to work", "open for work", "recruit", "vacancy"] },
-  { key: "experience", keywords: ["experience", "career", "years", "history", "cognizant", "olympus", "where does he work", "where is he", "current job", "current role", "previous", "background", "how long", "since when"] },
-  { key: "gxp", keywords: ["gxp", "fda", "pharma", "pharmaceutical", "compliance", "validation", "gamp", "21 cfr", "cfr", "alcoa", "regulated", "iq", "oq", "pq", "qualification", "csv", "computer system validation", "audit", "data integrity", "annex 11"] },
-  { key: "blog", keywords: ["blog", "blogs", "article", "articles", "post", "posts", "problem", "problems", "fix", "fixed", "bug", "bugs", "issue", "issues", "story", "stories", "war story"] },
-  { key: "resume", keywords: ["resume", "cv", "download", "pdf", "curriculum", "vitae"] },
-  { key: "contact", keywords: ["contact", "email", "phone", "mobile", "reach", "call", "linkedin", "github", "social", "connect", "message", "dm"] },
-  { key: "certs", keywords: ["certification", "certifications", "certified", "certificate", "azure", "aws", "oracle", "google cloud", "az-900", "gcp"] },
-  { key: "learning", keywords: ["learning", "learn", "studying", "study", "upskilling", "playwright", "langchain", "istqb", "ai testing", "what's next", "future", "roadmap", "plans"] },
-  { key: "education", keywords: ["education", "college", "university", "degree", "graduate", "graduated", "btech", "be", "bachelor", "mechanical", "vtu", "bldea", "school", "cgpa", "studied"] },
-  { key: "awards", keywords: ["award", "awards", "achievement", "achievements", "hackathon", "recognition", "won", "winner", "top performer"] },
-  { key: "location", keywords: ["location", "where", "based", "city", "bangalore", "bengaluru", "india", "country", "remote", "relocation"] },
-  { key: "salary", keywords: ["salary", "ctc", "package", "compensation", "pay", "rate", "lpa", "expected salary", "how much"] },
-];
-
-function scoreIntent(input, intent) {
-  let score = 0;
-  for (const kw of intent.keywords) {
-    if (intent.strict) {
-      // Exact / boundary match for short signals like "hi", "thanks"
-      const escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      const re = new RegExp(`(^|\\b)${escaped}(\\b|$|[!.?])`, "i");
-      if (re.test(input)) score += 10;
-    } else {
-      if (input.includes(kw)) {
-        // Multi-word matches score higher (more specific)
-        score += kw.split(" ").length * 2;
-      }
-    }
-  }
-  return score;
-}
-
-function getQaixResponse(input, history = []) {
-  const q = input.toLowerCase().trim();
-  if (!q) return { ...QAIX_RESPONSES.default, intent: "default" };
-
-  const scored = INTENTS.map((intent) => ({ key: intent.key, score: scoreIntent(q, intent) }))
-    .filter((s) => s.score > 0)
-    .sort((a, b) => b.score - a.score);
-
-  if (scored.length > 0) {
-    const best = scored[0].key;
-    // Avoid repeating the same answer twice in a row — fall to runner-up
-    const lastBot = [...history].reverse().find((m) => m.from === "qaix");
-    if (lastBot && lastBot.intent === best && scored.length > 1) {
-      return { ...QAIX_RESPONSES[scored[1].key], intent: scored[1].key };
-    }
-    return { ...QAIX_RESPONSES[best], intent: best };
-  }
-
-  return { ...QAIX_RESPONSES.default, intent: "default" };
-}
-
-// ─── GLOBAL STYLES (injected once at the top of body) ────────────────────────
-// Using a real <style> element guarantees keyframes are registered
+// ─── GLOBAL STYLES ───────────────────────────────────────────────────────────
 
 function GlobalStyles() {
   return (
     <style>{`
       :root {
-        --bg: #0a0a0c;
-        --bg-card: #13141a;
-        --bg-card-2: #0c0d11;
-        --mint: #7af0c8;
-        --gold: #d4af37;
-        --violet: #8b7fe5;
-        --text: #ffffff;
-        --text-muted: #9ca3af;
-        --text-dim: #6b7280;
+        --bg: #0a0a0c; --bg-card: #13141a; --bg-card-2: #0c0d11;
+        --mint: #7af0c8; --gold: #d4af37; --violet: #8b7fe5;
+        --text: #ffffff; --text-muted: #9ca3af; --text-dim: #6b7280;
       }
-
       * { cursor: auto; }
       html, body { cursor: auto !important; }
       a, button, [role="button"], input, textarea, select { cursor: pointer; }
       input, textarea { cursor: text; }
-
       html { scroll-behavior: smooth; }
       body {
-        background: var(--bg);
-        color: var(--text);
+        background: var(--bg); color: var(--text);
         font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
       }
-
-      .font-display {
-        font-family: 'Sora', 'Inter', system-ui, sans-serif;
-        font-weight: 700;
-        letter-spacing: -0.02em;
-      }
+      .font-display { font-family: 'Sora', 'Inter', system-ui, sans-serif; font-weight: 700; letter-spacing: -0.02em; }
       .font-sans { font-family: 'Inter', system-ui, sans-serif; }
       .font-mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; }
-
-      /* Cursor blink — THE FIX */
-      @keyframes cursorBlink {
-        0%, 49% { opacity: 1; }
-        50%, 100% { opacity: 0; }
-      }
+      @keyframes cursorBlink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
       .cursor-blink {
-        display: inline-block;
-        width: 3px;
-        height: 1.1em;
-        background: var(--mint);
-        margin-left: 4px;
-        vertical-align: text-bottom;
+        display: inline-block; width: 3px; height: 1.1em;
+        background: var(--mint); margin-left: 4px; vertical-align: text-bottom;
         animation: cursorBlink 1s steps(2) infinite;
         box-shadow: 0 0 8px rgba(122, 240, 200, 0.6);
       }
-
-      @keyframes dotPulse {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.4; transform: scale(1.3); }
-      }
+      @keyframes dotPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.3); } }
       .dot-pulse { animation: dotPulse 1.5s ease-in-out infinite; }
-
-      @keyframes marquee {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-50%); }
-      }
+      @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
       .marquee-track { animation: marquee 40s linear infinite; }
-
-      /* Scrollbar */
       ::-webkit-scrollbar { width: 8px; height: 8px; }
       ::-webkit-scrollbar-track { background: var(--bg); }
       ::-webkit-scrollbar-thumb { background: #1f2128; border-radius: 4px; }
       ::-webkit-scrollbar-thumb:hover { background: #2a2d36; }
-
       ::selection { background: rgba(122,240,200,0.25); color: white; }
     `}</style>
   );
 }
 
 // ─── CUSTOM CURSOR FOLLOWER ──────────────────────────────────────────────────
-// Renders a small glowing dot that follows the mouse — like premium sites
 
 function CursorFollower() {
   const dotRef = useRef(null);
@@ -413,29 +79,20 @@ function CursorFollower() {
   useEffect(() => {
     const isTouchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
     if (isTouchDevice) return;
-
     const move = (e) => {
       target.current = { x: e.clientX, y: e.clientY };
-      // Detect interactive element
       const el = e.target;
       const interactive = el?.closest?.("a, button, input, textarea, [role='button']");
       setIsPointer(!!interactive);
     };
-
     let raf;
     const animate = () => {
-      // Smooth follow with lerp
       pos.current.x += (target.current.x - pos.current.x) * 0.18;
       pos.current.y += (target.current.y - pos.current.y) * 0.18;
-      if (dotRef.current) {
-        dotRef.current.style.transform = `translate3d(${target.current.x}px, ${target.current.y}px, 0)`;
-      }
-      if (ringRef.current) {
-        ringRef.current.style.transform = `translate3d(${pos.current.x}px, ${pos.current.y}px, 0)`;
-      }
+      if (dotRef.current) dotRef.current.style.transform = `translate3d(${target.current.x}px, ${target.current.y}px, 0)`;
+      if (ringRef.current) ringRef.current.style.transform = `translate3d(${pos.current.x}px, ${pos.current.y}px, 0)`;
       raf = requestAnimationFrame(animate);
     };
-
     window.addEventListener("mousemove", move);
     raf = requestAnimationFrame(animate);
     return () => { window.removeEventListener("mousemove", move); cancelAnimationFrame(raf); };
@@ -443,14 +100,10 @@ function CursorFollower() {
 
   return (
     <>
-      <div ref={dotRef}
-        className="fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-difference"
-        style={{ transition: "width 0.2s, height 0.2s" }}>
+      <div ref={dotRef} className="fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-difference" style={{ transition: "width 0.2s, height 0.2s" }}>
         <div className={`rounded-full bg-[#7af0c8] ${isPointer ? "w-3 h-3" : "w-2 h-2"} -translate-x-1/2 -translate-y-1/2`} />
       </div>
-      <div ref={ringRef}
-        className="fixed top-0 left-0 pointer-events-none z-[9998]"
-        style={{ transition: "width 0.25s, height 0.25s, opacity 0.25s" }}>
+      <div ref={ringRef} className="fixed top-0 left-0 pointer-events-none z-[9998]" style={{ transition: "width 0.25s, height 0.25s, opacity 0.25s" }}>
         <div className={`rounded-full border border-[#7af0c8]/40 ${isPointer ? "w-12 h-12 opacity-100" : "w-8 h-8 opacity-60"} -translate-x-1/2 -translate-y-1/2`} />
       </div>
     </>
@@ -489,7 +142,7 @@ function speakVoice(text, onEnd) {
   window.speechSynthesis.speak(u);
 }
 
-// ─── AMBIENT BACKGROUND ──────────────────────────────────────────────────────
+// ─── BG ──────────────────────────────────────────────────────────────────────
 
 function AmbientMesh() {
   return (
@@ -520,16 +173,13 @@ function RobotCharacter({ speaking }) {
     <svg viewBox="0 0 240 280" className="w-56 h-64 md:w-72 md:h-80 drop-shadow-[0_0_80px_rgba(122,240,200,0.35)]">
       <defs>
         <radialGradient id="bodyGrad" cx="0.5" cy="0.3">
-          <stop offset="0%" stopColor="#1c1f2a" />
-          <stop offset="100%" stopColor="#0a0a0c" />
+          <stop offset="0%" stopColor="#1c1f2a" /><stop offset="100%" stopColor="#0a0a0c" />
         </radialGradient>
         <linearGradient id="visorGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#7af0c8" />
-          <stop offset="100%" stopColor="#8b7fe5" />
+          <stop offset="0%" stopColor="#7af0c8" /><stop offset="100%" stopColor="#8b7fe5" />
         </linearGradient>
         <radialGradient id="glowGrad" cx="0.5" cy="0.5">
-          <stop offset="0%" stopColor="#7af0c8" stopOpacity="0.5" />
-          <stop offset="100%" stopColor="#7af0c8" stopOpacity="0" />
+          <stop offset="0%" stopColor="#7af0c8" stopOpacity="0.5" /><stop offset="100%" stopColor="#7af0c8" stopOpacity="0" />
         </radialGradient>
       </defs>
       <motion.circle cx="120" cy="120" r="110" fill="url(#glowGrad)"
@@ -542,12 +192,8 @@ function RobotCharacter({ speaking }) {
         <rect x="55" y="42" width="130" height="120" rx="34" fill="url(#bodyGrad)" stroke="#7af0c8" strokeWidth="1.2" />
         <rect x="40" y="80" width="18" height="40" rx="6" fill="#13141a" stroke="#7af0c8" strokeWidth="0.8" />
         <rect x="182" y="80" width="18" height="40" rx="6" fill="#13141a" stroke="#7af0c8" strokeWidth="0.8" />
-        <circle cx="49" cy="100" r="2.5" fill="#7af0c8">
-          <animate attributeName="opacity" values="0.3;1;0.3" dur="1.8s" repeatCount="indefinite" />
-        </circle>
-        <circle cx="191" cy="100" r="2.5" fill="#d4af37">
-          <animate attributeName="opacity" values="1;0.3;1" dur="1.8s" repeatCount="indefinite" />
-        </circle>
+        <circle cx="49" cy="100" r="2.5" fill="#7af0c8"><animate attributeName="opacity" values="0.3;1;0.3" dur="1.8s" repeatCount="indefinite" /></circle>
+        <circle cx="191" cy="100" r="2.5" fill="#d4af37"><animate attributeName="opacity" values="1;0.3;1" dur="1.8s" repeatCount="indefinite" /></circle>
         <rect x="70" y="65" width="100" height="55" rx="14" fill="#06070a" stroke="url(#visorGrad)" strokeWidth="1.2" />
         <ellipse cx="98" cy="92" rx="9" ry="11" fill="#7af0c8" />
         <ellipse cx="142" cy="92" rx="9" ry="11" fill="#7af0c8" />
@@ -556,12 +202,8 @@ function RobotCharacter({ speaking }) {
         <motion.rect x="100" y="135" width="40" height="6" rx="3" fill="#7af0c8"
           animate={speaking ? { height: [6, 16, 8, 18, 6, 14, 6], y: [135, 130, 134, 129, 135, 131, 135] } : { height: 6, y: 135 }}
           transition={{ repeat: Infinity, duration: 0.7, ease: "easeInOut" }} />
-        <circle cx="78" cy="115" r="2.5" fill="#8b7fe5" opacity="0.7">
-          <animate attributeName="opacity" values="0.3;0.8;0.3" dur="2.4s" repeatCount="indefinite" />
-        </circle>
-        <circle cx="162" cy="115" r="2.5" fill="#8b7fe5" opacity="0.7">
-          <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2.4s" repeatCount="indefinite" />
-        </circle>
+        <circle cx="78" cy="115" r="2.5" fill="#8b7fe5" opacity="0.7"><animate attributeName="opacity" values="0.3;0.8;0.3" dur="2.4s" repeatCount="indefinite" /></circle>
+        <circle cx="162" cy="115" r="2.5" fill="#8b7fe5" opacity="0.7"><animate attributeName="opacity" values="0.8;0.3;0.8" dur="2.4s" repeatCount="indefinite" /></circle>
       </motion.g>
       <rect x="100" y="160" width="40" height="14" rx="4" fill="#13141a" stroke="#7af0c8" strokeWidth="0.8" />
       <motion.g animate={{ y: [0, -2, 0] }} transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut", delay: 0.2 }}>
@@ -585,7 +227,6 @@ function CinematicIntro({ onEnd }) {
   const mutedRef = useRef(false);
 
   useEffect(() => { mutedRef.current = muted; }, [muted]);
-
   useEffect(() => {
     if ("speechSynthesis" in window) {
       window.speechSynthesis.getVoices();
@@ -601,10 +242,7 @@ function CinematicIntro({ onEnd }) {
   useEffect(() => {
     if (!started) return;
     const timers = QAIX_SCRIPT.map(({ t, voice }, i) =>
-      setTimeout(() => {
-        setCurrentLine(i);
-        if (!mutedRef.current) speakVoice(voice);
-      }, t)
+      setTimeout(() => { setCurrentLine(i); if (!mutedRef.current) speakVoice(voice); }, t)
     );
     const endTimer = setTimeout(handleEnd, INTRO_DURATION);
     const skipTimer = setTimeout(() => setShowSkip(true), 1200);
@@ -626,11 +264,8 @@ function CinematicIntro({ onEnd }) {
   return (
     <motion.div initial={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.9 }}
       className="fixed inset-0 z-[200] bg-[#06070a] flex flex-col items-center justify-center overflow-hidden">
-      <AmbientMesh />
-      <GrainOverlay />
-      <div className="absolute inset-0 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.85) 100%)" }} />
-
+      <AmbientMesh /><GrainOverlay />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.85) 100%)" }} />
       <div className="absolute top-6 left-6 right-6 flex justify-between items-center font-mono text-[10px] text-[#7af0c8] z-10 tracking-[0.3em]">
         <div className="flex items-center gap-3">
           <span className="w-1.5 h-1.5 bg-[#7af0c8] rounded-full dot-pulse" />
@@ -638,41 +273,29 @@ function CinematicIntro({ onEnd }) {
         </div>
         <span className="hidden sm:block">PORTFOLIO_2026 · GURUPRASAD.C</span>
       </div>
-
       <CornerBrackets />
 
       <AnimatePresence mode="wait">
         {!started ? (
           <motion.div key="poster" initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.04 }} transition={{ duration: 0.7 }}
-            className="relative z-10 text-center px-6 max-w-3xl">
+            exit={{ opacity: 0, scale: 1.04 }} transition={{ duration: 0.7 }} className="relative z-10 text-center px-6 max-w-3xl">
             <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}
               className="font-mono text-[10px] text-[#7af0c8] tracking-[0.5em] mb-8">PORTFOLIO · 2026</motion.p>
-            <motion.h1
-              initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3, duration: 0.9 }}
+            <motion.h1 initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3, duration: 0.9 }}
               className="font-display text-5xl md:text-7xl text-white leading-[0.95] mb-3">
-              Guruprasad
-              <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-br from-[#7af0c8] via-[#d4af37] to-[#8b7fe5]">
-                Chougule
-              </span>
+              Guruprasad<br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-br from-[#7af0c8] via-[#d4af37] to-[#8b7fe5]">Chougule</span>
             </motion.h1>
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
-              className="font-mono text-xs text-[#9ca3af] tracking-[0.3em] mb-12">
-              QA · TEST AUTOMATION · CSV ENGINEER
-            </motion.p>
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1 }}
-              className="flex flex-col items-center gap-4">
+              className="font-mono text-xs text-[#9ca3af] tracking-[0.3em] mb-12">QA · TEST AUTOMATION · CSV ENGINEER</motion.p>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1 }} className="flex flex-col items-center gap-4">
               <motion.button onClick={() => setStarted(true)} whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
                 className="group inline-flex items-center gap-3 px-10 py-4 bg-gradient-to-br from-[#7af0c8] to-[#5dd9b0] text-[#0a0a0c] font-display font-bold text-xs tracking-[0.4em] rounded-full hover:shadow-[0_0_60px_rgba(122,240,200,0.4)] transition-shadow">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#0a0a0c] dot-pulse" />
-                BEGIN INTRO
-                <span className="group-hover:translate-x-1 transition-transform">→</span>
+                BEGIN INTRO <span className="group-hover:translate-x-1 transition-transform">→</span>
               </motion.button>
               <p className="font-mono text-[10px] text-[#6b7280] tracking-widest">🔊 with voice narration · tap to enable audio</p>
-              <button onClick={handleEnd} className="mt-2 font-mono text-xs text-[#6b7280] hover:text-white transition-colors underline underline-offset-4 tracking-wider">
-                Skip intro →
-              </button>
+              <button onClick={handleEnd} className="mt-2 font-mono text-xs text-[#6b7280] hover:text-white transition-colors underline underline-offset-4 tracking-wider">Skip intro →</button>
             </motion.div>
           </motion.div>
         ) : (
@@ -712,9 +335,7 @@ function CinematicIntro({ onEnd }) {
         {started && showSkip && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="absolute bottom-8 right-8 z-10 flex items-center gap-3">
-            <button onClick={toggleMute}
-              className="w-10 h-10 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:border-white/30 transition-colors"
-              title={muted ? "Unmute" : "Mute"}>
+            <button onClick={toggleMute} className="w-10 h-10 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:border-white/30 transition-colors" title={muted ? "Unmute" : "Mute"}>
               {muted ? (
                 <svg className="w-4 h-4 text-[#9ca3af]" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.17v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" /></svg>
               ) : (
@@ -734,78 +355,97 @@ function CinematicIntro({ onEnd }) {
 
 function CornerBrackets() {
   const cls = "absolute w-6 h-6 border-[#7af0c8]";
-  return (
-    <>
-      <div className={`${cls} top-4 left-4 border-l border-t`} />
-      <div className={`${cls} top-4 right-4 border-r border-t`} />
-      <div className={`${cls} bottom-4 left-4 border-l border-b`} />
-      <div className={`${cls} bottom-4 right-4 border-r border-b`} />
-    </>
-  );
+  return (<>
+    <div className={`${cls} top-4 left-4 border-l border-t`} />
+    <div className={`${cls} top-4 right-4 border-r border-t`} />
+    <div className={`${cls} bottom-4 left-4 border-l border-b`} />
+    <div className={`${cls} bottom-4 right-4 border-r border-b`} />
+  </>);
 }
 
-// ─── QAIX CHAT ───────────────────────────────────────────────────────────────
+// ═════════════════════════════════════════════════════════════════════════════
+//  REAL LLM CHAT — calls /api/chat which proxies to Google Gemini
+// ═════════════════════════════════════════════════════════════════════════════
 
-// Render text with **bold** + line breaks
 function FormattedMessage({ text }) {
   const lines = text.split("\n");
-  return (
-    <>
-      {lines.map((line, i) => {
-        const parts = line.split(/(\*\*[^*]+\*\*)/g);
-        return (
-          <div key={i} className={i > 0 ? "mt-1.5" : ""}>
-            {parts.map((part, j) => {
-              if (part.startsWith("**") && part.endsWith("**")) {
-                return <strong key={j} className="text-white font-semibold">{part.slice(2, -2)}</strong>;
-              }
-              return <span key={j}>{part}</span>;
-            })}
-          </div>
-        );
-      })}
-    </>
-  );
+  return (<>
+    {lines.map((line, i) => {
+      const parts = line.split(/(\*\*[^*]+\*\*)/g);
+      return (
+        <div key={i} className={i > 0 ? "mt-1.5" : ""}>
+          {parts.map((part, j) => {
+            if (part.startsWith("**") && part.endsWith("**"))
+              return <strong key={j} className="text-white font-semibold">{part.slice(2, -2)}</strong>;
+            return <span key={j}>{part}</span>;
+          })}
+        </div>
+      );
+    })}
+  </>);
 }
+
+const QUICK_SUGGESTIONS = [
+  "Who is Guru?",
+  "Show me his projects",
+  "Is he available for hire?",
+  "What's his tech stack?",
+];
 
 function QaixChat({ open, onClose }) {
   const [chatInput, setChatInput] = useState("");
-  const [chatHistory, setChatHistory] = useState([
+  const [messages, setMessages] = useState([
     {
-      from: "qaix",
-      intent: "greeting",
-      text: "Hi! I'm **QAIX** — Guru's AI assistant. 👋\n\nAsk me anything about his work, skills, projects, or how to reach him. Try one of these to get started:",
-      suggestions: ["Who is Guru?", "Show me his projects", "Is he available for hire?", "His tech stack"],
+      role: "assistant",
+      content: "Hi! I'm **QAIX** — Guru's AI assistant powered by an LLM. 👋\n\nI know everything from his resume — projects, skills, GxP work, certifications, the lot. Ask me anything!",
     },
   ]);
-  const [typing, setTyping] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const chatEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [chatHistory, typing]);
+  useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, loading]);
 
-  // Send a message (typed or from a suggestion chip)
-  const sendMessage = useCallback((text) => {
-    const q = text.trim(); if (!q) return;
-    setChatHistory((h) => [...h, { from: "user", text: q }]);
+  const sendMessage = useCallback(async (text) => {
+    const q = text.trim();
+    if (!q || loading) return;
+
+    const userMsg = { role: "user", content: q };
+    const nextMessages = [...messages, userMsg];
+    setMessages(nextMessages);
     setChatInput("");
-    setTyping(true);
+    setLoading(true);
+    setError(null);
 
-    // Use functional state so we always read the latest history when responding
-    setTimeout(() => {
-      setChatHistory((prev) => {
-        const response = getQaixResponse(q, prev);
-        return [...prev, { from: "qaix", ...response }];
+    try {
+      // Send only the conversation (no system prompt — backend adds it)
+      const conversation = nextMessages.filter((m) => m.role === "user" || m.role === "assistant");
+
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: conversation }),
       });
-      setTyping(false);
-    }, 700 + Math.random() * 500);
-  }, []);
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Something went wrong");
+
+      setMessages((m) => [...m, { role: "assistant", content: data.reply }]);
+    } catch (err) {
+      console.error("Chat error:", err);
+      setError(err.message || "Couldn't reach the AI. Please try again.");
+      // Roll back the optimistic user message? No — keep it; show error inline.
+    } finally {
+      setLoading(false);
+    }
+  }, [messages, loading]);
 
   const sendChat = () => sendMessage(chatInput);
   const handleKey = (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendChat(); } };
 
   const lastBotIdx = (() => {
-    for (let i = chatHistory.length - 1; i >= 0; i--) if (chatHistory[i].from === "qaix") return i;
+    for (let i = messages.length - 1; i >= 0; i--) if (messages[i].role === "assistant") return i;
     return -1;
   })();
 
@@ -814,44 +454,42 @@ function QaixChat({ open, onClose }) {
       {open && (
         <motion.div initial={{ opacity: 0, y: 30, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 30, scale: 0.95 }} transition={{ type: "spring", stiffness: 260, damping: 22 }}
-          className="fixed bottom-24 right-4 md:right-8 z-50 w-[calc(100%-2rem)] md:w-[420px] bg-[#0a0a0c]/95 backdrop-blur-xl border border-[#7af0c8]/20 rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(122,240,200,0.15)] flex flex-col" style={{ maxHeight: "min(640px, calc(100vh - 8rem))" }}>
+          className="fixed bottom-24 right-4 md:right-8 z-50 w-[calc(100%-2rem)] md:w-[420px] bg-[#0a0a0c]/95 backdrop-blur-xl border border-[#7af0c8]/20 rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(122,240,200,0.15)] flex flex-col"
+          style={{ maxHeight: "min(640px, calc(100vh - 8rem))" }}>
 
-          {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-white/5 bg-gradient-to-r from-[#13141a] to-[#0a0a0c] shrink-0">
             <div className="flex items-center gap-3">
               <motion.div animate={{ y: [0, -3, 0] }} transition={{ repeat: Infinity, duration: 2 }} className="text-xl">🤖</motion.div>
               <div>
-                <p className="font-display text-white text-sm">QAIX</p>
+                <p className="font-display text-white text-sm">QAIX <span className="font-mono text-[9px] text-[#d4af37] ml-1">· AI</span></p>
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <div className="w-1.5 h-1.5 rounded-full bg-[#7af0c8] dot-pulse" />
-                  <span className="font-mono text-[9px] text-[#7af0c8] tracking-[0.3em]">ONLINE · Guru's AI</span>
+                  <span className="font-mono text-[9px] text-[#7af0c8] tracking-[0.3em]">LLM-POWERED · Guru's AI</span>
                 </div>
               </div>
             </div>
             <button onClick={onClose} className="text-[#9ca3af] hover:text-white transition-colors font-mono text-xl leading-none w-7 h-7 flex items-center justify-center">×</button>
           </div>
 
-          {/* Messages — scrollable */}
           <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 min-h-0">
-            {chatHistory.map((m, i) => (
-              <motion.div key={i}
-                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-                <div className={`flex gap-2 items-start ${m.from === "user" ? "flex-row-reverse" : ""}`}>
-                  <span className="text-base shrink-0 mt-0.5">{m.from === "user" ? "👤" : "🤖"}</span>
-                  <div className={`rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed max-w-[85%] ${m.from === "user"
+            {messages.map((m, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+                <div className={`flex gap-2 items-start ${m.role === "user" ? "flex-row-reverse" : ""}`}>
+                  <span className="text-base shrink-0 mt-0.5">{m.role === "user" ? "👤" : "🤖"}</span>
+                  <div className={`rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed max-w-[85%] ${m.role === "user"
                     ? "bg-[#7af0c8]/10 border border-[#7af0c8]/20 text-white rounded-tr-sm"
                     : "bg-[#13141a] border border-white/5 text-[#d1d5db] rounded-tl-sm"}`}>
-                    <FormattedMessage text={m.text} />
+                    <FormattedMessage text={m.content} />
                   </div>
                 </div>
 
-                {/* Suggestion chips — render under the LAST bot message only */}
-                {m.from === "qaix" && i === lastBotIdx && m.suggestions && !typing && (
+                {/* Quick suggestion chips — only under the first assistant msg, before user types */}
+                {m.role === "assistant" && i === 0 && i === lastBotIdx && messages.length === 1 && (
                   <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
                     className="flex flex-wrap gap-1.5 mt-2.5 ml-7">
-                    {m.suggestions.map((s, idx) => (
-                      <button key={idx} onClick={() => sendMessage(s)}
-                        className="px-3 py-1.5 bg-[#7af0c8]/5 border border-[#7af0c8]/20 text-[#7af0c8] hover:bg-[#7af0c8]/15 hover:border-[#7af0c8]/40 rounded-full text-[11px] font-sans transition-all">
+                    {QUICK_SUGGESTIONS.map((s, idx) => (
+                      <button key={idx} onClick={() => sendMessage(s)} disabled={loading}
+                        className="px-3 py-1.5 bg-[#7af0c8]/5 border border-[#7af0c8]/20 text-[#7af0c8] hover:bg-[#7af0c8]/15 hover:border-[#7af0c8]/40 rounded-full text-[11px] font-sans transition-all disabled:opacity-40">
                         {s}
                       </button>
                     ))}
@@ -859,7 +497,7 @@ function QaixChat({ open, onClose }) {
                 )}
               </motion.div>
             ))}
-            {typing && (
+            {loading && (
               <div className="flex gap-2 items-start">
                 <span className="text-base">🤖</span>
                 <div className="bg-[#13141a] border border-white/5 rounded-2xl rounded-tl-sm px-3 py-2.5 flex gap-1">
@@ -867,15 +505,19 @@ function QaixChat({ open, onClose }) {
                 </div>
               </div>
             )}
+            {error && (
+              <div className="px-3 py-2 bg-[#f06b8b]/10 border border-[#f06b8b]/20 rounded-lg">
+                <p className="text-[#f06b8b] text-[11px] font-mono">⚠ {error}</p>
+              </div>
+            )}
             <div ref={chatEndRef} />
           </div>
 
-          {/* Input */}
           <div className="px-3 py-3 border-t border-white/5 bg-[#13141a]/60 flex gap-2 shrink-0">
             <input ref={inputRef} value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyDown={handleKey}
-              placeholder="Ask anything about Guru..."
-              className="flex-1 bg-[#06070a] border border-white/10 rounded-full px-4 py-2 text-white font-sans text-xs placeholder-white/30 focus:outline-none focus:border-[#7af0c8]/50 transition-colors" />
-            <button onClick={sendChat} disabled={!chatInput.trim()}
+              placeholder={loading ? "QAIX is thinking..." : "Ask anything about Guru..."} disabled={loading}
+              className="flex-1 bg-[#06070a] border border-white/10 rounded-full px-4 py-2 text-white font-sans text-xs placeholder-white/30 focus:outline-none focus:border-[#7af0c8]/50 transition-colors disabled:opacity-60" />
+            <button onClick={sendChat} disabled={!chatInput.trim() || loading}
               className="px-4 py-2 bg-[#7af0c8] text-[#0a0a0c] font-mono font-bold text-xs rounded-full hover:shadow-[0_0_20px_rgba(122,240,200,0.3)] transition-all disabled:opacity-40 disabled:cursor-not-allowed">→</button>
           </div>
         </motion.div>
@@ -890,7 +532,7 @@ function QaixFloatingBtn({ open, onClick }) {
       transition={{ delay: 0.5, type: "spring", stiffness: 260, damping: 20 }}
       onClick={onClick} whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.95 }}
       className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-40 w-14 h-14 rounded-full bg-gradient-to-br from-[#7af0c8] to-[#5dd9b0] text-[#0a0a0c] flex items-center justify-center text-2xl shadow-[0_0_30px_rgba(122,240,200,0.4)] hover:shadow-[0_0_50px_rgba(122,240,200,0.6)] transition-shadow"
-      title="Chat with QAIX">{open ? "×" : "🤖"}</motion.button>
+      title="Chat with QAIX (AI)">{open ? "×" : "🤖"}</motion.button>
   );
 }
 
@@ -914,15 +556,11 @@ function Heading({ label, title, subtitle }) {
         <div className="h-px w-10 bg-[#7af0c8]" />
         <p className="text-[#7af0c8] font-mono text-[10px] tracking-[0.4em] uppercase">{label}</p>
       </div>
-      <h2 className="font-display text-4xl md:text-5xl text-white leading-[1.05]">
-        {title}
-      </h2>
+      <h2 className="font-display text-4xl md:text-5xl text-white leading-[1.05]">{title}</h2>
       {subtitle && <p className="mt-5 text-[#9ca3af] text-base leading-relaxed font-sans">{subtitle}</p>}
     </div>
   );
 }
-
-// ─── NAVBAR ──────────────────────────────────────────────────────────────────
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -936,18 +574,12 @@ function Navbar() {
   return (
     <motion.nav initial={{ y: -60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6, delay: 0.2 }}
       className={`fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-6 md:px-16 py-4 transition-all duration-300 ${scrolled ? "bg-[#0a0a0c]/85 backdrop-blur-xl border-b border-white/5" : ""}`}>
-      <a href="#hero" className="font-display text-lg text-white">
-        Guru<span className="text-[#7af0c8]">.</span>
-      </a>
+      <a href="#hero" className="font-display text-lg text-white">Guru<span className="text-[#7af0c8]">.</span></a>
       <div className="hidden md:flex items-center gap-6">
         {NAV_LINKS.map((l) => (
-          <button key={l} onClick={() => scrollTo(l)}
-            className="font-mono text-[11px] text-[#9ca3af] hover:text-[#7af0c8] transition-colors tracking-[0.2em] uppercase">{l}</button>
+          <button key={l} onClick={() => scrollTo(l)} className="font-mono text-[11px] text-[#9ca3af] hover:text-[#7af0c8] transition-colors tracking-[0.2em] uppercase">{l}</button>
         ))}
-        <a href={CONTACT.resume} download
-          className="px-4 py-2 bg-[#7af0c8]/10 border border-[#7af0c8]/30 text-[#7af0c8] font-mono text-[10px] tracking-[0.3em] uppercase rounded-full hover:bg-[#7af0c8]/20 transition-colors">
-          Resume ↓
-        </a>
+        <a href={CONTACT.resume} download className="px-4 py-2 bg-[#7af0c8]/10 border border-[#7af0c8]/30 text-[#7af0c8] font-mono text-[10px] tracking-[0.3em] uppercase rounded-full hover:bg-[#7af0c8]/20 transition-colors">Resume ↓</a>
       </div>
       <button className="md:hidden text-white" onClick={() => setOpen((o) => !o)}>
         <div className="space-y-1.5">
@@ -971,8 +603,6 @@ function Navbar() {
   );
 }
 
-// ─── HERO ────────────────────────────────────────────────────────────────────
-
 function Hero() {
   const words = useMemo(() => ["QA Engineer", "Test Automation", "CSV Validator", "GxP Specialist"], []);
   const typed = useTypewriter(words);
@@ -982,52 +612,28 @@ function Hero() {
     <section id="hero" className="relative z-10 min-h-screen flex flex-col justify-center px-6 md:px-16 lg:px-24 xl:px-32 pt-24">
       <motion.div style={{ y }}>
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.3 }}
-          className="font-mono text-[10px] text-[#7af0c8] tracking-[0.5em] uppercase mb-8">
-          ◇ {CONTACT.status.toUpperCase()}
-        </motion.p>
-
+          className="font-mono text-[10px] text-[#7af0c8] tracking-[0.5em] uppercase mb-8">◇ {CONTACT.status.toUpperCase()}</motion.p>
         <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="font-display text-5xl sm:text-7xl md:text-8xl text-white leading-[0.9] mb-6">
-          Guruprasad
-          <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-br from-[#7af0c8] via-[#d4af37] to-[#8b7fe5]">
-            Chougule.
-          </span>
+          Guruprasad<br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-br from-[#7af0c8] via-[#d4af37] to-[#8b7fe5]">Chougule.</span>
         </motion.h1>
-
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}
-          className="flex items-baseline gap-1 mb-10">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="flex items-baseline gap-1 mb-10">
           <span className="font-mono text-base md:text-lg text-[#d1d5db]">{typed}</span>
           <span className="cursor-blink" />
         </motion.div>
-
         <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.2, duration: 0.6 }}
           className="font-sans text-[#9ca3af] text-base md:text-lg max-w-2xl leading-relaxed mb-12">
           Building reliable software through compliance-driven testing, automation, and AI-augmented QA practices.
-          <span className="block mt-2 text-[#7af0c8] font-mono text-xs tracking-wider">
-            {CONTACT.tagline}
-          </span>
+          <span className="block mt-2 text-[#7af0c8] font-mono text-xs tracking-wider">{CONTACT.tagline}</span>
         </motion.p>
-
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.4 }}
-          className="flex flex-wrap gap-3">
-          <a href={CONTACT.resume} download
-            className="px-7 py-3.5 bg-gradient-to-br from-[#7af0c8] to-[#5dd9b0] text-[#0a0a0c] font-mono font-bold text-xs rounded-full tracking-[0.3em] uppercase hover:shadow-[0_0_30px_rgba(122,240,200,0.4)] transition-all inline-flex items-center gap-2">
-            Download Resume <span>↓</span>
-          </a>
-          <button onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-            className="px-7 py-3.5 border border-white/15 text-white font-mono text-xs rounded-full tracking-[0.3em] uppercase hover:border-[#7af0c8]/50 hover:text-[#7af0c8] transition-all">
-            Get In Touch →
-          </button>
-          <a href={CONTACT.github} target="_blank" rel="noreferrer"
-            className="px-7 py-3.5 border border-white/15 text-white font-mono text-xs rounded-full tracking-[0.3em] uppercase hover:border-[#7af0c8]/50 hover:text-[#7af0c8] transition-all">
-            View GitHub ↗
-          </a>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.4 }} className="flex flex-wrap gap-3">
+          <a href={CONTACT.resume} download className="px-7 py-3.5 bg-gradient-to-br from-[#7af0c8] to-[#5dd9b0] text-[#0a0a0c] font-mono font-bold text-xs rounded-full tracking-[0.3em] uppercase hover:shadow-[0_0_30px_rgba(122,240,200,0.4)] transition-all inline-flex items-center gap-2">Download Resume <span>↓</span></a>
+          <button onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })} className="px-7 py-3.5 border border-white/15 text-white font-mono text-xs rounded-full tracking-[0.3em] uppercase hover:border-[#7af0c8]/50 hover:text-[#7af0c8] transition-all">Get In Touch →</button>
+          <a href={CONTACT.github} target="_blank" rel="noreferrer" className="px-7 py-3.5 border border-white/15 text-white font-mono text-xs rounded-full tracking-[0.3em] uppercase hover:border-[#7af0c8]/50 hover:text-[#7af0c8] transition-all">View GitHub ↗</a>
         </motion.div>
-
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.7 }}
-          className="flex items-center gap-5 mt-12">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.7 }} className="flex items-center gap-5 mt-12">
           <a href={CONTACT.linkedin} target="_blank" rel="noreferrer" className="text-[#9ca3af] hover:text-[#7af0c8] transition-colors" title="LinkedIn">
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.063 2.063 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
           </a>
@@ -1042,18 +648,13 @@ function Hero() {
           </a>
         </motion.div>
       </motion.div>
-
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }} className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
         <span className="font-mono text-[9px] text-[#6b7280] tracking-[0.4em]">SCROLL</span>
-        <motion.div animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}
-          className="w-px h-10 bg-gradient-to-b from-[#7af0c8] to-transparent" />
+        <motion.div animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 1.5 }} className="w-px h-10 bg-gradient-to-b from-[#7af0c8] to-transparent" />
       </motion.div>
     </section>
   );
 }
-
-// ─── MARQUEE ─────────────────────────────────────────────────────────────────
 
 function Marquee() {
   const items = ["Selenium WebDriver", "21 CFR Part 11", "Core Java", "GAMP 5", "TestNG", "ALCOA Plus", "REST API", "Postman", "JIRA", "Power Apps", "Python", "SQL", "Agile"];
@@ -1061,16 +662,12 @@ function Marquee() {
     <div className="relative z-10 border-y border-white/5 py-6 overflow-hidden bg-[#0c0d11]/40">
       <div className="flex gap-12 whitespace-nowrap marquee-track">
         {[...items, ...items, ...items].map((it, i) => (
-          <span key={i} className="font-display text-2xl md:text-3xl text-[#1f2128]">
-            {it} <span className="text-[#7af0c8]">✦</span>
-          </span>
+          <span key={i} className="font-display text-2xl md:text-3xl text-[#1f2128]">{it} <span className="text-[#7af0c8]">✦</span></span>
         ))}
       </div>
     </div>
   );
 }
-
-// ─── ABOUT ───────────────────────────────────────────────────────────────────
 
 function About() {
   return (
@@ -1081,14 +678,9 @@ function About() {
           <p className="text-lg md:text-xl text-white/85 font-display leading-snug">
             I'm a QA & Test Automation Engineer with <span className="text-[#7af0c8]">3 years</span> of hands-on experience delivering software testing across Web applications, ERP platforms, and Microsoft Power Apps.
           </p>
-          <p>
-            Currently a <span className="text-white">Product Test Specialist at Cognizant Technology Solutions</span>, working on the <span className="text-white">Olympus Life Sciences</span> account. As Primary QA Owner on the Global Ship Hold Center program, I've authored 400+ test scripts and achieved 100% on-time Go-Live across 4 major releases.
-          </p>
-          <p>
-            My specialty is compliance-driven testing under <span className="text-[#7af0c8] font-mono text-sm">21 CFR Part 11</span>, <span className="text-[#7af0c8] font-mono text-sm">GAMP 5</span>, and <span className="text-[#7af0c8] font-mono text-sm">ALCOA Plus</span> — directly applicable to Pharma, Healthcare, Finance, and Insurance.
-          </p>
+          <p>Currently a <span className="text-white">Product Test Specialist at Cognizant Technology Solutions</span>, working on the <span className="text-white">Olympus Life Sciences</span> account. As Primary QA Owner on the Global Ship Hold Center program, I've authored 400+ test scripts and achieved 100% on-time Go-Live across 4 major releases.</p>
+          <p>My specialty is compliance-driven testing under <span className="text-[#7af0c8] font-mono text-sm">21 CFR Part 11</span>, <span className="text-[#7af0c8] font-mono text-sm">GAMP 5</span>, and <span className="text-[#7af0c8] font-mono text-sm">ALCOA Plus</span> — directly applicable to Pharma, Healthcare, Finance, and Insurance.</p>
         </div>
-
         <div className="md:col-span-2 grid grid-cols-2 gap-3">
           {STATS.map(({ val, label }, i) => (
             <motion.div key={label} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }}
@@ -1104,8 +696,6 @@ function About() {
   );
 }
 
-// ─── SKILLS ──────────────────────────────────────────────────────────────────
-
 function Skills() {
   const categories = Object.keys(SKILLS);
   const [active, setActive] = useState(categories[0]);
@@ -1115,31 +705,20 @@ function Skills() {
       <div className="flex flex-wrap gap-2 mb-10">
         {categories.map((cat) => (
           <button key={cat} onClick={() => setActive(cat)}
-            className={`px-4 py-2 font-mono text-[10px] rounded-full tracking-[0.2em] uppercase transition-all ${active === cat
-              ? "bg-[#7af0c8] text-[#0a0a0c]"
-              : "border border-white/10 text-[#9ca3af] hover:border-[#7af0c8]/40 hover:text-[#7af0c8]"}`}>
-            {cat}
-          </button>
+            className={`px-4 py-2 font-mono text-[10px] rounded-full tracking-[0.2em] uppercase transition-all ${active === cat ? "bg-[#7af0c8] text-[#0a0a0c]" : "border border-white/10 text-[#9ca3af] hover:border-[#7af0c8]/40 hover:text-[#7af0c8]"}`}>{cat}</button>
         ))}
       </div>
       <AnimatePresence mode="wait">
-        <motion.div key={active} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -16 }} transition={{ duration: 0.3 }}
-          className="flex flex-wrap gap-2.5">
+        <motion.div key={active} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }} transition={{ duration: 0.3 }} className="flex flex-wrap gap-2.5">
           {SKILLS[active].map((skill, i) => (
-            <motion.span key={skill}
-              initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.025 }}
-              className="px-4 py-2.5 bg-gradient-to-br from-[#13141a] to-[#0c0d11] border border-white/5 hover:border-[#7af0c8]/30 rounded-full text-sm text-[#d1d5db] font-sans transition-colors">
-              {skill}
-            </motion.span>
+            <motion.span key={skill} initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.025 }}
+              className="px-4 py-2.5 bg-gradient-to-br from-[#13141a] to-[#0c0d11] border border-white/5 hover:border-[#7af0c8]/30 rounded-full text-sm text-[#d1d5db] font-sans transition-colors">{skill}</motion.span>
           ))}
         </motion.div>
       </AnimatePresence>
     </Section>
   );
 }
-
-// ─── EXPERIENCE ──────────────────────────────────────────────────────────────
 
 function Experience() {
   return (
@@ -1150,9 +729,7 @@ function Experience() {
           className="bg-gradient-to-br from-[#13141a] to-[#0c0d11] border border-white/5 rounded-3xl p-8 md:p-10">
           <div className="flex flex-wrap justify-between items-start gap-4 mb-6">
             <div>
-              <h3 className="font-display text-xl md:text-2xl text-white">
-                {exp.role} <span className="text-[#7af0c8]">@ {exp.company}</span>
-              </h3>
+              <h3 className="font-display text-xl md:text-2xl text-white">{exp.role} <span className="text-[#7af0c8]">@ {exp.company}</span></h3>
               <p className="font-mono text-xs text-[#9ca3af] mt-2 tracking-wider">{exp.client}</p>
             </div>
             <div className="text-right">
@@ -1174,19 +751,14 @@ function Experience() {
   );
 }
 
-// ─── PROJECTS ────────────────────────────────────────────────────────────────
-
 function Projects() {
   return (
     <Section id="projects">
-      <Heading label="04 — Projects" title="Selected work."
-        subtitle="Real systems I've validated, automated, and shipped — across Power Apps, ERP, and Web layers under GxP compliance." />
+      <Heading label="04 — Projects" title="Selected work." subtitle="Real systems I've validated, automated, and shipped — across Power Apps, ERP, and Web layers under GxP compliance." />
       <div className="grid md:grid-cols-2 gap-5">
         {PROJECTS.map((p, i) => (
-          <motion.div key={p.title} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }} transition={{ delay: i * 0.08 }} whileHover={{ y: -4 }}
-            className="group p-7 bg-gradient-to-br from-[#13141a] to-[#0c0d11] border border-white/5 hover:border-white/15 rounded-3xl transition-all"
-            style={{ "--accent": p.color }}>
+          <motion.div key={p.title} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} whileHover={{ y: -4 }}
+            className="group p-7 bg-gradient-to-br from-[#13141a] to-[#0c0d11] border border-white/5 hover:border-white/15 rounded-3xl transition-all" style={{ "--accent": p.color }}>
             <div className="flex items-start justify-between mb-5">
               <span className="text-3xl">{p.icon}</span>
               <span className="font-mono text-[10px] text-[#6b7280] tracking-[0.2em]">{p.period}</span>
@@ -1205,16 +777,13 @@ function Projects() {
   );
 }
 
-// ─── CERTIFICATIONS / EDUCATION / AWARDS / LEARNING ──────────────────────────
-
 function Certifications() {
   return (
     <Section id="certifications">
       <Heading label="05 — Credentials" title="Certifications & education." />
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
         {CERTIFICATIONS.map((c, i) => (
-          <motion.div key={c.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }} transition={{ delay: i * 0.08 }}
+          <motion.div key={c.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}
             className="group p-6 bg-gradient-to-br from-[#13141a] to-[#0c0d11] border border-white/5 hover:border-[#d4af37]/30 rounded-2xl transition-all">
             <div className="flex items-start justify-between mb-4">
               <span className="text-2xl">{c.icon}</span>
@@ -1226,7 +795,6 @@ function Certifications() {
           </motion.div>
         ))}
       </div>
-
       <div className="grid md:grid-cols-2 gap-5 mb-16">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
           className="p-7 bg-gradient-to-br from-[#13141a] to-[#0c0d11] border border-white/5 rounded-2xl">
@@ -1239,7 +807,6 @@ function Certifications() {
             <p className="font-mono text-xs text-[#7af0c8]">{EDUCATION.cgpa}</p>
           </div>
         </motion.div>
-
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
           className="p-7 bg-gradient-to-br from-[#13141a] to-[#0c0d11] border border-white/5 rounded-2xl">
           <p className="font-mono text-[10px] text-[#d4af37] tracking-[0.3em] uppercase mb-4">◆ Awards</p>
@@ -1257,7 +824,6 @@ function Certifications() {
           </div>
         </motion.div>
       </div>
-
       <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
         className="p-7 md:p-9 bg-gradient-to-br from-[#13141a] to-[#0c0d11] border border-[#8b7fe5]/15 rounded-3xl">
         <div className="flex items-start justify-between flex-wrap gap-3 mb-6">
@@ -1272,10 +838,7 @@ function Certifications() {
             <div key={i} className="flex items-center gap-4 p-4 bg-[#06070a]/50 border border-white/5 rounded-xl">
               <span className="font-mono text-[9px] text-[#8b7fe5] tracking-wider px-2 py-1 bg-[#8b7fe5]/10 rounded-full shrink-0">{l.phase}</span>
               <span className="text-sm text-[#d1d5db] flex-1 font-sans">{l.item}</span>
-              <span className={`font-mono text-[9px] tracking-wider px-2 py-1 rounded-full shrink-0 ${
-                l.status === "Active" ? "text-[#7af0c8] bg-[#7af0c8]/10" :
-                l.status === "Next" ? "text-[#d4af37] bg-[#d4af37]/10" : "text-[#6b7280] bg-white/5"
-              }`}>{l.status}</span>
+              <span className={`font-mono text-[9px] tracking-wider px-2 py-1 rounded-full shrink-0 ${l.status === "Active" ? "text-[#7af0c8] bg-[#7af0c8]/10" : l.status === "Next" ? "text-[#d4af37] bg-[#d4af37]/10" : "text-[#6b7280] bg-white/5"}`}>{l.status}</span>
             </div>
           ))}
         </div>
@@ -1284,13 +847,10 @@ function Certifications() {
   );
 }
 
-// ─── BLOG ────────────────────────────────────────────────────────────────────
-
 function BlogCard({ post, index }) {
   const [expanded, setExpanded] = useState(false);
   return (
-    <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-      transition={{ delay: index * 0.08 }}
+    <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.08 }}
       className="bg-gradient-to-br from-[#13141a] to-[#0c0d11] border border-white/5 rounded-3xl overflow-hidden hover:border-white/15 transition-colors">
       <div className="p-7">
         <div className="flex items-start gap-4 mb-5">
@@ -1306,11 +866,9 @@ function BlogCard({ post, index }) {
         <h3 className="font-display text-lg text-white leading-snug mb-4">{post.title}</h3>
         <div className="flex items-center gap-2 mb-2"><span className="font-mono text-[10px] text-[#f06b8b] tracking-wider">⚠ PROBLEM</span></div>
         <p className="text-[#9ca3af] text-sm leading-relaxed line-clamp-2 font-sans">{post.problem}</p>
-
         <AnimatePresence>
           {expanded && (
-            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.35, ease: "easeInOut" }} className="overflow-hidden">
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.35, ease: "easeInOut" }} className="overflow-hidden">
               <div className="mt-5 space-y-4">
                 <div>
                   <p className="font-mono text-[10px] text-[#f06b8b] mb-2 tracking-wider">⚠ FULL PROBLEM</p>
@@ -1325,15 +883,12 @@ function BlogCard({ post, index }) {
                   <p className="text-[#9ca3af] text-sm leading-relaxed font-sans">{post.fix}</p>
                 </div>
                 <div className="flex flex-wrap gap-2 pt-1">
-                  {post.tags.map((t) => (
-                    <span key={t} className="font-mono text-[10px] px-2.5 py-1 bg-white/5 border border-white/10 rounded-full text-[#9ca3af] tracking-wider">{t}</span>
-                  ))}
+                  {post.tags.map((t) => (<span key={t} className="font-mono text-[10px] px-2.5 py-1 bg-white/5 border border-white/10 rounded-full text-[#9ca3af] tracking-wider">{t}</span>))}
                 </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
-
         <button onClick={() => setExpanded((e) => !e)} className="mt-5 flex items-center gap-2 font-mono text-[10px] tracking-[0.2em] uppercase transition-colors" style={{ color: post.color }}>
           <motion.span animate={{ rotate: expanded ? 90 : 0 }} transition={{ duration: 0.2 }}>▸</motion.span>
           {expanded ? "Collapse" : "Read full post"}
@@ -1346,16 +901,13 @@ function BlogCard({ post, index }) {
 function Blog() {
   return (
     <Section id="blog">
-      <Heading label="06 — Blog" title="Problems I fixed."
-        subtitle="Real war stories from the trenches of QA engineering — broken down into problem, root cause, and the exact fix." />
+      <Heading label="06 — Blog" title="Problems I fixed." subtitle="Real war stories from the trenches of QA engineering — broken down into problem, root cause, and the exact fix." />
       <div className="grid md:grid-cols-2 gap-5">
         {BLOG_POSTS.map((post, i) => <BlogCard key={post.id} post={post} index={i} />)}
       </div>
     </Section>
   );
 }
-
-// ─── CONTACT ─────────────────────────────────────────────────────────────────
 
 function Contact() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
@@ -1369,7 +921,6 @@ function Contact() {
       setStatus("sent"); setForm({ name: "", email: "", message: "" });
     } catch { setStatus("error"); }
   };
-
   const rows = [
     { label: "Email", val: CONTACT.email, href: `mailto:${CONTACT.email}` },
     { label: "Phone", val: CONTACT.phone, href: `tel:${CONTACT.phoneRaw}` },
@@ -1379,7 +930,6 @@ function Contact() {
     { label: "Location", val: CONTACT.location, href: null },
     { label: "Status", val: CONTACT.status, href: null },
   ];
-
   return (
     <Section id="contact">
       <Heading label="07 — Contact" title="Let's talk." subtitle="Open to QA Engineer, Senior QA, QA Lead, Test Automation, and Senior Validation Engineer roles across regulated and product-driven organizations." />
@@ -1389,38 +939,26 @@ function Contact() {
             {rows.map(({ label, val, href }) => (
               <div key={label} className="flex gap-4 items-center py-3 border-b border-white/5">
                 <span className="font-mono text-[10px] text-[#6b7280] w-20 shrink-0 tracking-[0.2em] uppercase">{label}</span>
-                {href ? (
-                  <a href={href} target={href.startsWith("http") ? "_blank" : undefined} rel="noreferrer"
-                    className="text-[#7af0c8] hover:underline font-sans text-sm break-all">{val}</a>
-                ) : (
-                  <span className="text-white font-sans text-sm">{val}</span>
-                )}
+                {href ? <a href={href} target={href.startsWith("http") ? "_blank" : undefined} rel="noreferrer" className="text-[#7af0c8] hover:underline font-sans text-sm break-all">{val}</a> : <span className="text-white font-sans text-sm">{val}</span>}
               </div>
             ))}
           </div>
-          <a href={CONTACT.resume} download
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-br from-[#7af0c8] to-[#5dd9b0] text-[#0a0a0c] font-mono font-bold text-xs rounded-full tracking-[0.3em] uppercase hover:shadow-[0_0_30px_rgba(122,240,200,0.4)] transition-all">
-            Download Resume ↓
-          </a>
+          <a href={CONTACT.resume} download className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-br from-[#7af0c8] to-[#5dd9b0] text-[#0a0a0c] font-mono font-bold text-xs rounded-full tracking-[0.3em] uppercase hover:shadow-[0_0_30px_rgba(122,240,200,0.4)] transition-all">Download Resume ↓</a>
         </div>
-
         <form onSubmit={handleSubmit} className="space-y-4">
           {[{ id: "name", label: "Name", type: "text" }, { id: "email", label: "Email", type: "email" }].map(({ id, label, type }) => (
             <div key={id}>
               <label className="block font-mono text-[10px] text-[#6b7280] mb-2 tracking-[0.2em] uppercase">{label}</label>
-              <input type={type} value={form[id]} onChange={(e) => setForm((f) => ({ ...f, [id]: e.target.value }))}
-                required placeholder={`Your ${label.toLowerCase()}`}
+              <input type={type} value={form[id]} onChange={(e) => setForm((f) => ({ ...f, [id]: e.target.value }))} required placeholder={`Your ${label.toLowerCase()}`}
                 className="w-full bg-[#13141a] border border-white/10 rounded-xl px-4 py-3 text-white text-sm font-sans placeholder-white/20 focus:outline-none focus:border-[#7af0c8]/50 transition-colors" />
             </div>
           ))}
           <div>
             <label className="block font-mono text-[10px] text-[#6b7280] mb-2 tracking-[0.2em] uppercase">Message</label>
-            <textarea rows={5} value={form.message} onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
-              required placeholder="Tell me about your project or opportunity..."
+            <textarea rows={5} value={form.message} onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))} required placeholder="Tell me about your project or opportunity..."
               className="w-full bg-[#13141a] border border-white/10 rounded-xl px-4 py-3 text-white text-sm font-sans placeholder-white/20 focus:outline-none focus:border-[#7af0c8]/50 transition-colors resize-none" />
           </div>
-          <button type="submit" disabled={status === "sending"}
-            className="w-full py-3.5 bg-gradient-to-br from-[#7af0c8] to-[#5dd9b0] text-[#0a0a0c] font-mono font-bold text-xs rounded-full tracking-[0.3em] uppercase hover:shadow-[0_0_30px_rgba(122,240,200,0.4)] transition-all disabled:opacity-50">
+          <button type="submit" disabled={status === "sending"} className="w-full py-3.5 bg-gradient-to-br from-[#7af0c8] to-[#5dd9b0] text-[#0a0a0c] font-mono font-bold text-xs rounded-full tracking-[0.3em] uppercase hover:shadow-[0_0_30px_rgba(122,240,200,0.4)] transition-all disabled:opacity-50">
             {status === "sending" ? "Sending..." : status === "sent" ? "Message Sent ✓" : "Send Message →"}
           </button>
           {status === "error" && <p className="text-[#f06b8b] font-mono text-[10px] text-center tracking-wider">Something went wrong. Try emailing directly.</p>}
@@ -1443,29 +981,20 @@ function Footer() {
   );
 }
 
-// ─── APP ─────────────────────────────────────────────────────────────────────
-
 export default function App() {
   const [introDone, setIntroDone] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
-
   useEffect(() => {
     document.body.style.overflow = introDone ? "" : "hidden";
     return () => { document.body.style.overflow = ""; };
   }, [introDone]);
-
   return (
     <div className="min-h-screen bg-[#0a0a0c] text-white overflow-x-hidden">
       <GlobalStyles />
       <CursorFollower />
-
-      <AnimatePresence>
-        {!introDone && <CinematicIntro onEnd={() => setIntroDone(true)} />}
-      </AnimatePresence>
-
+      <AnimatePresence>{!introDone && <CinematicIntro onEnd={() => setIntroDone(true)} />}</AnimatePresence>
       <AmbientMesh />
       <GrainOverlay />
-
       <Navbar />
       <Hero />
       <Marquee />
@@ -1477,7 +1006,6 @@ export default function App() {
       <Blog />
       <Contact />
       <Footer />
-
       {introDone && (
         <>
           <QaixFloatingBtn open={chatOpen} onClick={() => setChatOpen((o) => !o)} />
