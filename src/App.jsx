@@ -579,7 +579,16 @@ function QaixChat({ open, onClose }) {
 
           <div className="flex items-center justify-between px-4 py-3 border-b border-white/5 bg-gradient-to-r from-[#13141a] to-[#0a0a0c] shrink-0">
             <div className="flex items-center gap-3">
-              <motion.div animate={{ y: [0, -3, 0] }} transition={{ repeat: Infinity, duration: 2 }} className="text-xl">🤖</motion.div>
+              {/* Matching sparkle icon - mini version of the floating button */}
+              <div className="relative w-8 h-8 rounded-full bg-gradient-to-br from-[#7af0c8] via-[#a8e8d8] to-[#8b7fe5] flex items-center justify-center shadow-[0_0_15px_rgba(122,240,200,0.4)]">
+                <motion.svg
+                  animate={{ rotate: [0, 360] }}
+                  transition={{ repeat: Infinity, duration: 8, ease: "linear" }}
+                  className="w-4 h-4 text-[#0a0a0c]"
+                  fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z" />
+                </motion.svg>
+              </div>
               <div>
                 <p className="font-display text-white text-sm">QAIX <span className="font-mono text-[9px] text-[#d4af37] ml-1">· AI</span></p>
                 <div className="flex items-center gap-1.5 mt-0.5">
@@ -595,7 +604,15 @@ function QaixChat({ open, onClose }) {
             {messages.map((m, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                 <div className={`flex gap-2 items-start ${m.role === "user" ? "flex-row-reverse" : ""}`}>
-                  <span className="text-base shrink-0 mt-0.5">{m.role === "user" ? "👤" : "🤖"}</span>
+                  {m.role === "user" ? (
+                    <span className="text-base shrink-0 mt-0.5">👤</span>
+                  ) : (
+                    <div className="shrink-0 mt-0.5 w-5 h-5 rounded-full bg-gradient-to-br from-[#7af0c8] to-[#8b7fe5] flex items-center justify-center">
+                      <svg className="w-2.5 h-2.5 text-[#0a0a0c]" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z" />
+                      </svg>
+                    </div>
+                  )}
                   <div className={`rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed max-w-[85%] ${m.role === "user"
                     ? "bg-[#7af0c8]/10 border border-[#7af0c8]/20 text-white rounded-tr-sm"
                     : "bg-[#13141a] border border-white/5 text-[#d1d5db] rounded-tl-sm"}`}>
@@ -619,7 +636,15 @@ function QaixChat({ open, onClose }) {
             ))}
             {loading && (
               <div className="flex gap-2 items-start">
-                <span className="text-base">🤖</span>
+                <div className="shrink-0 mt-0.5 w-5 h-5 rounded-full bg-gradient-to-br from-[#7af0c8] to-[#8b7fe5] flex items-center justify-center">
+                  <motion.svg
+                    animate={{ rotate: [0, 360] }}
+                    transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
+                    className="w-2.5 h-2.5 text-[#0a0a0c]"
+                    fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z" />
+                  </motion.svg>
+                </div>
                 <div className="bg-[#13141a] border border-white/5 rounded-2xl rounded-tl-sm px-3 py-2.5 flex gap-1">
                   {[0,1,2].map(i => <motion.div key={i} animate={{ y: [0,-4,0] }} transition={{ repeat: Infinity, duration: 0.6, delay: i*0.15 }} className="w-1.5 h-1.5 rounded-full bg-[#7af0c8]" />)}
                 </div>
@@ -647,12 +672,147 @@ function QaixChat({ open, onClose }) {
 }
 
 function QaixFloatingBtn({ open, onClick }) {
+  const [showHint, setShowHint] = useState(false);
+
+  // Show "Ask me anything about Guru" hint on desktop only, once per session
+  useEffect(() => {
+    if (open) { setShowHint(false); return; }
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    if (isMobile) return;
+
+    const seenKey = "qaix-hint-seen";
+    if (sessionStorage.getItem(seenKey)) return;
+
+    const showT = setTimeout(() => setShowHint(true), 4000); // appears after 4s
+    const hideT = setTimeout(() => {
+      setShowHint(false);
+      sessionStorage.setItem(seenKey, "1");
+    }, 12000); // auto-dismisses after 12s total
+    return () => { clearTimeout(showT); clearTimeout(hideT); };
+  }, [open]);
+
   return (
-    <motion.button initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-      transition={{ delay: 0.5, type: "spring", stiffness: 260, damping: 20 }}
-      onClick={onClick} whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.95 }}
-      className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-40 w-14 h-14 rounded-full bg-gradient-to-br from-[#7af0c8] to-[#5dd9b0] text-[#0a0a0c] flex items-center justify-center text-2xl shadow-[0_0_30px_rgba(122,240,200,0.4)] hover:shadow-[0_0_50px_rgba(122,240,200,0.6)] transition-shadow"
-      title="Chat with QAIX (AI)">{open ? "×" : "🤖"}</motion.button>
+    <>
+      {/* Discovery hint bubble — desktop only, once per session */}
+      <AnimatePresence>
+        {showHint && !open && (
+          <motion.div
+            initial={{ opacity: 0, x: 20, scale: 0.9 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 20, scale: 0.9 }}
+            transition={{ type: "spring", stiffness: 260, damping: 22 }}
+            className="hidden md:flex fixed bottom-10 right-28 z-40 items-center gap-2.5 pointer-events-none">
+            <div className="px-4 py-2.5 bg-[#0a0a0c]/95 backdrop-blur-xl border border-[#7af0c8]/30 rounded-2xl rounded-br-sm shadow-[0_0_30px_rgba(122,240,200,0.2)]">
+              <p className="font-display text-sm text-white whitespace-nowrap">
+                <span className="text-[#7af0c8]">✦</span> Ask me anything about Guru
+              </p>
+              <p className="font-mono text-[9px] text-[#9ca3af] tracking-[0.2em] mt-0.5">POWERED BY AI</p>
+            </div>
+            {/* Speech bubble tail */}
+            <div className="w-2 h-2 bg-[#0a0a0c] border-r border-b border-[#7af0c8]/30 rotate-45 -ml-3" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Premium AI Sparkle button */}
+      <motion.button
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 0.5, type: "spring", stiffness: 260, damping: 20 }}
+        onClick={onClick}
+        whileHover={{ scale: 1.08 }}
+        whileTap={{ scale: 0.92 }}
+        className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-40 group"
+        title={open ? "Close chat" : "Chat with QAIX (AI)"}
+        aria-label={open ? "Close chat" : "Open AI chat"}>
+
+        {/* Outer pulsing rings (only when closed) */}
+        {!open && (
+          <>
+            <motion.div
+              animate={{ scale: [1, 1.6, 1], opacity: [0.4, 0, 0.4] }}
+              transition={{ repeat: Infinity, duration: 2.5, ease: "easeOut" }}
+              className="absolute inset-0 rounded-full bg-[#7af0c8]"
+              style={{ filter: "blur(8px)" }}
+            />
+            <motion.div
+              animate={{ scale: [1, 1.4, 1], opacity: [0.3, 0, 0.3] }}
+              transition={{ repeat: Infinity, duration: 2.5, ease: "easeOut", delay: 0.5 }}
+              className="absolute inset-0 rounded-full border border-[#7af0c8]/50"
+            />
+          </>
+        )}
+
+        {/* Main button — gradient with rotating gradient border */}
+        <div className="relative w-14 h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-[#7af0c8] via-[#a8e8d8] to-[#8b7fe5] flex items-center justify-center shadow-[0_0_30px_rgba(122,240,200,0.4)] group-hover:shadow-[0_0_50px_rgba(122,240,200,0.6),_0_0_80px_rgba(139,127,229,0.3)] transition-shadow overflow-hidden">
+
+          {/* Subtle inner gradient swirl */}
+          <div className="absolute inset-0 rounded-full opacity-50"
+            style={{ background: "conic-gradient(from 0deg, rgba(122,240,200,0), rgba(139,127,229,0.4), rgba(122,240,200,0))" }} />
+
+          {/* The icon — animated sparkle when closed, X when open */}
+          <AnimatePresence mode="wait">
+            {open ? (
+              <motion.svg
+                key="close"
+                initial={{ rotate: -90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: 90, opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                className="relative z-10 w-6 h-6 text-[#0a0a0c]"
+                fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </motion.svg>
+            ) : (
+              <motion.div
+                key="sparkle"
+                initial={{ rotate: 0, opacity: 0, scale: 0.5 }}
+                animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                exit={{ rotate: 90, opacity: 0, scale: 0.5 }}
+                transition={{ duration: 0.3 }}
+                className="relative z-10 flex flex-col items-center justify-center">
+                {/* Main sparkle - animated */}
+                <motion.svg
+                  animate={{ rotate: [0, 360] }}
+                  transition={{ repeat: Infinity, duration: 8, ease: "linear" }}
+                  className="w-7 h-7 md:w-8 md:h-8 text-[#0a0a0c]"
+                  fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z" />
+                </motion.svg>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Tiny notification dot (when closed) */}
+          {!open && (
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 1, type: "spring" }}
+              className="absolute top-1 right-1 w-3 h-3 bg-[#d4af37] rounded-full border-2 border-[#0a0a0c] flex items-center justify-center">
+              <motion.div
+                animate={{ scale: [1, 1.3, 1] }}
+                transition={{ repeat: Infinity, duration: 1.5 }}
+                className="w-1 h-1 bg-[#0a0a0c] rounded-full"
+              />
+            </motion.div>
+          )}
+        </div>
+
+        {/* "AI" label below button on desktop */}
+        {!open && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.2 }}
+            className="absolute -bottom-5 left-1/2 -translate-x-1/2 hidden md:block">
+            <span className="font-mono text-[9px] text-[#7af0c8] tracking-[0.3em] whitespace-nowrap">
+              QAIX · AI
+            </span>
+          </motion.div>
+        )}
+      </motion.button>
+    </>
   );
 }
 
