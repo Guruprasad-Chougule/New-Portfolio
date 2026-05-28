@@ -251,64 +251,92 @@ function RobotCharacter({ speaking }) {
 
 function CinematicIntro({ onEnd }) {
   const [started, setStarted] = useState(false);
-  const [currentLine, setCurrentLine] = useState(-1);
-  const [showSkip, setShowSkip] = useState(false);
-  const [muted, setMuted] = useState(false);
-  const mutedRef = useRef(false);
+  const [muted, setMuted] = useState(true); // Start muted (browser autoplay policy requires it)
+  const [showSoundHint, setShowSoundHint] = useState(true);
+  const [videoEnded, setVideoEnded] = useState(false);
+  const videoRef = useRef(null);
+  const ambientVideoRef = useRef(null);
 
-  useEffect(() => { mutedRef.current = muted; }, [muted]);
+  // Auto-hide the "Tap for sound" hint after 4 seconds
   useEffect(() => {
-    if ("speechSynthesis" in window) {
-      window.speechSynthesis.getVoices();
-      window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
-    }
-  }, []);
+    if (!started) return;
+    const t = setTimeout(() => setShowSoundHint(false), 4000);
+    return () => clearTimeout(t);
+  }, [started]);
 
   const handleEnd = useCallback(() => {
-    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    if (videoRef.current) videoRef.current.pause();
+    if (ambientVideoRef.current) ambientVideoRef.current.pause();
     onEnd();
   }, [onEnd]);
 
+  // When the main video finishes naturally, give a brief moment then end
   useEffect(() => {
-    if (!started) return;
-    const timers = QAIX_SCRIPT.map(({ t, voice }, i) =>
-      setTimeout(() => { setCurrentLine(i); if (!mutedRef.current) speakVoice(voice); }, t)
-    );
-    const endTimer = setTimeout(handleEnd, INTRO_DURATION);
-    const skipTimer = setTimeout(() => setShowSkip(true), 1200);
-    return () => {
-      timers.forEach(clearTimeout);
-      clearTimeout(endTimer); clearTimeout(skipTimer);
-      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
-    };
-  }, [started, handleEnd]);
+    if (videoEnded) {
+      const t = setTimeout(handleEnd, 800);
+      return () => clearTimeout(t);
+    }
+  }, [videoEnded, handleEnd]);
+
+  const handleStart = () => {
+    setStarted(true);
+    setMuted(false); // Unmute on user interaction (allowed by browser)
+    if (videoRef.current) {
+      videoRef.current.muted = false;
+      videoRef.current.play().catch(() => {});
+    }
+    if (ambientVideoRef.current) {
+      ambientVideoRef.current.play().catch(() => {});
+    }
+  };
 
   const toggleMute = () => {
-    setMuted((m) => {
-      const next = !m;
-      if (next && "speechSynthesis" in window) window.speechSynthesis.cancel();
-      return next;
-    });
+    const next = !muted;
+    setMuted(next);
+    if (videoRef.current) videoRef.current.muted = next;
+    setShowSoundHint(false);
   };
 
   return (
     <motion.div initial={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.9 }}
       className="fixed inset-0 z-[200] bg-[#06070a] flex flex-col items-center justify-center overflow-hidden">
-      <AmbientMesh /><GrainOverlay />
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.85) 100%)" }} />
-      <div className="absolute top-6 left-6 right-6 flex justify-between items-center font-mono text-[10px] text-[#7af0c8] z-10 tracking-[0.3em]">
+
+      {/* AMBIENT BLURRED VIDEO LAYER — Vaibhav's signature look */}
+      {started && (
+        <video
+          ref={ambientVideoRef}
+          src="/intro.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-40"
+          style={{ filter: "blur(40px) saturate(1.4) brightness(0.6)", transform: "scale(1.2)" }}
+        />
+      )}
+
+      {/* CINEMATIC OVERLAYS */}
+      <div className="absolute inset-0 pointer-events-none z-[1]" style={{ background: "radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.85) 100%)" }} />
+      <div className="absolute inset-0 pointer-events-none z-[1] bg-gradient-to-t from-[#06070a] via-transparent to-[#06070a]/60" />
+      <GrainOverlay />
+
+      {/* TOP STATUS BAR */}
+      <div className="absolute top-6 left-6 right-6 flex justify-between items-center font-mono text-[10px] text-[#7af0c8] z-30 tracking-[0.3em]">
         <div className="flex items-center gap-3">
           <span className="w-1.5 h-1.5 bg-[#7af0c8] rounded-full dot-pulse" />
-          <span>REC · QAIX.SYS</span>
+          <span>{started ? "PLAYING · INTRO.MP4" : "REC · QAIX.SYS"}</span>
         </div>
         <span className="hidden sm:block">PORTFOLIO_2026 · GURUPRASAD.C</span>
       </div>
+
       <CornerBrackets />
 
       <AnimatePresence mode="wait">
         {!started ? (
+          /* POSTER FRAME — what you see before clicking play */
           <motion.div key="poster" initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.04 }} transition={{ duration: 0.7 }} className="relative z-10 text-center px-6 max-w-3xl">
+            exit={{ opacity: 0, scale: 1.04 }} transition={{ duration: 0.7 }}
+            className="relative z-20 text-center px-6 max-w-3xl">
             <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}
               className="font-mono text-[10px] text-[#7af0c8] tracking-[0.5em] mb-8">PORTFOLIO · 2026</motion.p>
             <motion.h1 initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3, duration: 0.9 }}
@@ -318,54 +346,68 @@ function CinematicIntro({ onEnd }) {
             </motion.h1>
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
               className="font-mono text-xs text-[#9ca3af] tracking-[0.3em] mb-12">QA · TEST AUTOMATION · CSV ENGINEER</motion.p>
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1 }} className="flex flex-col items-center gap-4">
-              <motion.button onClick={() => setStarted(true)} whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1 }}
+              className="flex flex-col items-center gap-4">
+              <motion.button onClick={handleStart} whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
                 className="group inline-flex items-center gap-3 px-10 py-4 bg-gradient-to-br from-[#7af0c8] to-[#5dd9b0] text-[#0a0a0c] font-display font-bold text-xs tracking-[0.4em] rounded-full hover:shadow-[0_0_60px_rgba(122,240,200,0.4)] transition-shadow">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#0a0a0c] dot-pulse" />
-                BEGIN INTRO <span className="group-hover:translate-x-1 transition-transform">→</span>
+                PLAY INTRO <span className="group-hover:translate-x-1 transition-transform">▶</span>
               </motion.button>
-              <p className="font-mono text-[10px] text-[#6b7280] tracking-widest">🔊 with voice narration · tap to enable audio</p>
+              <p className="font-mono text-[10px] text-[#6b7280] tracking-widest">🔊 sound enabled · cinematic introduction</p>
               <button onClick={handleEnd} className="mt-2 font-mono text-xs text-[#6b7280] hover:text-white transition-colors underline underline-offset-4 tracking-wider">Skip intro →</button>
             </motion.div>
           </motion.div>
         ) : (
-          <motion.div key="playing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}
-            className="relative z-10 flex flex-col items-center px-6">
-            <motion.div initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}>
-              <RobotCharacter speaking={currentLine >= 0 && currentLine < QAIX_SCRIPT.length - 1} />
-            </motion.div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
-              className="mt-2 flex items-center gap-2 font-mono text-[10px] text-[#7af0c8] tracking-[0.4em]">
-              <span>&lt;</span><span>QAIX.AI</span><span>/&gt;</span>
-            </motion.div>
-            <div className="mt-8 h-24 max-w-2xl text-center">
-              <AnimatePresence mode="wait">
-                {currentLine >= 0 && (
-                  <motion.p key={currentLine} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -14 }} transition={{ duration: 0.5 }}
-                    className="font-display text-2xl md:text-3xl text-white leading-tight">
-                    {QAIX_SCRIPT[currentLine].text}
-                  </motion.p>
-                )}
-              </AnimatePresence>
+          /* PLAYING — main video centered */
+          <motion.div key="playing" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="relative z-20 w-full max-w-5xl px-6 flex flex-col items-center">
+
+            {/* MAIN VIDEO with cinematic frame */}
+            <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-[0_0_80px_rgba(122,240,200,0.2)] border border-white/10">
+              <video
+                ref={videoRef}
+                src="/intro.mp4"
+                autoPlay
+                playsInline
+                muted={muted}
+                onEnded={() => setVideoEnded(true)}
+                className="w-full h-full object-cover"
+              />
+
+              {/* Subtle edge vignette on the video */}
+              <div className="absolute inset-0 pointer-events-none" style={{ boxShadow: "inset 0 0 80px rgba(0,0,0,0.6)" }} />
             </div>
-            <div className="mt-8 w-72 h-px bg-white/10 overflow-hidden rounded-full">
-              <motion.div initial={{ width: "0%" }} animate={{ width: "100%" }}
-                transition={{ duration: INTRO_DURATION / 1000, ease: "linear" }}
-                className="h-full bg-gradient-to-r from-[#7af0c8] via-[#d4af37] to-[#8b7fe5]" />
-            </div>
-            <p className="mt-3 font-mono text-[9px] text-[#6b7280] tracking-[0.4em]">
-              {String(Math.min(currentLine + 1, QAIX_SCRIPT.length)).padStart(2, "0")} / {String(QAIX_SCRIPT.length).padStart(2, "0")}
-            </p>
+
+            {/* Label below video */}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
+              className="mt-6 flex items-center gap-2 font-mono text-[10px] text-[#7af0c8] tracking-[0.4em]">
+              <span>&lt;</span><span>GURUPRASAD.AI</span><span>/&gt;</span>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
+      {/* TAP FOR SOUND HINT — appears briefly after play, then auto-hides */}
       <AnimatePresence>
-        {started && showSkip && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="absolute bottom-8 right-8 z-10 flex items-center gap-3">
-            <button onClick={toggleMute} className="w-10 h-10 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:border-white/30 transition-colors" title={muted ? "Unmute" : "Mute"}>
+        {started && showSoundHint && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
+            className="absolute bottom-24 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-4 py-2 bg-black/60 backdrop-blur-md border border-white/15 rounded-full">
+            <motion.span animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1.5 }} className="text-[#7af0c8]">🔊</motion.span>
+            <span className="font-mono text-[10px] text-white/80 tracking-[0.2em]">SOUND ON</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* GLASSMORPHISM CONTROLS — bottom right */}
+      <AnimatePresence>
+        {started && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+            transition={{ delay: 0.5 }}
+            className="absolute bottom-8 right-8 z-30 flex items-center gap-3">
+            <button onClick={toggleMute}
+              className="w-11 h-11 flex items-center justify-center bg-black/40 backdrop-blur-md border border-white/15 rounded-full hover:bg-white/10 hover:border-white/30 transition-all"
+              title={muted ? "Unmute" : "Mute"}>
               {muted ? (
                 <svg className="w-4 h-4 text-[#9ca3af]" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.17v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" /></svg>
               ) : (
@@ -373,12 +415,22 @@ function CinematicIntro({ onEnd }) {
               )}
             </button>
             <button onClick={handleEnd}
-              className="flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/10 rounded-full font-mono text-[10px] text-[#9ca3af] hover:text-white hover:border-white/30 transition-colors tracking-[0.3em]">
+              className="flex items-center gap-2 px-5 py-2.5 bg-black/40 backdrop-blur-md border border-white/15 rounded-full font-mono text-[10px] text-[#d1d5db] hover:text-white hover:border-white/40 transition-all tracking-[0.3em]">
               SKIP <span>→</span>
             </button>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* SCROLL INDICATOR — bottom center */}
+      {started && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} transition={{ delay: 2 }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 pointer-events-none">
+          <span className="font-mono text-[9px] text-[#6b7280] tracking-[0.4em]">PORTFOLIO</span>
+          <motion.div animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}
+            className="w-px h-8 bg-gradient-to-b from-[#7af0c8] to-transparent" />
+        </motion.div>
+      )}
     </motion.div>
   );
 }
@@ -609,7 +661,7 @@ function Navbar() {
         {NAV_LINKS.map((l) => (
           <button key={l} onClick={() => scrollTo(l)} className="font-mono text-[11px] text-[#9ca3af] hover:text-[#7af0c8] transition-colors tracking-[0.2em] uppercase">{l}</button>
         ))}
-        <a href={CONTACT.resume} download className="px-4 py-2 bg-[#7af0c8]/10 border border-[#7af0c8]/30 text-[#7af0c8] font-mono text-[10px] tracking-[0.3em] uppercase rounded-full hover:bg-[#7af0c8]/20 transition-colors">Resume ↓</a>
+        <a href={CONTACT.resume} target="_blank" rel="noreferrer" className="px-4 py-2 bg-[#7af0c8]/10 border border-[#7af0c8]/30 text-[#7af0c8] font-mono text-[10px] tracking-[0.3em] uppercase rounded-full hover:bg-[#7af0c8]/20 transition-colors">Resume ↓</a>
       </div>
       <button className="md:hidden text-white" onClick={() => setOpen((o) => !o)}>
         <div className="space-y-1.5">
@@ -625,7 +677,7 @@ function Navbar() {
             {NAV_LINKS.map((l) => (
               <button key={l} onClick={() => scrollTo(l)} className="font-mono text-[#9ca3af] hover:text-[#7af0c8] transition-colors tracking-[0.2em] text-xs uppercase">{l}</button>
             ))}
-            <a href={CONTACT.resume} download className="font-mono text-[#7af0c8] text-xs border border-[#7af0c8]/50 px-4 py-2 rounded-full tracking-[0.3em]">RESUME ↓</a>
+            <a href={CONTACT.resume} target="_blank" rel="noreferrer" className="font-mono text-[#7af0c8] text-xs border border-[#7af0c8]/50 px-4 py-2 rounded-full tracking-[0.3em]">RESUME ↓</a>
           </motion.div>
         )}
       </AnimatePresence>
@@ -678,7 +730,7 @@ function Hero() {
         </motion.p>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.4 }} className="flex flex-wrap gap-3">
-          <a href={CONTACT.resume} download className="group relative px-7 py-3.5 bg-gradient-to-br from-[#7af0c8] to-[#5dd9b0] text-[#0a0a0c] font-mono font-bold text-xs rounded-full tracking-[0.3em] uppercase hover:shadow-[0_0_40px_rgba(122,240,200,0.5)] transition-all inline-flex items-center gap-2 overflow-hidden">
+          <a href={CONTACT.resume} target="_blank" rel="noreferrer" className="group relative px-7 py-3.5 bg-gradient-to-br from-[#7af0c8] to-[#5dd9b0] text-[#0a0a0c] font-mono font-bold text-xs rounded-full tracking-[0.3em] uppercase hover:shadow-[0_0_40px_rgba(122,240,200,0.5)] transition-all inline-flex items-center gap-2 overflow-hidden">
             <span className="relative z-10">Download Resume</span>
             <span className="relative z-10 group-hover:translate-y-0.5 transition-transform">↓</span>
             <span className="absolute inset-0 bg-gradient-to-r from-[#7af0c8] via-[#a8f8d8] to-[#7af0c8] opacity-0 group-hover:opacity-100 transition-opacity" style={{ backgroundSize: "200% 100%", animation: "shimmer 2s linear infinite" }} />
@@ -1182,7 +1234,7 @@ function Contact() {
               </div>
             ))}
           </div>
-          <a href={CONTACT.resume} download className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-br from-[#7af0c8] to-[#5dd9b0] text-[#0a0a0c] font-mono font-bold text-xs rounded-full tracking-[0.3em] uppercase hover:shadow-[0_0_30px_rgba(122,240,200,0.4)] transition-all">Download Resume ↓</a>
+          <a href={CONTACT.resume} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-br from-[#7af0c8] to-[#5dd9b0] text-[#0a0a0c] font-mono font-bold text-xs rounded-full tracking-[0.3em] uppercase hover:shadow-[0_0_30px_rgba(122,240,200,0.4)] transition-all">Download Resume ↓</a>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           {[{ id: "name", label: "Name", type: "text" }, { id: "email", label: "Email", type: "email" }].map(({ id, label, type }) => (
