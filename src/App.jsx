@@ -662,7 +662,7 @@ function Section({ id, children, className = "" }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   return (
-    <section id={id} ref={ref} className={`relative z-10 py-20 md:py-32 px-5 sm:px-6 md:px-16 lg:px-24 xl:px-32 ${className}`}>
+    <section id={id} ref={ref} className={`relative z-10 py-14 md:py-20 px-5 sm:px-6 md:px-16 lg:px-24 xl:px-32 ${className}`}>
       <motion.div initial={{ opacity: 0, y: 48 }} animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}>{children}</motion.div>
     </section>
@@ -671,7 +671,7 @@ function Section({ id, children, className = "" }) {
 
 function Heading({ label, title, subtitle }) {
   return (
-    <div className="mb-14 md:mb-20 max-w-3xl">
+    <div className="mb-10 md:mb-14 max-w-3xl">
       <div className="flex items-center gap-3 mb-5">
         <div className="h-px w-10 bg-[#7af0c8]" />
         <p className="text-[#7af0c8] font-mono text-[10px] tracking-[0.4em] uppercase">{label}</p>
@@ -1205,7 +1205,7 @@ function Testimonials() {
         ))}
       </div>
 
-      <p className="mt-10 text-center font-mono text-[10px] text-[#6b7280] tracking-[0.2em] uppercase">
+      <p className="mt-8 text-center font-mono text-[10px] text-[#6b7280] tracking-[0.2em] uppercase">
         Want to recommend Guru? Reach out via the contact form below.
       </p>
     </Section>
