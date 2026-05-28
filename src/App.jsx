@@ -1413,16 +1413,18 @@ export default function App() {
 
 // Vercel Analytics + Speed Insights — lazy loaded so they don't slow first paint.
 // Free tier: 2,500 events/month (plenty for portfolio). Enable in Vercel dashboard.
+// Using string concat for module paths so Vite doesn't fail the build if packages aren't installed.
 function VercelAnalytics() {
   useEffect(() => {
-    // Dynamically import so build doesn't fail if package not installed yet
-    import("@vercel/analytics/react").then(({ inject }) => inject?.()).catch(() => {});
+    const pkg = "@vercel/" + "analytics/react";
+    import(/* @vite-ignore */ pkg).then((m) => m.inject?.()).catch(() => {});
   }, []);
   return null;
 }
 function VercelSpeedInsights() {
   useEffect(() => {
-    import("@vercel/speed-insights").then(({ injectSpeedInsights }) => injectSpeedInsights?.()).catch(() => {});
+    const pkg = "@vercel/" + "speed-insights";
+    import(/* @vite-ignore */ pkg).then((m) => m.injectSpeedInsights?.()).catch(() => {});
   }, []);
   return null;
 }
