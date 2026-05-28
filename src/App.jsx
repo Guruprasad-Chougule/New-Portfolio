@@ -633,7 +633,7 @@ function Hero() {
           <button onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })} className="px-7 py-3.5 border border-white/15 text-white font-mono text-xs rounded-full tracking-[0.3em] uppercase hover:border-[#7af0c8]/50 hover:text-[#7af0c8] transition-all">Get In Touch →</button>
           <a href={CONTACT.github} target="_blank" rel="noreferrer" className="px-7 py-3.5 border border-white/15 text-white font-mono text-xs rounded-full tracking-[0.3em] uppercase hover:border-[#7af0c8]/50 hover:text-[#7af0c8] transition-all">View GitHub ↗</a>
         </motion.div>
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.7 }} className="flex items-center gap-5 mt-12">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.7 }} className="flex items-center gap-8 mt-12">
           <a href={CONTACT.linkedin} target="_blank" rel="noreferrer" className="text-[#9ca3af] hover:text-[#7af0c8] transition-colors" title="LinkedIn">
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.063 2.063 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
           </a>
@@ -705,14 +705,14 @@ function Skills() {
       <div className="flex flex-wrap gap-2 mb-10">
         {categories.map((cat) => (
           <button key={cat} onClick={() => setActive(cat)}
-            className={`px-4 py-2 font-mono text-[10px] rounded-full tracking-[0.2em] uppercase transition-all ${active === cat ? "bg-[#7af0c8] text-[#0a0a0c]" : "border border-white/10 text-[#9ca3af] hover:border-[#7af0c8]/40 hover:text-[#7af0c8]"}`}>{cat}</button>
+            className={`px-4 py-2 font-mono text-[10px] rounded-full tracking-[0.2em] uppercase transition-all ${active === cat ? "bg-[#7af0c8] text-[#0a0a0c] shadow-[0_0_20px_rgba(122,240,200,0.3)]" : "border border-white/20 text-[#d1d5db] hover:border-[#7af0c8]/60 hover:text-[#7af0c8] hover:bg-[#7af0c8]/5"}`}>{cat}</button>
         ))}
       </div>
       <AnimatePresence mode="wait">
         <motion.div key={active} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }} transition={{ duration: 0.3 }} className="flex flex-wrap gap-2.5">
           {SKILLS[active].map((skill, i) => (
             <motion.span key={skill} initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.025 }}
-              className="px-4 py-2.5 bg-gradient-to-br from-[#13141a] to-[#0c0d11] border border-white/5 hover:border-[#7af0c8]/30 rounded-full text-sm text-[#d1d5db] font-sans transition-colors">{skill}</motion.span>
+              className="px-4 py-2.5 bg-gradient-to-br from-[#1a1c24] to-[#13141a] border border-white/15 hover:border-[#7af0c8]/50 rounded-full text-sm text-white font-sans transition-all hover:bg-gradient-to-br hover:from-[#7af0c8]/10 hover:to-[#7af0c8]/5">{skill}</motion.span>
           ))}
         </motion.div>
       </AnimatePresence>
