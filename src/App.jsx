@@ -707,17 +707,31 @@ function Hero() {
 }
 
 function Marquee() {
-  const items = ["Selenium WebDriver", "21 CFR Part 11", "Core Java", "GAMP 5", "TestNG", "ALCOA Plus", "REST API", "Postman", "JIRA", "Power Apps", "Python", "SQL", "Agile"];
+  // Premium divider strip — small badge row instead of overwhelming marquee
+  const badges = [
+    { label: "3+ YEARS", color: "#7af0c8" },
+    { label: "400+ SCRIPTS", color: "#8b7fe5" },
+    { label: "21 CFR PART 11", color: "#d4af37" },
+    { label: "GAMP 5", color: "#5ec8ff" },
+    { label: "100% ON-TIME GO-LIVE", color: "#f06b8b" },
+  ];
   return (
-    <div className="relative z-10 border-y border-white/5 py-10 overflow-hidden bg-[#0a0a0c]">
-      <div className="flex gap-12 whitespace-nowrap marquee-track">
-        {[...items, ...items, ...items].map((it, i) => (
-          <span key={i} className="font-display text-2xl md:text-3xl text-[#16171c] select-none">{it} <span className="text-[#7af0c8]/30">✦</span></span>
-        ))}
+    <div className="relative z-10 border-y border-white/5 py-8 bg-[#0a0a0c]">
+      <div className="max-w-7xl mx-auto px-6 md:px-16">
+        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+          {badges.map((b, i) => (
+            <div key={b.label} className="flex items-center gap-3">
+              {i > 0 && <span className="text-[#2d2f38]">·</span>}
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full" style={{ background: b.color, boxShadow: `0 0 8px ${b.color}` }} />
+                <span className="font-mono text-[10px] tracking-[0.3em] uppercase" style={{ color: b.color }}>
+                  {b.label}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-      {/* Soft fade edges so it looks like a clean strip */}
-      <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#0a0a0c] to-transparent pointer-events-none" />
-      <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#0a0a0c] to-transparent pointer-events-none" />
     </div>
   );
 }
