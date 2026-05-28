@@ -21,7 +21,7 @@ const PROVIDERS = [
     name: "Cerebras",
     envKey: "CEREBRAS_API_KEY",
     endpoint: "https://api.cerebras.ai/v1/chat/completions",
-    models: ["llama-3.3-70b", "llama3.1-8b"],
+    models: ["gpt-oss-120b", "zai-glm-4.7"],
     format: "openai",
   },
   {
