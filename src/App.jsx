@@ -57,7 +57,37 @@ function GlobalStyles() {
       @keyframes dotPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.3); } }
       .dot-pulse { animation: dotPulse 1.5s ease-in-out infinite; }
       @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-      .marquee-track { animation: marquee 40s linear infinite; }
+      .marquee-track { animation: marquee 50s linear infinite; }
+
+      /* PREMIUM: Animated gradient on hero name */
+      @keyframes nameShimmer { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+      .hero-name-gradient {
+        background: linear-gradient(110deg, #7af0c8 0%, #d4af37 25%, #8b7fe5 50%, #d4af37 75%, #7af0c8 100%);
+        background-size: 300% 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        animation: nameShimmer 8s ease-in-out infinite;
+      }
+
+      /* PREMIUM: Button shimmer overlay */
+      @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+
+      /* PREMIUM: Subtle animated tech grid */
+      @keyframes gridFloat { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(20px, 20px); } }
+      .tech-grid {
+        background-image:
+          linear-gradient(rgba(122, 240, 200, 0.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(122, 240, 200, 0.05) 1px, transparent 1px);
+        background-size: 80px 80px;
+        animation: gridFloat 30s ease-in-out infinite;
+      }
+
+      /* PREMIUM: Glowing edge for cards on hover */
+      @keyframes borderGlow {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(122, 240, 200, 0); }
+        50% { box-shadow: 0 0 30px 2px rgba(122, 240, 200, 0.15); }
+      }
       ::-webkit-scrollbar { width: 8px; height: 8px; }
       ::-webkit-scrollbar-track { background: var(--bg); }
       ::-webkit-scrollbar-thumb { background: #1f2128; border-radius: 4px; }
@@ -608,46 +638,66 @@ function Hero() {
   const typed = useTypewriter(words);
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 600], [0, 100]);
+
+  const socials = [
+    { href: CONTACT.linkedin, label: "LinkedIn", icon: <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.063 2.063 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg> },
+    { href: CONTACT.github, label: "GitHub", icon: <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" /></svg> },
+    { href: `mailto:${CONTACT.email}`, label: "Email", icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 8l9 6 9-6M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg> },
+    { href: `tel:${CONTACT.phoneRaw}`, label: "Phone", icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h2.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg> },
+  ];
+
   return (
     <section id="hero" className="relative z-10 min-h-screen flex flex-col justify-center px-6 md:px-16 lg:px-24 xl:px-32 pt-24">
       <motion.div style={{ y }}>
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.3 }}
-          className="font-mono text-[10px] text-[#7af0c8] tracking-[0.5em] uppercase mb-8">◇ {CONTACT.status.toUpperCase()}</motion.p>
+        {/* Premium status pill */}
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}
+          className="inline-flex items-center gap-2.5 mb-8 px-4 py-1.5 bg-gradient-to-r from-[#7af0c8]/10 via-[#7af0c8]/5 to-transparent border border-[#7af0c8]/25 rounded-full backdrop-blur-sm">
+          <span className="relative flex w-2 h-2">
+            <span className="absolute inline-flex w-full h-full rounded-full bg-[#7af0c8] opacity-75 dot-pulse" />
+            <span className="relative inline-flex w-2 h-2 rounded-full bg-[#7af0c8]" />
+          </span>
+          <span className="font-mono text-[10px] text-[#7af0c8] tracking-[0.3em] uppercase">{CONTACT.status}</span>
+        </motion.div>
+
         <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="font-display text-5xl sm:text-7xl md:text-8xl text-white leading-[0.9] mb-6">
           Guruprasad<br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-br from-[#7af0c8] via-[#d4af37] to-[#8b7fe5]">Chougule.</span>
+          <span className="hero-name-gradient">Chougule.</span>
         </motion.h1>
+
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="flex items-baseline gap-1 mb-10">
           <span className="font-mono text-base md:text-lg text-[#d1d5db]">{typed}</span>
           <span className="cursor-blink" />
         </motion.div>
+
         <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.2, duration: 0.6 }}
           className="font-sans text-[#9ca3af] text-base md:text-lg max-w-2xl leading-relaxed mb-12">
           Building reliable software through compliance-driven testing, automation, and AI-augmented QA practices.
           <span className="block mt-2 text-[#7af0c8] font-mono text-xs tracking-wider">{CONTACT.tagline}</span>
         </motion.p>
+
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.4 }} className="flex flex-wrap gap-3">
-          <a href={CONTACT.resume} download className="px-7 py-3.5 bg-gradient-to-br from-[#7af0c8] to-[#5dd9b0] text-[#0a0a0c] font-mono font-bold text-xs rounded-full tracking-[0.3em] uppercase hover:shadow-[0_0_30px_rgba(122,240,200,0.4)] transition-all inline-flex items-center gap-2">Download Resume <span>↓</span></a>
-          <button onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })} className="px-7 py-3.5 border border-white/15 text-white font-mono text-xs rounded-full tracking-[0.3em] uppercase hover:border-[#7af0c8]/50 hover:text-[#7af0c8] transition-all">Get In Touch →</button>
-          <a href={CONTACT.github} target="_blank" rel="noreferrer" className="px-7 py-3.5 border border-white/15 text-white font-mono text-xs rounded-full tracking-[0.3em] uppercase hover:border-[#7af0c8]/50 hover:text-[#7af0c8] transition-all">View GitHub ↗</a>
+          <a href={CONTACT.resume} download className="group relative px-7 py-3.5 bg-gradient-to-br from-[#7af0c8] to-[#5dd9b0] text-[#0a0a0c] font-mono font-bold text-xs rounded-full tracking-[0.3em] uppercase hover:shadow-[0_0_40px_rgba(122,240,200,0.5)] transition-all inline-flex items-center gap-2 overflow-hidden">
+            <span className="relative z-10">Download Resume</span>
+            <span className="relative z-10 group-hover:translate-y-0.5 transition-transform">↓</span>
+            <span className="absolute inset-0 bg-gradient-to-r from-[#7af0c8] via-[#a8f8d8] to-[#7af0c8] opacity-0 group-hover:opacity-100 transition-opacity" style={{ backgroundSize: "200% 100%", animation: "shimmer 2s linear infinite" }} />
+          </a>
+          <button onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })} className="px-7 py-3.5 bg-white/5 border border-white/15 text-white font-mono text-xs rounded-full tracking-[0.3em] uppercase hover:bg-[#7af0c8]/5 hover:border-[#7af0c8]/50 hover:text-[#7af0c8] transition-all backdrop-blur-sm">Get In Touch →</button>
+          <a href={CONTACT.github} target="_blank" rel="noreferrer" className="px-7 py-3.5 bg-white/5 border border-white/15 text-white font-mono text-xs rounded-full tracking-[0.3em] uppercase hover:bg-[#7af0c8]/5 hover:border-[#7af0c8]/50 hover:text-[#7af0c8] transition-all backdrop-blur-sm">View GitHub ↗</a>
         </motion.div>
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.7 }} className="flex items-center gap-8 mt-12">
-          <a href={CONTACT.linkedin} target="_blank" rel="noreferrer" className="text-[#9ca3af] hover:text-[#7af0c8] transition-colors" title="LinkedIn">
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.063 2.063 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
-          </a>
-          <a href={CONTACT.github} target="_blank" rel="noreferrer" className="text-[#9ca3af] hover:text-[#7af0c8] transition-colors" title="GitHub">
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" /></svg>
-          </a>
-          <a href={`mailto:${CONTACT.email}`} className="text-[#9ca3af] hover:text-[#7af0c8] transition-colors" title="Email">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.6" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 8l9 6 9-6M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-          </a>
-          <a href={`tel:${CONTACT.phoneRaw}`} className="text-[#9ca3af] hover:text-[#7af0c8] transition-colors" title="Phone">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.6" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h2.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
-          </a>
+
+        {/* Framed social icons — no more invisible blobs */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.7 }} className="flex items-center gap-3 mt-12">
+          {socials.map((s, i) => (
+            <a key={s.label} href={s.href} target={s.href.startsWith("http") ? "_blank" : undefined} rel="noreferrer" title={s.label}
+              className="group relative w-11 h-11 flex items-center justify-center bg-[#13141a] border border-white/10 hover:border-[#7af0c8]/60 rounded-xl text-[#9ca3af] hover:text-[#7af0c8] transition-all hover:bg-[#7af0c8]/5 hover:scale-110 hover:shadow-[0_0_20px_rgba(122,240,200,0.25)]">
+              {s.icon}
+            </a>
+          ))}
         </motion.div>
       </motion.div>
+
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }} className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
         <span className="font-mono text-[9px] text-[#6b7280] tracking-[0.4em]">SCROLL</span>
         <motion.div animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 1.5 }} className="w-px h-10 bg-gradient-to-b from-[#7af0c8] to-transparent" />
@@ -659,10 +709,10 @@ function Hero() {
 function Marquee() {
   const items = ["Selenium WebDriver", "21 CFR Part 11", "Core Java", "GAMP 5", "TestNG", "ALCOA Plus", "REST API", "Postman", "JIRA", "Power Apps", "Python", "SQL", "Agile"];
   return (
-    <div className="relative z-10 border-y border-white/5 py-6 overflow-hidden bg-[#0c0d11]/40">
+    <div className="relative z-10 border-y border-white/5 py-8 overflow-hidden bg-gradient-to-r from-transparent via-[#0d0e12]/60 to-transparent">
       <div className="flex gap-12 whitespace-nowrap marquee-track">
         {[...items, ...items, ...items].map((it, i) => (
-          <span key={i} className="font-display text-2xl md:text-3xl text-[#1f2128]">{it} <span className="text-[#7af0c8]">✦</span></span>
+          <span key={i} className="font-display text-2xl md:text-3xl text-[#2d2f38] hover:text-[#7af0c8]/40 transition-colors">{it} <span className="text-[#7af0c8]/60">✦</span></span>
         ))}
       </div>
     </div>
@@ -993,6 +1043,8 @@ export default function App() {
       <GlobalStyles />
       <CursorFollower />
       <AnimatePresence>{!introDone && <CinematicIntro onEnd={() => setIntroDone(true)} />}</AnimatePresence>
+      {/* Premium tech grid backdrop */}
+      <div className="tech-grid fixed inset-0 z-0 pointer-events-none opacity-50" />
       <AmbientMesh />
       <GrainOverlay />
       <Navbar />
