@@ -34,29 +34,65 @@ export const STATS = [
 
 export const SKILLS = {
   "Automation & Programming": [
-    "Selenium WebDriver", "Core Java", "Python", "TestNG", "Maven",
-    "Pytest", "SQL", "REST API Testing", "Postman",
+    { name: "Selenium WebDriver", level: 5, years: "3 yrs", desc: "Built TestNG + Maven automation suites for regression cycles. Reduced manual testing effort by ~60% over 4 major release cycles." },
+    { name: "Core Java", level: 5, years: "3 yrs", desc: "Primary language for Selenium automation frameworks. OOP design patterns, exception handling, and data-driven test architectures." },
+    { name: "Python", level: 4, years: "2 yrs", desc: "Used for API automation and data validation scripts. Currently upskilling toward Pytest framework in my AI-augmented QA roadmap." },
+    { name: "TestNG", level: 5, years: "3 yrs", desc: "Annotation-driven test orchestration: parallel execution, data providers, listeners, and HTML reporting for regression suites." },
+    { name: "Maven", level: 4, years: "3 yrs", desc: "Build automation and dependency management for Java test projects. POM configuration and surefire reporting integration." },
+    { name: "Pytest", level: 3, years: "Learning", desc: "Currently learning as part of Phase 1 of my AI-Augmented QA roadmap. Fixtures, parametrization, and modern Python testing patterns." },
+    { name: "SQL", level: 4, years: "3 yrs", desc: "Database verification for ERP and Power Apps workflows. Complex joins, stored procedure validation, and data migration QA." },
+    { name: "REST API Testing", level: 5, years: "3 yrs", desc: "Validated backend service integrations, JSON payloads, and authentication flows for shipment and CAPA workflows." },
+    { name: "Postman", level: 5, years: "3 yrs", desc: "API request building, environment management, collection runs, and Newman CI integration for automated API regression." },
   ],
   "Testing Types": [
-    "Manual Testing", "Automation Testing", "Functional", "Regression",
-    "Smoke", "Sanity", "SIT", "UAT", "Test Case Design", "Defect Management",
+    { name: "Manual Testing", level: 5, years: "3 yrs", desc: "Exploratory and scripted testing across Web, ERP, and Power Apps. Authored 400+ test scripts with 100% traceability in JIRA." },
+    { name: "Automation Testing", level: 5, years: "3 yrs", desc: "Selenium + TestNG automation framework design. Page Object Model, data-driven tests, and CI/CD integration." },
+    { name: "Functional", level: 5, years: "3 yrs", desc: "End-to-end functional verification against User Requirement Specifications across 4 major releases of the Global Ship Hold Center." },
+    { name: "Regression", level: 5, years: "3 yrs", desc: "Sanity and regression cycles after every production deployment, preventing post-release defects and sustaining a clean release history." },
+    { name: "Smoke", level: 5, years: "3 yrs", desc: "Quick health-check suite to verify critical paths after each build deployment before deeper testing begins." },
+    { name: "Sanity", level: 5, years: "3 yrs", desc: "Focused validation on specific functionality after a fix to confirm the change works and didn't break anything else." },
+    { name: "SIT", level: 5, years: "3 yrs", desc: "System Integration Testing across Power Apps, ERP layers, and external services. Validated data flow and contract compliance." },
+    { name: "UAT", level: 4, years: "3 yrs", desc: "Coordinated User Acceptance Testing with global business stakeholders in Americas, APAC, and EMEA." },
+    { name: "Test Case Design", level: 5, years: "3 yrs", desc: "BTM-based scenarios with full Requirements Traceability Matrix coverage. Risk-based prioritization for GxP-governed projects." },
+    { name: "Defect Management", level: 5, years: "3 yrs", desc: "Full defect lifecycle in JIRA — logging, prioritization, RCA collaboration with devs, and post-fix verification." },
   ],
   "Platforms & Applications": [
-    "Microsoft Power Apps", "PeopleSoft HCM", "Hexagon EAM",
-    "Microsoft Power BI", "Web Applications", "ERP Systems", "Agile PLM",
+    { name: "Microsoft Power Apps", level: 5, years: "3 yrs", desc: "Primary platform for Olympus account — Global Ship Hold Center, FCAT, NCR/CAPA workflows all built and validated on Power Apps." },
+    { name: "PeopleSoft HCM", level: 3, years: "1 yr", desc: "Human Capital Management module testing — payroll, benefits, and employee data workflows." },
+    { name: "Hexagon EAM", level: 4, years: "1 yr", desc: "Operational Qualification testing across multiple Enterprise Asset Management modules with 100% data integrity validation." },
+    { name: "Microsoft Power BI", level: 3, years: "2 yrs", desc: "Dashboard validation, data source verification, and visualization accuracy for compliance reporting." },
+    { name: "Web Applications", level: 5, years: "3 yrs", desc: "Cross-browser testing on Chrome, Firefox, Edge. Responsive design verification and accessibility checks." },
+    { name: "ERP Systems", level: 4, years: "3 yrs", desc: "Enterprise Resource Planning workflow validation — order-to-cash, shipment holds, change control, and master data." },
+    { name: "Agile PLM", level: 3, years: "2 yrs", desc: "Product Lifecycle Management — change requests, BOM validation, and document control workflows for regulated industries." },
   ],
   "Compliance & Validation": [
-    "21 CFR Part 11", "GAMP 5", "ALCOA Plus", "EU Annex 11",
-    "Computer System Validation", "IQ / OQ / PQ", "CAPA", "NCR",
-    "Audit Readiness", "Validation Summary Report",
+    { name: "21 CFR Part 11", level: 5, years: "3 yrs", desc: "FDA regulation for electronic records and signatures. Closed 15+ compliance gaps across pharmaceutical Power Apps platforms." },
+    { name: "GAMP 5", level: 5, years: "3 yrs", desc: "Good Automated Manufacturing Practice — risk-based validation approach used across all GxP-governed Olympus projects." },
+    { name: "ALCOA Plus", level: 5, years: "3 yrs", desc: "Data Integrity principles: Attributable, Legible, Contemporaneous, Original, Accurate — plus Complete, Consistent, Enduring, Available." },
+    { name: "EU Annex 11", level: 4, years: "2 yrs", desc: "European regulation for computerised systems in GxP environments. Risk management and supplier qualification expertise." },
+    { name: "Computer System Validation", level: 5, years: "3 yrs", desc: "Owned end-to-end CSV deliverables for 5 GxP-governed projects across four major releases with zero compliance escalations." },
+    { name: "IQ / OQ / PQ", level: 5, years: "3 yrs", desc: "Installation, Operational, and Performance Qualification — full qualification lifecycle for FDA-regulated enterprise systems." },
+    { name: "CAPA", level: 5, years: "3 yrs", desc: "Corrective and Preventive Action workflow validation. Validated CAPA 2.0 enhancements with zero impact on legacy process flows." },
+    { name: "NCR", level: 5, years: "3 yrs", desc: "Non-Conformance Report remediation. Closed 15+ compliance gaps aligned to GxP and ALCOA Plus principles." },
+    { name: "Audit Readiness", level: 5, years: "3 yrs", desc: "Ensured 100% audit readiness for JIRA workflows, qualification artifacts, and project deliverables across multiple FDA-style reviews." },
+    { name: "Validation Summary Report", level: 5, years: "3 yrs", desc: "Drafted Test Summary Reports and Validation Summary Reports for every SDLC phase across 4 major releases." },
   ],
   "Tools": [
-    "JIRA", "Microsoft Office Suite", "Microsoft Copilot",
-    "Git", "GitHub", "E-Signature Platforms",
+    { name: "JIRA", level: 5, years: "3 yrs", desc: "Primary test management tool — test execution, defect tracking, traceability matrix, and Agile sprint workflows." },
+    { name: "Microsoft Office Suite", level: 5, years: "5+ yrs", desc: "Excel for test data, Word for protocols and reports, PowerPoint for status decks to global stakeholders." },
+    { name: "Microsoft Copilot", level: 4, years: "1 yr", desc: "AI-augmented test case generation, documentation drafting, and prompt engineering for productivity gains." },
+    { name: "Git", level: 4, years: "3 yrs", desc: "Version control for test scripts and frameworks. Branching strategies, merge conflict resolution, code reviews." },
+    { name: "GitHub", level: 4, years: "3 yrs", desc: "Repository management for automation projects. Issues, pull requests, and Actions for CI/CD." },
+    { name: "E-Signature Platforms", level: 4, years: "2 yrs", desc: "Validated electronic signature integration under 21 CFR Part 11. Resolved P1 e-sig defects through structured RCA." },
   ],
   "Methodologies": [
-    "Agile Scrum", "Waterfall", "V-Model", "STLC", "SDLC",
-    "Risk-Based Testing", "BTM-based Test Design",
+    { name: "Agile Scrum", level: 5, years: "3 yrs", desc: "Daily standups, sprint planning, retros. Partnered with global stakeholders in Americas, APAC, and EMEA under Agile delivery cadence." },
+    { name: "Waterfall", level: 4, years: "2 yrs", desc: "Sequential SDLC for regulated environments where traceability and gated phases matter more than iteration speed." },
+    { name: "V-Model", level: 4, years: "2 yrs", desc: "Validation lifecycle that maps each development phase to a testing phase — ideal for GxP-regulated medical device software." },
+    { name: "STLC", level: 5, years: "3 yrs", desc: "Software Testing Life Cycle — requirements analysis, test planning, design, execution, closure. Full ownership across releases." },
+    { name: "SDLC", level: 5, years: "3 yrs", desc: "Drafted Test Summary Reports for every SDLC phase. Embedded QA participation from requirements through production." },
+    { name: "Risk-Based Testing", level: 5, years: "3 yrs", desc: "Prioritized test coverage based on impact and likelihood. Risk-based scenarios across all 4 major releases." },
+    { name: "BTM-based Test Design", level: 5, years: "3 yrs", desc: "Business Test Matrix approach — derives test scenarios from business workflows, ensuring full functional coverage." },
   ],
 };
 
@@ -172,7 +208,7 @@ export const BLOG_POSTS = [
 
 export function buildSystemPrompt() {
   const skillLines = Object.entries(SKILLS)
-    .map(([cat, items]) => `- ${cat}: ${items.join(", ")}`)
+    .map(([cat, items]) => `- ${cat}: ${items.map(s => s.name).join(", ")}`)
     .join("\n");
 
   const expLines = EXPERIENCE.map((e) =>
