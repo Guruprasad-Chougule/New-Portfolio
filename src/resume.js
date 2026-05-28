@@ -21,7 +21,7 @@ export const CONTACT = {
   // 2. Share → "Anyone with the link" → Viewer
   // 3. Copy the file ID from the share URL (the long string between /d/ and /view)
   // 4. Paste it below — no GitHub commit needed for future updates, just replace the Drive file!
-  resume: "https://drive.google.com/uc?export=download&id=PASTE_YOUR_GOOGLE_DRIVE_FILE_ID_HERE",
+  resume: "https://drive.google.com/file/d/1ygAcwC7dld6zppzeHq3j5-gHDRbOY7eI/view",
   location: "Bangalore, India",
   status: "Open to opportunities",
 };
