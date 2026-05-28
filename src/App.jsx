@@ -647,7 +647,7 @@ function Hero() {
   ];
 
   return (
-    <section id="hero" className="relative z-10 min-h-screen flex flex-col justify-center px-6 md:px-16 lg:px-24 xl:px-32 pt-24">
+    <section id="hero" className="relative z-10 min-h-screen flex flex-col justify-center px-6 md:px-16 lg:px-24 xl:px-32 pt-32 pb-32">
       <motion.div style={{ y }}>
         {/* Premium status pill */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}
@@ -709,12 +709,15 @@ function Hero() {
 function Marquee() {
   const items = ["Selenium WebDriver", "21 CFR Part 11", "Core Java", "GAMP 5", "TestNG", "ALCOA Plus", "REST API", "Postman", "JIRA", "Power Apps", "Python", "SQL", "Agile"];
   return (
-    <div className="relative z-10 border-y border-white/5 py-8 overflow-hidden bg-gradient-to-r from-transparent via-[#0d0e12]/60 to-transparent">
+    <div className="relative z-10 border-y border-white/5 py-10 overflow-hidden bg-[#0a0a0c]">
       <div className="flex gap-12 whitespace-nowrap marquee-track">
         {[...items, ...items, ...items].map((it, i) => (
-          <span key={i} className="font-display text-2xl md:text-3xl text-[#2d2f38] hover:text-[#7af0c8]/40 transition-colors">{it} <span className="text-[#7af0c8]/60">✦</span></span>
+          <span key={i} className="font-display text-2xl md:text-3xl text-[#16171c] select-none">{it} <span className="text-[#7af0c8]/30">✦</span></span>
         ))}
       </div>
+      {/* Soft fade edges so it looks like a clean strip */}
+      <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#0a0a0c] to-transparent pointer-events-none" />
+      <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#0a0a0c] to-transparent pointer-events-none" />
     </div>
   );
 }
@@ -749,20 +752,75 @@ function About() {
 function Skills() {
   const categories = Object.keys(SKILLS);
   const [active, setActive] = useState(categories[0]);
+
+  // Each category gets its own accent color for visual distinction
+  const CATEGORY_COLORS = {
+    "Automation & Programming": { color: "#7af0c8", icon: "⚡", label: "MINT" },
+    "Testing Types": { color: "#8b7fe5", icon: "🧪", label: "VIOLET" },
+    "Platforms & Applications": { color: "#5ec8ff", icon: "🖥️", label: "BLUE" },
+    "Compliance & Validation": { color: "#d4af37", icon: "🛡️", label: "GOLD" },
+    "Tools": { color: "#f06b8b", icon: "🛠️", label: "ROSE" },
+    "Methodologies": { color: "#ff9d5c", icon: "📐", label: "AMBER" },
+  };
+
+  const activeColor = CATEGORY_COLORS[active]?.color || "#7af0c8";
+  const activeIcon = CATEGORY_COLORS[active]?.icon || "✦";
+
   return (
     <Section id="skills">
       <Heading label="02 — Skills" title="Tools of the trade." />
-      <div className="flex flex-wrap gap-2 mb-10">
-        {categories.map((cat) => (
-          <button key={cat} onClick={() => setActive(cat)}
-            className={`px-4 py-2 font-mono text-[10px] rounded-full tracking-[0.2em] uppercase transition-all ${active === cat ? "bg-[#7af0c8] text-[#0a0a0c] shadow-[0_0_20px_rgba(122,240,200,0.3)]" : "border border-white/20 text-[#d1d5db] hover:border-[#7af0c8]/60 hover:text-[#7af0c8] hover:bg-[#7af0c8]/5"}`}>{cat}</button>
-        ))}
+
+      {/* Category tabs — each gets its own color */}
+      <div className="flex flex-wrap gap-2 mb-12">
+        {categories.map((cat) => {
+          const c = CATEGORY_COLORS[cat];
+          const isActive = active === cat;
+          return (
+            <button key={cat} onClick={() => setActive(cat)}
+              className="group relative px-4 py-2.5 font-mono text-[10px] rounded-full tracking-[0.2em] uppercase transition-all border flex items-center gap-2"
+              style={{
+                borderColor: isActive ? c.color : "rgba(255,255,255,0.15)",
+                background: isActive ? `${c.color}15` : "transparent",
+                color: isActive ? c.color : "#d1d5db",
+                boxShadow: isActive ? `0 0 25px ${c.color}30` : "none",
+              }}>
+              <span className="text-sm">{c.icon}</span>
+              <span>{cat}</span>
+              <span className="px-1.5 py-0.5 rounded-full text-[9px]" style={{
+                background: isActive ? `${c.color}25` : "rgba(255,255,255,0.05)",
+                color: isActive ? c.color : "#6b7280",
+              }}>{SKILLS[cat].length}</span>
+            </button>
+          );
+        })}
       </div>
+
+      {/* Active category indicator bar */}
+      <div className="flex items-center gap-3 mb-6">
+        <span className="text-2xl">{activeIcon}</span>
+        <div className="h-px flex-1" style={{ background: `linear-gradient(to right, ${activeColor}40, transparent)` }} />
+        <span className="font-mono text-[10px] tracking-[0.3em] uppercase" style={{ color: activeColor }}>
+          {SKILLS[active].length} skills
+        </span>
+      </div>
+
+      {/* Skill pills — color matched to active category */}
       <AnimatePresence mode="wait">
-        <motion.div key={active} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }} transition={{ duration: 0.3 }} className="flex flex-wrap gap-2.5">
+        <motion.div key={active} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }} transition={{ duration: 0.3 }} className="flex flex-wrap gap-3">
           {SKILLS[active].map((skill, i) => (
-            <motion.span key={skill} initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.025 }}
-              className="px-4 py-2.5 bg-gradient-to-br from-[#1a1c24] to-[#13141a] border border-white/15 hover:border-[#7af0c8]/50 rounded-full text-sm text-white font-sans transition-all hover:bg-gradient-to-br hover:from-[#7af0c8]/10 hover:to-[#7af0c8]/5">{skill}</motion.span>
+            <motion.span key={skill}
+              initial={{ opacity: 0, scale: 0.85 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: i * 0.04 }}
+              whileHover={{ y: -3, scale: 1.05 }}
+              className="group relative px-5 py-3 bg-[#13141a] border rounded-xl text-sm text-white font-sans cursor-default transition-colors"
+              style={{
+                borderColor: `${activeColor}30`,
+              }}>
+              {/* Decorative left dot */}
+              <span className="inline-block w-1.5 h-1.5 rounded-full mr-2.5 transition-all" style={{ background: activeColor, boxShadow: `0 0 8px ${activeColor}` }} />
+              {skill}
+            </motion.span>
           ))}
         </motion.div>
       </AnimatePresence>
