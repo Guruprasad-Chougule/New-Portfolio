@@ -884,7 +884,7 @@ function Navbar() {
 }
 
 function Hero() {
-  const words = useMemo(() => ["QA Engineer", "Test Automation", "CSV Validator", "GxP Specialist"], []);
+  const words = useMemo(() => ["QA Engineer", "Test Automation", "API Testing", "AI-Augmented QA", "CSV Validator"], []);
   const typed = useTypewriter(words);
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 600], [0, 100]);
@@ -923,7 +923,7 @@ function Hero() {
 
         <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.2, duration: 0.6 }}
           className="font-sans text-[#9ca3af] text-base md:text-lg max-w-2xl leading-relaxed mb-12">
-          Building reliable software through compliance-driven testing, automation, and AI-augmented QA practices.
+          Building reliable software through smart automation, rigorous testing, and AI-augmented QA practices — across any domain that values quality.
           <span className="block mt-2 text-[#7af0c8] font-mono text-xs tracking-wider">{CONTACT.tagline}</span>
         </motion.p>
 
@@ -986,10 +986,11 @@ function About() {
       <div className="grid md:grid-cols-5 gap-12 items-start">
         <div className="md:col-span-3 space-y-5 text-[#9ca3af] leading-relaxed font-sans">
           <p className="text-lg md:text-xl text-white/85 font-display leading-snug">
-            I'm a QA & Test Automation Engineer with <span className="text-[#7af0c8]">3 years</span> of hands-on experience delivering software testing across Web applications, ERP platforms, and Microsoft Power Apps.
+            I'm a QA & Test Automation Engineer with <span className="text-[#7af0c8]">3 years</span> of hands-on experience building reliable software across Web, ERP, and Microsoft Power Apps platforms — anywhere quality matters.
           </p>
-          <p>Currently a <span className="text-white">Product Test Specialist at Cognizant Technology Solutions</span>, working on the <span className="text-white">Olympus Life Sciences</span> account. As Primary QA Owner on the Global Ship Hold Center program, I've authored 400+ test scripts and achieved 100% on-time Go-Live across 4 major releases.</p>
-          <p>My specialty is compliance-driven testing under <span className="text-[#7af0c8] font-mono text-sm">21 CFR Part 11</span>, <span className="text-[#7af0c8] font-mono text-sm">GAMP 5</span>, and <span className="text-[#7af0c8] font-mono text-sm">ALCOA Plus</span> — directly applicable to Pharma, Healthcare, Finance, and Insurance.</p>
+          <p>Currently a <span className="text-white">Product Test Specialist at Cognizant Technology Solutions</span>. As Primary QA Owner on the Global Ship Hold Center program, I've authored <span className="text-white">400+ test scripts</span>, achieved <span className="text-white">100% on-time Go-Live</span> across 4 major releases, and reduced manual testing effort by <span className="text-white">60%</span> through Selenium automation.</p>
+          <p>My toolkit spans <span className="text-[#7af0c8] font-mono text-sm">Selenium</span>, <span className="text-[#7af0c8] font-mono text-sm">Java</span>, <span className="text-[#7af0c8] font-mono text-sm">Python</span>, <span className="text-[#7af0c8] font-mono text-sm">REST APIs</span>, <span className="text-[#7af0c8] font-mono text-sm">SQL</span>, and modern <span className="text-[#7af0c8] font-mono text-sm">AI-augmented QA practices</span>. As a bonus, I bring deep expertise in regulated-industry validation (<span className="text-[#d4af37] font-mono text-sm">21 CFR Part 11</span>, <span className="text-[#d4af37] font-mono text-sm">GAMP 5</span>, <span className="text-[#d4af37] font-mono text-sm">CSV/CSA</span>) — a value-add for Pharma and Healthcare, but my QA fundamentals apply everywhere.</p>
+          <p>Open to opportunities across <span className="text-white">Product</span>, <span className="text-white">SaaS</span>, <span className="text-white">FinTech</span>, <span className="text-white">Healthcare</span>, <span className="text-white">Pharma</span>, <span className="text-white">Insurance</span>, and any team that takes quality seriously.</p>
         </div>
         <div className="md:col-span-2 grid grid-cols-2 gap-3">
           {STATS.map(({ val, label }, i) => (
@@ -1019,6 +1020,7 @@ function Skills() {
     "Compliance & Validation": { color: "#d4af37", icon: "🛡️" },
     "Tools": { color: "#f06b8b", icon: "🛠️" },
     "Methodologies": { color: "#ff9d5c", icon: "📐" },
+    "Cloud & AI": { color: "#a78bfa", icon: "🤖" },
   };
 
   const activeColor = CATEGORY_COLORS[activeCat]?.color || "#7af0c8";
@@ -1484,7 +1486,7 @@ function Contact() {
   ];
   return (
     <Section id="contact">
-      <Heading label="08 — Contact" title="Let's talk." subtitle="Open to QA Engineer, Senior QA, QA Lead, Test Automation, and Senior Validation Engineer roles across regulated and product-driven organizations." />
+      <Heading label="08 — Contact" title="Let's talk." subtitle="Open to QA Engineer, Senior QA, QA Lead, Test Automation, and Validation Engineer roles across all domains — Product, SaaS, FinTech, Healthcare, Pharma, Insurance, or anywhere quality matters." />
       <div className="grid md:grid-cols-2 gap-12 md:gap-16">
         <div>
           <div className="space-y-3 mb-8">
