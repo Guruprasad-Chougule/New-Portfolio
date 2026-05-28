@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import {
   CONTACT, STATS, SKILLS, EXPERIENCE, PROJECTS,
-  CERTIFICATIONS, LEARNING, AWARDS, EDUCATION, BLOG_POSTS,
+  CERTIFICATIONS, LEARNING, AWARDS, EDUCATION, BLOG_POSTS, TESTIMONIALS,
 } from "./resume.js";
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -10,7 +10,7 @@ import {
 //  All resume data lives in src/resume.js — update there, redeploy, done.
 // ════════════════════════════════════════════════════════════════════════════
 
-const NAV_LINKS = ["About", "Skills", "Experience", "Projects", "Certifications", "Blog", "Contact"];
+const NAV_LINKS = ["About", "Skills", "Experience", "Projects", "Certifications", "Testimonials", "Blog", "Contact"];
 
 const QAIX_SCRIPT = [
   { t: 0,     text: "Initializing QAIX.", voice: "Initializing." },
@@ -1169,6 +1169,49 @@ function Certifications() {
   );
 }
 
+function Testimonials() {
+  return (
+    <Section id="testimonials">
+      <Heading label="06 — Testimonials" title="What people say."
+        subtitle="Real recommendations from colleagues and managers I've worked with on regulated, high-stakes projects." />
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {TESTIMONIALS.map((t, i) => (
+          <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }} transition={{ delay: i * 0.1 }} whileHover={{ y: -4 }}
+            className="group p-6 md:p-7 bg-gradient-to-br from-[#13141a] to-[#0c0d11] border border-white/5 hover:border-white/15 rounded-3xl transition-all flex flex-col">
+            {/* Quote icon */}
+            <svg className="w-8 h-8 mb-4 opacity-30" fill={t.color} viewBox="0 0 24 24">
+              <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z" />
+            </svg>
+
+            <p className="text-[#d1d5db] text-sm md:text-base leading-relaxed font-sans flex-1 mb-6">"{t.quote}"</p>
+
+            <div className="flex items-center gap-3 pt-4 border-t border-white/5">
+              {/* Avatar with initials */}
+              <div className="w-11 h-11 rounded-full flex items-center justify-center font-display font-bold text-sm shrink-0 border" style={{
+                background: `${t.color}15`,
+                borderColor: `${t.color}40`,
+                color: t.color,
+              }}>
+                {t.initials}
+              </div>
+              <div className="min-w-0">
+                <p className="font-display text-sm text-white truncate">{t.name}</p>
+                <p className="font-mono text-[10px] text-[#9ca3af] tracking-wider mt-0.5 truncate">{t.role}</p>
+                <p className="font-mono text-[9px] text-[#6b7280] tracking-wider mt-0.5 truncate" style={{ color: t.color }}>{t.company}</p>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      <p className="mt-10 text-center font-mono text-[10px] text-[#6b7280] tracking-[0.2em] uppercase">
+        Want to recommend Guru? Reach out via the contact form below.
+      </p>
+    </Section>
+  );
+}
+
 function BlogCard({ post, index }) {
   const [expanded, setExpanded] = useState(false);
   return (
@@ -1223,7 +1266,7 @@ function BlogCard({ post, index }) {
 function Blog() {
   return (
     <Section id="blog">
-      <Heading label="06 — Blog" title="Problems I fixed." subtitle="Real war stories from the trenches of QA engineering — broken down into problem, root cause, and the exact fix." />
+      <Heading label="07 — Blog" title="Problems I fixed." subtitle="Real war stories from the trenches of QA engineering — broken down into problem, root cause, and the exact fix." />
       <div className="grid md:grid-cols-2 gap-5">
         {BLOG_POSTS.map((post, i) => <BlogCard key={post.id} post={post} index={i} />)}
       </div>
@@ -1234,14 +1277,41 @@ function Blog() {
 function Contact() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [status, setStatus] = useState("idle");
+
+  // EmailJS credentials — get free at https://www.emailjs.com (200 emails/month free)
+  // After signup: replace these 3 placeholders. Setup guide in /SETUP_GUIDE.md
+  const EMAILJS_SERVICE_ID = "YOUR_SERVICE_ID";
+  const EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID";
+  const EMAILJS_PUBLIC_KEY = "YOUR_PUBLIC_KEY";
+
   const handleSubmit = async (e) => {
-    e.preventDefault(); setStatus("sending");
+    e.preventDefault();
+    setStatus("sending");
+
+    // If EmailJS isn't configured yet, fall back to mailto: link
+    const notConfigured = EMAILJS_SERVICE_ID === "YOUR_SERVICE_ID";
+    if (notConfigured) {
+      // Open user's email client with pre-filled message
+      const subject = encodeURIComponent(`Portfolio inquiry from ${form.name}`);
+      const body = encodeURIComponent(`Hi Guru,\n\n${form.message}\n\n— ${form.name}\n${form.email}`);
+      window.location.href = `mailto:${CONTACT.email}?subject=${subject}&body=${body}`;
+      setStatus("sent");
+      setTimeout(() => { setForm({ name: "", email: "", message: "" }); setStatus("idle"); }, 2000);
+      return;
+    }
+
     try {
       const { default: emailjs } = await import("@emailjs/browser");
-      await emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID",
-        { from_name: form.name, from_email: form.email, message: form.message }, "YOUR_PUBLIC_KEY");
-      setStatus("sent"); setForm({ name: "", email: "", message: "" });
-    } catch { setStatus("error"); }
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID,
+        { from_name: form.name, from_email: form.email, message: form.message, to_email: CONTACT.email },
+        EMAILJS_PUBLIC_KEY);
+      setStatus("sent");
+      setForm({ name: "", email: "", message: "" });
+      setTimeout(() => setStatus("idle"), 4000);
+    } catch (err) {
+      console.error("EmailJS error:", err);
+      setStatus("error");
+    }
   };
   const rows = [
     { label: "Email", val: CONTACT.email, href: `mailto:${CONTACT.email}` },
@@ -1254,7 +1324,7 @@ function Contact() {
   ];
   return (
     <Section id="contact">
-      <Heading label="07 — Contact" title="Let's talk." subtitle="Open to QA Engineer, Senior QA, QA Lead, Test Automation, and Senior Validation Engineer roles across regulated and product-driven organizations." />
+      <Heading label="08 — Contact" title="Let's talk." subtitle="Open to QA Engineer, Senior QA, QA Lead, Test Automation, and Senior Validation Engineer roles across regulated and product-driven organizations." />
       <div className="grid md:grid-cols-2 gap-12 md:gap-16">
         <div>
           <div className="space-y-3 mb-8">
@@ -1324,6 +1394,7 @@ export default function App() {
       <Experience />
       <Projects />
       <Certifications />
+      <Testimonials />
       <Blog />
       <Contact />
       <Footer />
@@ -1333,6 +1404,25 @@ export default function App() {
           <QaixChat open={chatOpen} onClose={() => setChatOpen(false)} />
         </>
       )}
+      {/* Vercel Analytics — tracks visitors, page views, top referrers (free, GDPR-friendly) */}
+      <VercelAnalytics />
+      <VercelSpeedInsights />
     </div>
   );
+}
+
+// Vercel Analytics + Speed Insights — lazy loaded so they don't slow first paint.
+// Free tier: 2,500 events/month (plenty for portfolio). Enable in Vercel dashboard.
+function VercelAnalytics() {
+  useEffect(() => {
+    // Dynamically import so build doesn't fail if package not installed yet
+    import("@vercel/analytics/react").then(({ inject }) => inject?.()).catch(() => {});
+  }, []);
+  return null;
+}
+function VercelSpeedInsights() {
+  useEffect(() => {
+    import("@vercel/speed-insights").then(({ injectSpeedInsights }) => injectSpeedInsights?.()).catch(() => {});
+  }, []);
+  return null;
 }
