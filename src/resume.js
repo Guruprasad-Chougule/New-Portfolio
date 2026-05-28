@@ -8,8 +8,8 @@
 
 export const CONTACT = {
   name: "Guruprasad Chougule",
-  title: "Quality Assurance, Test Automation & CSV Engineer",
-  tagline: "GxP CSV Validation Engineer · 3 Years · Life Sciences IT",
+  title: "Quality Assurance · Test Automation · Computer System Validation Engineer",
+  tagline: "QA & Test Automation · 3 Years · Open to all domains",
   email: "guruprasadyc20@gmail.com",
   phone: "+91 8217703368",
   phoneRaw: "+918217703368",
@@ -21,12 +21,12 @@ export const CONTACT = {
   // 2. Share → "Anyone with the link" → Viewer
   // 3. Copy the file ID from the share URL (the long string between /d/ and /view)
   // 4. Paste it below — no GitHub commit needed for future updates, just replace the Drive file!
-  resume: "https://drive.google.com/file/d/1ygAcwC7dld6zppzeHq3j5-gHDRbOY7eI/view",
+  resume: "https://drive.google.com/uc?export=download&id=1ygAcwC7dld6zppzeHq3j5-gHDRbOY7eI",
   location: "Bangalore, India",
   status: "Open to opportunities",
 };
 
-export const SUMMARY = `Quality Assurance and Test Automation Engineer with 3 years of hands-on experience delivering software testing for Life Sciences ERP, Microsoft Power Apps, and Web platforms. Proficient in Selenium WebDriver, Core Java, TestNG, Maven, SQL, and REST API testing with Postman across Functional, Regression, SIT, UAT, and Smoke cycles. Specialized expertise in compliance-driven testing such as 21 CFR Part 11, GAMP 5, ALCOA Plus, and the qualification lifecycle including Installation, Operational, and Performance Qualification, Requirements Traceability, and Validation Summary Reports. Currently serving as Primary QA Owner on the Olympus Global Ship Hold Center program, where I have authored 400+ test scripts and achieved 100% on-time Go-Live over four major releases with zero release slippage. Strong in JIRA defect handling, Risk-Based Methodology, Root Cause Analysis, and cross-functional collaboration with global teams. Seeking QA Engineer, Senior QA Engineer, QA Lead, Test Automation Engineer, and Senior Validation Engineer roles across regulated and product-driven organizations including Pharma, Healthcare, Finance, and Insurance domains.`;
+export const SUMMARY = `Quality Assurance and Test Automation Engineer with 3 years of hands-on experience delivering software testing across Web applications, ERP platforms, and Microsoft Power Apps — applicable to any domain that values quality. Proficient in Selenium WebDriver, Core Java, Python, TestNG, Maven, SQL, REST API testing with Postman, and Generative AI / Prompt Engineering for modern QA workflows. Strong across the full STLC: Functional, Regression, SIT, UAT, Smoke, and Risk-Based testing, with deep ownership of Test Strategy, Defect Lifecycle Management, and Requirements Traceability. Additionally, I bring specialized expertise in compliance-driven testing (21 CFR Part 11, GAMP 5, ALCOA Plus, Computer System Validation, Computer Software Assurance) — a value-add for regulated industries, but not a constraint. Currently Primary QA Owner on the Olympus Global Ship Hold Center program, with 400+ test scripts delivered, 100% on-time Go-Live across 4 major releases, and a 60% reduction in manual testing effort through Selenium automation. Open to QA Engineer, Senior QA, QA Lead, Test Automation Engineer, and Senior Validation Engineer roles across Pharma, Healthcare, Finance, Insurance, Product, SaaS, FinTech, and any quality-first organization.`;
 
 export const STATS = [
   { val: "3+", label: "Years Experience" },
@@ -76,7 +76,9 @@ export const SKILLS = {
     { name: "ALCOA Plus", level: 5, years: "3 yrs", desc: "Data Integrity principles: Attributable, Legible, Contemporaneous, Original, Accurate — plus Complete, Consistent, Enduring, Available." },
     { name: "EU Annex 11", level: 4, years: "2 yrs", desc: "European regulation for computerised systems in GxP environments. Risk management and supplier qualification expertise." },
     { name: "Computer System Validation", level: 5, years: "3 yrs", desc: "Owned end-to-end CSV deliverables for 5 GxP-governed projects across four major releases with zero compliance escalations." },
+    { name: "Computer Software Assurance", level: 4, years: "2 yrs", desc: "Modern FDA-recommended approach (post-2022) that emphasizes critical thinking and risk over exhaustive documentation. Applied to streamline validation of low-risk software functions." },
     { name: "IQ / OQ / PQ", level: 5, years: "3 yrs", desc: "Installation, Operational, and Performance Qualification — full qualification lifecycle for FDA-regulated enterprise systems." },
+    { name: "Data Integrity", level: 5, years: "3 yrs", desc: "End-to-end data lineage and integrity validation across migrations and integrations. ALCOA Plus principles embedded in every test cycle." },
     { name: "CAPA", level: 5, years: "3 yrs", desc: "Corrective and Preventive Action workflow validation. Validated CAPA 2.0 enhancements with zero impact on legacy process flows." },
     { name: "NCR", level: 5, years: "3 yrs", desc: "Non-Conformance Report remediation. Closed 15+ compliance gaps aligned to GxP and ALCOA Plus principles." },
     { name: "Audit Readiness", level: 5, years: "3 yrs", desc: "Ensured 100% audit readiness for JIRA workflows, qualification artifacts, and project deliverables across multiple FDA-style reviews." },
@@ -98,6 +100,13 @@ export const SKILLS = {
     { name: "SDLC", level: 5, years: "3 yrs", desc: "Drafted Test Summary Reports for every SDLC phase. Embedded QA participation from requirements through production." },
     { name: "Risk-Based Testing", level: 5, years: "3 yrs", desc: "Prioritized test coverage based on impact and likelihood. Risk-based scenarios across all 4 major releases." },
     { name: "BTM-based Test Design", level: 5, years: "3 yrs", desc: "Business Test Matrix approach — derives test scenarios from business workflows, ensuring full functional coverage." },
+  ],
+  "Cloud & AI": [
+    { name: "Microsoft Azure Fundamentals", level: 3, years: "2 yrs", desc: "Cloud concepts, core Azure services, security, privacy, compliance, pricing models. Certified AZ-900." },
+    { name: "Google Cloud Digital Leader", level: 3, years: "2 yrs", desc: "Cloud strategy, digital transformation, Google Cloud product portfolio. Certified by Google Cloud." },
+    { name: "Oracle AI Foundations", level: 3, years: "2 yrs", desc: "Core AI/ML concepts, OCI AI services. Ranked Top 150 of 3,000+ participants for advanced SQL problem solving." },
+    { name: "Generative AI", level: 4, years: "1 yr", desc: "Applied LLMs (Claude, GPT, Gemini, Cerebras) to test case generation, defect analysis, and documentation. Built this portfolio's AI chatbot." },
+    { name: "Prompt Engineering", level: 4, years: "1 yr", desc: "Crafting precise prompts for AI-augmented QA workflows — test scenarios, RCA assistance, code review acceleration." },
   ],
 };
 
