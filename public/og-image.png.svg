@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <!-- Background gradient -->
+    <radialGradient id="bgMint" cx="20%" cy="20%">
+      <stop offset="0%" stop-color="#7af0c8" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#7af0c8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="bgViolet" cx="80%" cy="80%">
+      <stop offset="0%" stop-color="#8b7fe5" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#8b7fe5" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Name gradient -->
+    <linearGradient id="nameGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7af0c8"/>
+      <stop offset="50%" stop-color="#d4af37"/>
+      <stop offset="100%" stop-color="#8b7fe5"/>
+    </linearGradient>
+    <!-- Grid pattern -->
+    <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+      <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#7af0c8" stroke-width="0.5" opacity="0.08"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0a0a0c"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <rect width="1200" height="630" fill="url(#bgMint)"/>
+  <rect width="1200" height="630" fill="url(#bgViolet)"/>
+
+  <!-- Top status bar -->
+  <g font-family="JetBrains Mono, monospace" font-size="14" fill="#7af0c8" letter-spacing="3">
+    <circle cx="60" cy="60" r="4" fill="#7af0c8"/>
+    <text x="80" y="65">PORTFOLIO · 2026</text>
+    <text x="1100" y="65" text-anchor="end" fill="#9ca3af">GURUPRASAD.C</text>
+  </g>
+
+  <!-- Corner brackets - top left -->
+  <path d="M 40 100 L 40 140 M 40 100 L 80 100" stroke="#7af0c8" stroke-width="2" fill="none"/>
+  <!-- Corner brackets - top right -->
+  <path d="M 1160 100 L 1160 140 M 1160 100 L 1120 100" stroke="#7af0c8" stroke-width="2" fill="none"/>
+  <!-- Corner brackets - bottom left -->
+  <path d="M 40 530 L 40 490 M 40 530 L 80 530" stroke="#7af0c8" stroke-width="2" fill="none"/>
+  <!-- Corner brackets - bottom right -->
+  <path d="M 1160 530 L 1160 490 M 1160 530 L 1120 530" stroke="#7af0c8" stroke-width="2" fill="none"/>
+
+  <!-- Main name -->
+  <g font-family="Sora, sans-serif" font-weight="700" letter-spacing="-2">
+    <text x="80" y="260" font-size="92" fill="#ffffff">Guruprasad</text>
+    <text x="80" y="370" font-size="92" fill="url(#nameGrad)">Chougule.</text>
+  </g>
+
+  <!-- Role tag -->
+  <g font-family="JetBrains Mono, monospace" font-size="18" letter-spacing="6" fill="#9ca3af">
+    <text x="80" y="420">QA · TEST AUTOMATION · CSV ENGINEER</text>
+  </g>
+
+  <!-- Stats badges -->
+  <g font-family="JetBrains Mono, monospace" font-size="14" letter-spacing="3">
+    <!-- Badge 1 -->
+    <rect x="80" y="470" width="170" height="42" rx="21" fill="#7af0c8" fill-opacity="0.08" stroke="#7af0c8" stroke-opacity="0.3" stroke-width="1"/>
+    <circle cx="100" cy="491" r="3" fill="#7af0c8"/>
+    <text x="115" y="496" fill="#7af0c8">3+ YEARS</text>
+
+    <!-- Badge 2 -->
+    <rect x="265" y="470" width="200" height="42" rx="21" fill="#d4af37" fill-opacity="0.08" stroke="#d4af37" stroke-opacity="0.3" stroke-width="1"/>
+    <circle cx="285" cy="491" r="3" fill="#d4af37"/>
+    <text x="300" y="496" fill="#d4af37">400+ SCRIPTS</text>
+
+    <!-- Badge 3 -->
+    <rect x="480" y="470" width="220" height="42" rx="21" fill="#8b7fe5" fill-opacity="0.08" stroke="#8b7fe5" stroke-opacity="0.3" stroke-width="1"/>
+    <circle cx="500" cy="491" r="3" fill="#8b7fe5"/>
+    <text x="515" y="496" fill="#8b7fe5">21 CFR PART 11</text>
+
+    <!-- Badge 4 -->
+    <rect x="715" y="470" width="135" height="42" rx="21" fill="#5ec8ff" fill-opacity="0.08" stroke="#5ec8ff" stroke-opacity="0.3" stroke-width="1"/>
+    <circle cx="735" cy="491" r="3" fill="#5ec8ff"/>
+    <text x="750" y="496" fill="#5ec8ff">GAMP 5</text>
+  </g>
+
+  <!-- Bottom URL -->
+  <g font-family="JetBrains Mono, monospace" font-size="14" letter-spacing="3" fill="#6b7280">
+    <text x="80" y="585">guruprasadchougule.vercel.app</text>
+    <text x="1120" y="585" text-anchor="end" fill="#7af0c8">&lt; GURUPRASAD.AI /&gt;</text>
+  </g>
+
+  <!-- Decorative robot icon top right -->
+  <g transform="translate(1000, 180)" opacity="0.6">
+    <circle r="80" fill="#7af0c8" fill-opacity="0.05"/>
+    <text font-size="100" text-anchor="middle" dy="36">🤖</text>
+  </g>
+</svg>
