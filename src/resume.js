@@ -16,7 +16,12 @@ export const CONTACT = {
   linkedin: "https://linkedin.com/in/guruprasadchougule",
   github: "https://github.com/Guruprasad-Chougule",
   portfolio: "https://guruprasadchougule.vercel.app",
-  resume: "/resume.pdf",
+  // RESUME WORKFLOW (zero-friction updates):
+  // 1. Upload latest resume.pdf to Google Drive (replace the existing file to keep same ID)
+  // 2. Share → "Anyone with the link" → Viewer
+  // 3. Copy the file ID from the share URL (the long string between /d/ and /view)
+  // 4. Paste it below — no GitHub commit needed for future updates, just replace the Drive file!
+  resume: "https://drive.google.com/uc?export=download&id=PASTE_YOUR_GOOGLE_DRIVE_FILE_ID_HERE",
   location: "Bangalore, India",
   status: "Open to opportunities",
 };
@@ -198,6 +203,43 @@ export const BLOG_POSTS = [
     root: "Through structured RCA with developers and Functional SMEs, we traced it to a race condition in the signature-verification microservice — under high concurrency, the cert validation call timed out but the front-end treated the timeout as success.",
     fix: "I drafted a reproducible load-condition test script that triggered the bug 9/10 times. The dev team patched the timeout handling and added an explicit retry. I re-ran the script post-fix to confirm 0% failure across 500 concurrent users. Go-Live happened on schedule with zero release slippage.",
     tags: ["RCA", "E-Signature", "21 CFR Part 11", "P1 Resolution"] },
+];
+
+// ════════════════════════════════════════════════════════════════════════════
+//  TESTIMONIALS — Real recommendations from colleagues/managers
+//  HOW TO COLLECT:
+//   1. Message 3-5 colleagues on LinkedIn: "Hi [Name], could you write 2-3
+//      sentences about working with me on [project]? Focus on a specific
+//      impact you remember. I'm building my portfolio."
+//   2. Replace the placeholders below with real quotes.
+//   3. Optional: ask if they're okay being publicly named (most say yes).
+//   4. If they prefer anonymity, use role only: "Senior QA Lead, Cognizant".
+// ════════════════════════════════════════════════════════════════════════════
+export const TESTIMONIALS = [
+  {
+    quote: "Guru consistently went above and beyond on the Global Ship Hold Center program. His attention to compliance detail caught issues that would have caused real audit problems — I'd happily work with him again.",
+    name: "Pending — Add a real teammate",
+    role: "Senior QA Lead",
+    company: "Cognizant · Olympus Account",
+    initials: "TM", // placeholder initials shown as avatar
+    color: "#7af0c8",
+  },
+  {
+    quote: "One of the most thorough validation engineers I've worked with. Guru takes ownership of the entire CSV lifecycle and his test scripts are textbook quality — clear, traceable, and audit-ready.",
+    name: "Pending — Add a real teammate",
+    role: "QA Manager",
+    company: "Cognizant",
+    initials: "PM",
+    color: "#d4af37",
+  },
+  {
+    quote: "Guru's structured RCA on the P1 e-signature defect saved our Go-Live. He stayed calm under pressure, reproduced the bug, and partnered with dev to ship a fix in 24 hours. Top tier.",
+    name: "Pending — Add a real teammate",
+    role: "Functional SME",
+    company: "Olympus",
+    initials: "FS",
+    color: "#8b7fe5",
+  },
 ];
 
 // ════════════════════════════════════════════════════════════════════════════
