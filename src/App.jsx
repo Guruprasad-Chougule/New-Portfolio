@@ -254,10 +254,14 @@ function CinematicIntro({ onEnd }) {
   const [showSoundPrompt, setShowSoundPrompt] = useState(true);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [videoError, setVideoError] = useState(false);
+  const [showScrollHint, setShowScrollHint] = useState(false);
   const videoRef = useRef(null);
   const ambientVideoRef = useRef(null);
+  const endedRef = useRef(false); // Prevent double-end
 
   const handleEnd = useCallback(() => {
+    if (endedRef.current) return;
+    endedRef.current = true;
     if (videoRef.current) videoRef.current.pause();
     if (ambientVideoRef.current) ambientVideoRef.current.pause();
     onEnd();
@@ -284,9 +288,9 @@ function CinematicIntro({ onEnd }) {
     }
   };
 
-  // Auto-hide the sound prompt after 8 seconds if user doesn't interact
+  // Auto-hide the sound prompt after 6 seconds if user doesn't interact
   useEffect(() => {
-    const t = setTimeout(() => setShowSoundPrompt(false), 8000);
+    const t = setTimeout(() => setShowSoundPrompt(false), 6000);
     return () => clearTimeout(t);
   }, []);
 
@@ -297,6 +301,41 @@ function CinematicIntro({ onEnd }) {
     }, 5000);
     return () => clearTimeout(t);
   }, [videoLoaded]);
+
+  // Show "scroll to skip" hint after 3 seconds
+  useEffect(() => {
+    const t = setTimeout(() => setShowScrollHint(true), 3000);
+    return () => clearTimeout(t);
+  }, []);
+
+  // SCROLL TO SKIP: any wheel scroll, touch swipe, or arrow key skips the intro
+  useEffect(() => {
+    const handleScroll = (e) => {
+      // Only skip on downward scroll/swipe (positive deltaY or significant downward touch)
+      if (e.deltaY && e.deltaY > 5) handleEnd();
+    };
+    const handleKey = (e) => {
+      if (["ArrowDown", "PageDown", "End", " "].includes(e.key)) handleEnd();
+    };
+    let touchStartY = 0;
+    const handleTouchStart = (e) => { touchStartY = e.touches[0]?.clientY || 0; };
+    const handleTouchMove = (e) => {
+      const currentY = e.touches[0]?.clientY || 0;
+      if (touchStartY - currentY > 30) handleEnd(); // swipe up = skip
+    };
+
+    window.addEventListener("wheel", handleScroll, { passive: true });
+    window.addEventListener("keydown", handleKey);
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+
+    return () => {
+      window.removeEventListener("wheel", handleScroll);
+      window.removeEventListener("keydown", handleKey);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, [handleEnd]);
 
   return (
     <motion.div initial={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.9 }}
@@ -320,22 +359,22 @@ function CinematicIntro({ onEnd }) {
       <div className="absolute inset-0 pointer-events-none z-[1] bg-gradient-to-t from-[#06070a] via-transparent to-[#06070a]/40" />
       <GrainOverlay />
 
-      {/* TOP STATUS BAR */}
-      <div className="absolute top-6 left-6 right-6 flex justify-between items-center font-mono text-[10px] text-[#7af0c8] z-30 tracking-[0.3em] pointer-events-none">
-        <div className="flex items-center gap-3">
+      {/* TOP STATUS BAR — responsive: hides label on small screens */}
+      <div className="absolute top-4 md:top-6 left-4 md:left-6 right-4 md:right-6 flex justify-between items-center font-mono text-[9px] md:text-[10px] text-[#7af0c8] z-30 tracking-[0.2em] md:tracking-[0.3em] pointer-events-none">
+        <div className="flex items-center gap-2 md:gap-3">
           <span className="w-1.5 h-1.5 bg-[#7af0c8] rounded-full dot-pulse" />
-          <span>{videoError ? "ERROR · TAP SKIP" : (videoLoaded ? "PLAYING · INTRO" : "LOADING...")}</span>
+          <span>{videoError ? "ERROR" : (videoLoaded ? "PLAYING" : "LOADING...")}</span>
         </div>
-        <span className="hidden sm:block">PORTFOLIO_2026 · GURUPRASAD.C</span>
+        <span className="hidden md:block">PORTFOLIO_2026 · GURUPRASAD.C</span>
       </div>
 
       <CornerBrackets />
 
-      {/* MAIN VIDEO — centered, autoplays muted */}
+      {/* MAIN VIDEO — responsive sizing */}
       <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-20 w-full max-w-5xl px-6 flex flex-col items-center">
-        <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-[0_0_80px_rgba(122,240,200,0.25)] border border-white/10 bg-[#06070a]">
+        className="relative z-20 w-full max-w-5xl px-4 md:px-6 flex flex-col items-center">
+        <div className="relative w-full aspect-video rounded-xl md:rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(122,240,200,0.2)] md:shadow-[0_0_80px_rgba(122,240,200,0.25)] border border-white/10 bg-[#06070a]">
           <video
             ref={videoRef}
             src="/intro.mp4"
@@ -361,55 +400,72 @@ function CinematicIntro({ onEnd }) {
 
           {/* Error fallback */}
           {videoError && (
-            <div className="absolute inset-0 flex items-center justify-center bg-[#06070a]">
-              <div className="text-center max-w-md px-6">
-                <p className="text-4xl mb-3">⚠️</p>
-                <p className="font-display text-xl text-white mb-2">Video couldn't load</p>
-                <p className="font-mono text-xs text-[#9ca3af] mb-4">Check that intro.mp4 exists in public/ folder</p>
-                <button onClick={handleEnd} className="px-6 py-2 bg-[#7af0c8] text-[#0a0a0c] font-mono text-xs rounded-full tracking-[0.2em]">CONTINUE TO PORTFOLIO →</button>
+            <div className="absolute inset-0 flex items-center justify-center bg-[#06070a] px-4">
+              <div className="text-center max-w-md">
+                <p className="text-3xl md:text-4xl mb-3">⚠️</p>
+                <p className="font-display text-lg md:text-xl text-white mb-2">Video couldn't load</p>
+                <p className="font-mono text-[10px] md:text-xs text-[#9ca3af] mb-4">Check that intro.mp4 exists in public/ folder</p>
+                <button onClick={handleEnd} className="px-5 md:px-6 py-2 bg-[#7af0c8] text-[#0a0a0c] font-mono text-[10px] md:text-xs rounded-full tracking-[0.2em]">CONTINUE →</button>
               </div>
             </div>
           )}
 
           {/* Edge vignette */}
-          <div className="absolute inset-0 pointer-events-none" style={{ boxShadow: "inset 0 0 80px rgba(0,0,0,0.5)" }} />
+          <div className="absolute inset-0 pointer-events-none" style={{ boxShadow: "inset 0 0 60px rgba(0,0,0,0.5)" }} />
         </div>
 
         {/* Label below video */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
-          className="mt-6 flex items-center gap-2 font-mono text-[10px] text-[#7af0c8] tracking-[0.4em]">
+          className="mt-4 md:mt-6 flex items-center gap-2 font-mono text-[9px] md:text-[10px] text-[#7af0c8] tracking-[0.3em] md:tracking-[0.4em]">
           <span>&lt;</span><span>GURUPRASAD.AI</span><span>/&gt;</span>
         </motion.div>
       </motion.div>
 
-      {/* CLICK FOR SOUND PROMPT — large, obvious, dismisses on first click */}
+      {/* CLICK FOR SOUND PROMPT — responsive position */}
       <AnimatePresence>
         {showSoundPrompt && videoLoaded && !videoError && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9 }}
             transition={{ delay: 0.3 }}
-            className="absolute bottom-28 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
+            className="absolute bottom-24 md:bottom-28 left-1/2 -translate-x-1/2 z-30 pointer-events-none px-4">
             <motion.div animate={{ y: [0, -4, 0] }} transition={{ repeat: Infinity, duration: 1.8 }}
-              className="flex items-center gap-3 px-5 py-3 bg-black/70 backdrop-blur-md border border-[#7af0c8]/30 rounded-full shadow-[0_0_30px_rgba(122,240,200,0.3)]">
-              <motion.span animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1.2 }} className="text-lg">🔊</motion.span>
-              <span className="font-mono text-[11px] text-white tracking-[0.25em]">CLICK ANYWHERE FOR SOUND</span>
+              className="flex items-center gap-2 md:gap-3 px-4 md:px-5 py-2.5 md:py-3 bg-black/70 backdrop-blur-md border border-[#7af0c8]/30 rounded-full shadow-[0_0_30px_rgba(122,240,200,0.3)]">
+              <motion.span animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1.2 }} className="text-base md:text-lg">🔊</motion.span>
+              <span className="font-mono text-[9px] md:text-[11px] text-white tracking-[0.2em] md:tracking-[0.25em] whitespace-nowrap">TAP FOR SOUND</span>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* GLASSMORPHISM CONTROLS — bottom right */}
-      <div className="absolute bottom-8 right-8 z-30 flex items-center gap-3">
+      {/* SCROLL TO SKIP HINT — appears after 3 sec */}
+      <AnimatePresence>
+        {showScrollHint && videoLoaded && !videoError && !showSoundPrompt && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 0.6, y: 0 }} exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1 pointer-events-none">
+            <motion.div animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}
+              className="flex flex-col items-center gap-1">
+              <span className="font-mono text-[8px] md:text-[9px] text-[#7af0c8] tracking-[0.3em] md:tracking-[0.4em]">SCROLL TO SKIP</span>
+              <svg className="w-3 h-3 md:w-4 md:h-4 text-[#7af0c8]/60" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              </svg>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* GLASSMORPHISM CONTROLS — bigger touch targets on mobile */}
+      <div className="absolute bottom-4 md:bottom-8 right-4 md:right-8 z-30 flex items-center gap-2 md:gap-3">
         <button onClick={toggleMute}
-          className="w-11 h-11 flex items-center justify-center bg-black/50 backdrop-blur-md border border-white/15 rounded-full hover:bg-white/10 hover:border-white/30 transition-all"
+          className="w-12 h-12 md:w-11 md:h-11 flex items-center justify-center bg-black/50 backdrop-blur-md border border-white/15 rounded-full hover:bg-white/10 hover:border-white/30 active:scale-95 transition-all"
           title={muted ? "Unmute" : "Mute"}>
           {muted ? (
-            <svg className="w-4 h-4 text-[#9ca3af]" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.17v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" /></svg>
+            <svg className="w-5 h-5 md:w-4 md:h-4 text-[#9ca3af]" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.17v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" /></svg>
           ) : (
-            <svg className="w-4 h-4 text-[#7af0c8]" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" /></svg>
+            <svg className="w-5 h-5 md:w-4 md:h-4 text-[#7af0c8]" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" /></svg>
           )}
         </button>
         <button onClick={(e) => { e.stopPropagation(); handleEnd(); }}
-          className="flex items-center gap-2 px-5 py-2.5 bg-black/50 backdrop-blur-md border border-white/15 rounded-full font-mono text-[10px] text-[#d1d5db] hover:text-white hover:border-white/40 transition-all tracking-[0.3em]">
+          className="flex items-center gap-1.5 md:gap-2 px-4 md:px-5 py-3 md:py-2.5 bg-black/50 backdrop-blur-md border border-white/15 rounded-full font-mono text-[10px] text-[#d1d5db] hover:text-white hover:border-white/40 active:scale-95 transition-all tracking-[0.25em] md:tracking-[0.3em]">
           SKIP <span>→</span>
         </button>
       </div>
@@ -606,7 +662,7 @@ function Section({ id, children, className = "" }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   return (
-    <section id={id} ref={ref} className={`relative z-10 py-24 md:py-32 px-6 md:px-16 lg:px-24 xl:px-32 ${className}`}>
+    <section id={id} ref={ref} className={`relative z-10 py-20 md:py-32 px-5 sm:px-6 md:px-16 lg:px-24 xl:px-32 ${className}`}>
       <motion.div initial={{ opacity: 0, y: 48 }} animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}>{children}</motion.div>
     </section>
@@ -637,7 +693,7 @@ function Navbar() {
   const scrollTo = (id) => { document.getElementById(id.toLowerCase())?.scrollIntoView({ behavior: "smooth" }); setOpen(false); };
   return (
     <motion.nav initial={{ y: -60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6, delay: 0.2 }}
-      className={`fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-6 md:px-16 py-4 transition-all duration-300 ${scrolled ? "bg-[#0a0a0c]/85 backdrop-blur-xl border-b border-white/5" : ""}`}>
+      className={`fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-5 sm:px-6 md:px-16 py-4 transition-all duration-300 ${scrolled ? "bg-[#0a0a0c]/85 backdrop-blur-xl border-b border-white/5" : ""}`}>
       <a href="#hero" className="font-display text-lg text-white">Guru<span className="text-[#7af0c8]">.</span></a>
       <div className="hidden md:flex items-center gap-6">
         {NAV_LINKS.map((l) => (
@@ -681,7 +737,7 @@ function Hero() {
   ];
 
   return (
-    <section id="hero" className="relative z-10 min-h-screen flex flex-col justify-center px-6 md:px-16 lg:px-24 xl:px-32 pt-32 pb-32">
+    <section id="hero" className="relative z-10 min-h-screen flex flex-col justify-center px-5 sm:px-6 md:px-16 lg:px-24 xl:px-32 pt-28 sm:pt-32 pb-24 sm:pb-32">
       <motion.div style={{ y }}>
         {/* Premium status pill */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}
@@ -695,7 +751,7 @@ function Hero() {
 
         <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="font-display text-5xl sm:text-7xl md:text-8xl text-white leading-[0.9] mb-6">
+          className="font-display text-[2.75rem] sm:text-7xl md:text-8xl text-white leading-[0.9] mb-6">
           Guruprasad<br />
           <span className="hero-name-gradient">Chougule.</span>
         </motion.h1>
@@ -1250,10 +1306,7 @@ function Footer() {
 export default function App() {
   const [introDone, setIntroDone] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
-  useEffect(() => {
-    document.body.style.overflow = introDone ? "" : "hidden";
-    return () => { document.body.style.overflow = ""; };
-  }, [introDone]);
+  // No body overflow lock — intro is dismissible by scroll/swipe/click/skip
   return (
     <div className="min-h-screen bg-[#0a0a0c] text-white overflow-x-hidden">
       <GlobalStyles />
