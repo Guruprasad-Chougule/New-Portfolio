@@ -250,19 +250,12 @@ function RobotCharacter({ speaking }) {
 // ─── CINEMATIC INTRO ─────────────────────────────────────────────────────────
 
 function CinematicIntro({ onEnd }) {
-  const [started, setStarted] = useState(false);
-  const [muted, setMuted] = useState(true); // Start muted (browser autoplay policy requires it)
-  const [showSoundHint, setShowSoundHint] = useState(true);
-  const [videoEnded, setVideoEnded] = useState(false);
+  const [muted, setMuted] = useState(true); // Browser requires muted for autoplay
+  const [showSoundPrompt, setShowSoundPrompt] = useState(true);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [videoError, setVideoError] = useState(false);
   const videoRef = useRef(null);
   const ambientVideoRef = useRef(null);
-
-  // Auto-hide the "Tap for sound" hint after 4 seconds
-  useEffect(() => {
-    if (!started) return;
-    const t = setTimeout(() => setShowSoundHint(false), 4000);
-    return () => clearTimeout(t);
-  }, [started]);
 
   const handleEnd = useCallback(() => {
     if (videoRef.current) videoRef.current.pause();
@@ -270,167 +263,156 @@ function CinematicIntro({ onEnd }) {
     onEnd();
   }, [onEnd]);
 
-  // When the main video finishes naturally, give a brief moment then end
-  useEffect(() => {
-    if (videoEnded) {
-      const t = setTimeout(handleEnd, 800);
-      return () => clearTimeout(t);
-    }
-  }, [videoEnded, handleEnd]);
-
-  const handleStart = () => {
-    setStarted(true);
-    setMuted(false); // Unmute on user interaction (allowed by browser)
+  // Unmute on user interaction — handles browser autoplay policy correctly
+  const enableSound = useCallback(() => {
     if (videoRef.current) {
       videoRef.current.muted = false;
+      // Re-trigger play after unmute (some browsers pause when unmuted)
       videoRef.current.play().catch(() => {});
     }
-    if (ambientVideoRef.current) {
-      ambientVideoRef.current.play().catch(() => {});
+    setMuted(false);
+    setShowSoundPrompt(false);
+  }, []);
+
+  const toggleMute = (e) => {
+    e?.stopPropagation();
+    if (muted) {
+      enableSound();
+    } else {
+      if (videoRef.current) videoRef.current.muted = true;
+      setMuted(true);
     }
   };
 
-  const toggleMute = () => {
-    const next = !muted;
-    setMuted(next);
-    if (videoRef.current) videoRef.current.muted = next;
-    setShowSoundHint(false);
-  };
+  // Auto-hide the sound prompt after 8 seconds if user doesn't interact
+  useEffect(() => {
+    const t = setTimeout(() => setShowSoundPrompt(false), 8000);
+    return () => clearTimeout(t);
+  }, []);
+
+  // If video fails to load after 5 seconds, allow user to skip
+  useEffect(() => {
+    const t = setTimeout(() => {
+      if (!videoLoaded) setVideoError(true);
+    }, 5000);
+    return () => clearTimeout(t);
+  }, [videoLoaded]);
 
   return (
     <motion.div initial={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.9 }}
-      className="fixed inset-0 z-[200] bg-[#06070a] flex flex-col items-center justify-center overflow-hidden">
+      onClick={muted ? enableSound : undefined}
+      className="fixed inset-0 z-[200] bg-[#06070a] flex flex-col items-center justify-center overflow-hidden cursor-pointer">
 
-      {/* AMBIENT BLURRED VIDEO LAYER — Vaibhav's signature look */}
-      {started && (
-        <video
-          ref={ambientVideoRef}
-          src="/intro.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-40"
-          style={{ filter: "blur(40px) saturate(1.4) brightness(0.6)", transform: "scale(1.2)" }}
-        />
-      )}
+      {/* AMBIENT BLURRED VIDEO LAYER */}
+      <video
+        ref={ambientVideoRef}
+        src="/intro.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none"
+        style={{ filter: "blur(50px) saturate(1.4) brightness(0.5)", transform: "scale(1.3)" }}
+      />
 
       {/* CINEMATIC OVERLAYS */}
-      <div className="absolute inset-0 pointer-events-none z-[1]" style={{ background: "radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.85) 100%)" }} />
-      <div className="absolute inset-0 pointer-events-none z-[1] bg-gradient-to-t from-[#06070a] via-transparent to-[#06070a]/60" />
+      <div className="absolute inset-0 pointer-events-none z-[1]" style={{ background: "radial-gradient(ellipse at center, transparent 25%, rgba(0,0,0,0.9) 100%)" }} />
+      <div className="absolute inset-0 pointer-events-none z-[1] bg-gradient-to-t from-[#06070a] via-transparent to-[#06070a]/40" />
       <GrainOverlay />
 
       {/* TOP STATUS BAR */}
-      <div className="absolute top-6 left-6 right-6 flex justify-between items-center font-mono text-[10px] text-[#7af0c8] z-30 tracking-[0.3em]">
+      <div className="absolute top-6 left-6 right-6 flex justify-between items-center font-mono text-[10px] text-[#7af0c8] z-30 tracking-[0.3em] pointer-events-none">
         <div className="flex items-center gap-3">
           <span className="w-1.5 h-1.5 bg-[#7af0c8] rounded-full dot-pulse" />
-          <span>{started ? "PLAYING · INTRO.MP4" : "REC · QAIX.SYS"}</span>
+          <span>{videoError ? "ERROR · TAP SKIP" : (videoLoaded ? "PLAYING · INTRO" : "LOADING...")}</span>
         </div>
         <span className="hidden sm:block">PORTFOLIO_2026 · GURUPRASAD.C</span>
       </div>
 
       <CornerBrackets />
 
-      <AnimatePresence mode="wait">
-        {!started ? (
-          /* POSTER FRAME — what you see before clicking play */
-          <motion.div key="poster" initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.04 }} transition={{ duration: 0.7 }}
-            className="relative z-20 text-center px-6 max-w-3xl">
-            <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}
-              className="font-mono text-[10px] text-[#7af0c8] tracking-[0.5em] mb-8">PORTFOLIO · 2026</motion.p>
-            <motion.h1 initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3, duration: 0.9 }}
-              className="font-display text-5xl md:text-7xl text-white leading-[0.95] mb-3">
-              Guruprasad<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-br from-[#7af0c8] via-[#d4af37] to-[#8b7fe5]">Chougule</span>
-            </motion.h1>
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
-              className="font-mono text-xs text-[#9ca3af] tracking-[0.3em] mb-12">QA · TEST AUTOMATION · CSV ENGINEER</motion.p>
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1 }}
-              className="flex flex-col items-center gap-4">
-              <motion.button onClick={handleStart} whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-                className="group inline-flex items-center gap-3 px-10 py-4 bg-gradient-to-br from-[#7af0c8] to-[#5dd9b0] text-[#0a0a0c] font-display font-bold text-xs tracking-[0.4em] rounded-full hover:shadow-[0_0_60px_rgba(122,240,200,0.4)] transition-shadow">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#0a0a0c] dot-pulse" />
-                PLAY INTRO <span className="group-hover:translate-x-1 transition-transform">▶</span>
-              </motion.button>
-              <p className="font-mono text-[10px] text-[#6b7280] tracking-widest">🔊 sound enabled · cinematic introduction</p>
-              <button onClick={handleEnd} className="mt-2 font-mono text-xs text-[#6b7280] hover:text-white transition-colors underline underline-offset-4 tracking-wider">Skip intro →</button>
-            </motion.div>
-          </motion.div>
-        ) : (
-          /* PLAYING — main video centered */
-          <motion.div key="playing" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="relative z-20 w-full max-w-5xl px-6 flex flex-col items-center">
+      {/* MAIN VIDEO — centered, autoplays muted */}
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-20 w-full max-w-5xl px-6 flex flex-col items-center">
+        <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-[0_0_80px_rgba(122,240,200,0.25)] border border-white/10 bg-[#06070a]">
+          <video
+            ref={videoRef}
+            src="/intro.mp4"
+            autoPlay
+            playsInline
+            muted={muted}
+            onLoadedData={() => setVideoLoaded(true)}
+            onEnded={handleEnd}
+            onError={() => setVideoError(true)}
+            className="w-full h-full object-cover"
+          />
 
-            {/* MAIN VIDEO with cinematic frame */}
-            <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-[0_0_80px_rgba(122,240,200,0.2)] border border-white/10">
-              <video
-                ref={videoRef}
-                src="/intro.mp4"
-                autoPlay
-                playsInline
-                muted={muted}
-                onEnded={() => setVideoEnded(true)}
-                className="w-full h-full object-cover"
-              />
-
-              {/* Subtle edge vignette on the video */}
-              <div className="absolute inset-0 pointer-events-none" style={{ boxShadow: "inset 0 0 80px rgba(0,0,0,0.6)" }} />
+          {/* Loading placeholder */}
+          {!videoLoaded && !videoError && (
+            <div className="absolute inset-0 flex items-center justify-center bg-[#06070a]">
+              <div className="flex flex-col items-center gap-4">
+                <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                  className="w-10 h-10 border-2 border-[#7af0c8]/30 border-t-[#7af0c8] rounded-full" />
+                <p className="font-mono text-[10px] text-[#7af0c8] tracking-[0.3em]">LOADING INTRO</p>
+              </div>
             </div>
+          )}
 
-            {/* Label below video */}
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
-              className="mt-6 flex items-center gap-2 font-mono text-[10px] text-[#7af0c8] tracking-[0.4em]">
-              <span>&lt;</span><span>GURUPRASAD.AI</span><span>/&gt;</span>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          {/* Error fallback */}
+          {videoError && (
+            <div className="absolute inset-0 flex items-center justify-center bg-[#06070a]">
+              <div className="text-center max-w-md px-6">
+                <p className="text-4xl mb-3">⚠️</p>
+                <p className="font-display text-xl text-white mb-2">Video couldn't load</p>
+                <p className="font-mono text-xs text-[#9ca3af] mb-4">Check that intro.mp4 exists in public/ folder</p>
+                <button onClick={handleEnd} className="px-6 py-2 bg-[#7af0c8] text-[#0a0a0c] font-mono text-xs rounded-full tracking-[0.2em]">CONTINUE TO PORTFOLIO →</button>
+              </div>
+            </div>
+          )}
 
-      {/* TAP FOR SOUND HINT — appears briefly after play, then auto-hides */}
+          {/* Edge vignette */}
+          <div className="absolute inset-0 pointer-events-none" style={{ boxShadow: "inset 0 0 80px rgba(0,0,0,0.5)" }} />
+        </div>
+
+        {/* Label below video */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
+          className="mt-6 flex items-center gap-2 font-mono text-[10px] text-[#7af0c8] tracking-[0.4em]">
+          <span>&lt;</span><span>GURUPRASAD.AI</span><span>/&gt;</span>
+        </motion.div>
+      </motion.div>
+
+      {/* CLICK FOR SOUND PROMPT — large, obvious, dismisses on first click */}
       <AnimatePresence>
-        {started && showSoundHint && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
-            className="absolute bottom-24 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-4 py-2 bg-black/60 backdrop-blur-md border border-white/15 rounded-full">
-            <motion.span animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1.5 }} className="text-[#7af0c8]">🔊</motion.span>
-            <span className="font-mono text-[10px] text-white/80 tracking-[0.2em]">SOUND ON</span>
+        {showSoundPrompt && videoLoaded && !videoError && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ delay: 0.3 }}
+            className="absolute bottom-28 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
+            <motion.div animate={{ y: [0, -4, 0] }} transition={{ repeat: Infinity, duration: 1.8 }}
+              className="flex items-center gap-3 px-5 py-3 bg-black/70 backdrop-blur-md border border-[#7af0c8]/30 rounded-full shadow-[0_0_30px_rgba(122,240,200,0.3)]">
+              <motion.span animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1.2 }} className="text-lg">🔊</motion.span>
+              <span className="font-mono text-[11px] text-white tracking-[0.25em]">CLICK ANYWHERE FOR SOUND</span>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* GLASSMORPHISM CONTROLS — bottom right */}
-      <AnimatePresence>
-        {started && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-            transition={{ delay: 0.5 }}
-            className="absolute bottom-8 right-8 z-30 flex items-center gap-3">
-            <button onClick={toggleMute}
-              className="w-11 h-11 flex items-center justify-center bg-black/40 backdrop-blur-md border border-white/15 rounded-full hover:bg-white/10 hover:border-white/30 transition-all"
-              title={muted ? "Unmute" : "Mute"}>
-              {muted ? (
-                <svg className="w-4 h-4 text-[#9ca3af]" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.17v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" /></svg>
-              ) : (
-                <svg className="w-4 h-4 text-[#7af0c8]" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" /></svg>
-              )}
-            </button>
-            <button onClick={handleEnd}
-              className="flex items-center gap-2 px-5 py-2.5 bg-black/40 backdrop-blur-md border border-white/15 rounded-full font-mono text-[10px] text-[#d1d5db] hover:text-white hover:border-white/40 transition-all tracking-[0.3em]">
-              SKIP <span>→</span>
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* SCROLL INDICATOR — bottom center */}
-      {started && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} transition={{ delay: 2 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 pointer-events-none">
-          <span className="font-mono text-[9px] text-[#6b7280] tracking-[0.4em]">PORTFOLIO</span>
-          <motion.div animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}
-            className="w-px h-8 bg-gradient-to-b from-[#7af0c8] to-transparent" />
-        </motion.div>
-      )}
+      <div className="absolute bottom-8 right-8 z-30 flex items-center gap-3">
+        <button onClick={toggleMute}
+          className="w-11 h-11 flex items-center justify-center bg-black/50 backdrop-blur-md border border-white/15 rounded-full hover:bg-white/10 hover:border-white/30 transition-all"
+          title={muted ? "Unmute" : "Mute"}>
+          {muted ? (
+            <svg className="w-4 h-4 text-[#9ca3af]" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.17v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" /></svg>
+          ) : (
+            <svg className="w-4 h-4 text-[#7af0c8]" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" /></svg>
+          )}
+        </button>
+        <button onClick={(e) => { e.stopPropagation(); handleEnd(); }}
+          className="flex items-center gap-2 px-5 py-2.5 bg-black/50 backdrop-blur-md border border-white/15 rounded-full font-mono text-[10px] text-[#d1d5db] hover:text-white hover:border-white/40 transition-all tracking-[0.3em]">
+          SKIP <span>→</span>
+        </button>
+      </div>
     </motion.div>
   );
 }
@@ -759,31 +741,24 @@ function Hero() {
 }
 
 function Marquee() {
-  // Premium divider strip — small badge row instead of overwhelming marquee
-  const badges = [
-    { label: "3+ YEARS", color: "#7af0c8" },
-    { label: "400+ SCRIPTS", color: "#8b7fe5" },
-    { label: "21 CFR PART 11", color: "#d4af37" },
-    { label: "GAMP 5", color: "#5ec8ff" },
-    { label: "100% ON-TIME GO-LIVE", color: "#f06b8b" },
+  const items = [
+    "Selenium WebDriver", "21 CFR Part 11", "Core Java", "GAMP 5", "TestNG",
+    "ALCOA Plus", "REST API", "Postman", "JIRA", "Power Apps",
+    "Python", "SQL", "Agile Scrum", "Pytest", "Computer System Validation",
+    "IQ / OQ / PQ", "CAPA", "Risk-Based Testing"
   ];
   return (
-    <div className="relative z-10 border-y border-white/5 py-8 bg-[#0a0a0c]">
-      <div className="max-w-7xl mx-auto px-6 md:px-16">
-        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
-          {badges.map((b, i) => (
-            <div key={b.label} className="flex items-center gap-3">
-              {i > 0 && <span className="text-[#2d2f38]">·</span>}
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full" style={{ background: b.color, boxShadow: `0 0 8px ${b.color}` }} />
-                <span className="font-mono text-[10px] tracking-[0.3em] uppercase" style={{ color: b.color }}>
-                  {b.label}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
+    <div className="relative z-10 border-y border-white/5 py-6 overflow-hidden bg-[#0a0a0c]">
+      <div className="flex gap-12 whitespace-nowrap marquee-track">
+        {[...items, ...items, ...items].map((it, i) => (
+          <span key={i} className="font-display text-2xl md:text-3xl text-[#7af0c8]/40 hover:text-[#7af0c8] transition-colors select-none">
+            {it} <span className="text-[#d4af37]/60">✦</span>
+          </span>
+        ))}
       </div>
+      {/* Soft fade edges */}
+      <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#0a0a0c] to-transparent pointer-events-none z-10" />
+      <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#0a0a0c] to-transparent pointer-events-none z-10" />
     </div>
   );
 }
