@@ -751,32 +751,40 @@ function About() {
 
 function Skills() {
   const categories = Object.keys(SKILLS);
-  const [active, setActive] = useState(categories[0]);
+  const [activeCat, setActiveCat] = useState(categories[0]);
+  const [selectedSkill, setSelectedSkill] = useState(null);
 
   // Each category gets its own accent color for visual distinction
   const CATEGORY_COLORS = {
-    "Automation & Programming": { color: "#7af0c8", icon: "⚡", label: "MINT" },
-    "Testing Types": { color: "#8b7fe5", icon: "🧪", label: "VIOLET" },
-    "Platforms & Applications": { color: "#5ec8ff", icon: "🖥️", label: "BLUE" },
-    "Compliance & Validation": { color: "#d4af37", icon: "🛡️", label: "GOLD" },
-    "Tools": { color: "#f06b8b", icon: "🛠️", label: "ROSE" },
-    "Methodologies": { color: "#ff9d5c", icon: "📐", label: "AMBER" },
+    "Automation & Programming": { color: "#7af0c8", icon: "⚡" },
+    "Testing Types": { color: "#8b7fe5", icon: "🧪" },
+    "Platforms & Applications": { color: "#5ec8ff", icon: "🖥️" },
+    "Compliance & Validation": { color: "#d4af37", icon: "🛡️" },
+    "Tools": { color: "#f06b8b", icon: "🛠️" },
+    "Methodologies": { color: "#ff9d5c", icon: "📐" },
   };
 
-  const activeColor = CATEGORY_COLORS[active]?.color || "#7af0c8";
-  const activeIcon = CATEGORY_COLORS[active]?.icon || "✦";
+  const activeColor = CATEGORY_COLORS[activeCat]?.color || "#7af0c8";
+  const activeIcon = CATEGORY_COLORS[activeCat]?.icon || "✦";
+
+  // When switching categories, clear selection
+  const switchCategory = (cat) => {
+    setActiveCat(cat);
+    setSelectedSkill(null);
+  };
 
   return (
     <Section id="skills">
-      <Heading label="02 — Skills" title="Tools of the trade." />
+      <Heading label="02 — Skills" title="Tools of the trade."
+        subtitle="Click any skill to read more — each one comes with real-world context from my work." />
 
-      {/* Category tabs — each gets its own color */}
+      {/* Category tabs */}
       <div className="flex flex-wrap gap-2 mb-12">
         {categories.map((cat) => {
           const c = CATEGORY_COLORS[cat];
-          const isActive = active === cat;
+          const isActive = activeCat === cat;
           return (
-            <button key={cat} onClick={() => setActive(cat)}
+            <button key={cat} onClick={() => switchCategory(cat)}
               className="group relative px-4 py-2.5 font-mono text-[10px] rounded-full tracking-[0.2em] uppercase transition-all border flex items-center gap-2"
               style={{
                 borderColor: isActive ? c.color : "rgba(255,255,255,0.15)",
@@ -796,35 +804,144 @@ function Skills() {
       </div>
 
       {/* Active category indicator bar */}
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center gap-3 mb-8">
         <span className="text-2xl">{activeIcon}</span>
         <div className="h-px flex-1" style={{ background: `linear-gradient(to right, ${activeColor}40, transparent)` }} />
         <span className="font-mono text-[10px] tracking-[0.3em] uppercase" style={{ color: activeColor }}>
-          {SKILLS[active].length} skills
+          {SKILLS[activeCat].length} skills · click to expand
         </span>
       </div>
 
-      {/* Skill pills — color matched to active category */}
+      {/* Skills grid */}
       <AnimatePresence mode="wait">
-        <motion.div key={active} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }} transition={{ duration: 0.3 }} className="flex flex-wrap gap-3">
-          {SKILLS[active].map((skill, i) => (
-            <motion.span key={skill}
-              initial={{ opacity: 0, scale: 0.85 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: i * 0.04 }}
-              whileHover={{ y: -3, scale: 1.05 }}
-              className="group relative px-5 py-3 bg-[#13141a] border rounded-xl text-sm text-white font-sans cursor-default transition-colors"
-              style={{
-                borderColor: `${activeColor}30`,
-              }}>
-              {/* Decorative left dot */}
-              <span className="inline-block w-1.5 h-1.5 rounded-full mr-2.5 transition-all" style={{ background: activeColor, boxShadow: `0 0 8px ${activeColor}` }} />
-              {skill}
-            </motion.span>
-          ))}
+        <motion.div key={activeCat} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -16 }} transition={{ duration: 0.3 }}
+          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {SKILLS[activeCat].map((skill, i) => {
+            const isSelected = selectedSkill === skill.name;
+            return (
+              <SkillCard key={skill.name} skill={skill} index={i}
+                color={activeColor}
+                isSelected={isSelected}
+                onClick={() => setSelectedSkill(isSelected ? null : skill.name)} />
+            );
+          })}
         </motion.div>
       </AnimatePresence>
+
+      {/* Expanded skill detail panel */}
+      <AnimatePresence>
+        {selectedSkill && (() => {
+          const skill = SKILLS[activeCat].find(s => s.name === selectedSkill);
+          if (!skill) return null;
+          return (
+            <motion.div initial={{ opacity: 0, y: 20, height: 0 }} animate={{ opacity: 1, y: 0, height: "auto" }}
+              exit={{ opacity: 0, y: 20, height: 0 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="overflow-hidden mt-6">
+              <div className="relative p-6 md:p-8 rounded-2xl border bg-gradient-to-br from-[#13141a] to-[#0a0a0c]"
+                style={{ borderColor: `${activeColor}40` }}>
+                {/* Decorative gradient bar */}
+                <div className="absolute top-0 left-0 right-0 h-px" style={{ background: `linear-gradient(to right, transparent, ${activeColor}, transparent)` }} />
+
+                <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
+                  <div className="flex items-center gap-3">
+                    <span className="text-3xl">{activeIcon}</span>
+                    <div>
+                      <h3 className="font-display text-2xl text-white">{skill.name}</h3>
+                      <p className="font-mono text-[10px] tracking-[0.3em] uppercase mt-1" style={{ color: activeColor }}>
+                        {activeCat}
+                      </p>
+                    </div>
+                  </div>
+                  <button onClick={() => setSelectedSkill(null)}
+                    className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-[#9ca3af] hover:text-white transition-colors text-xl leading-none">×</button>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-4 mb-5">
+                  <div className="p-3 rounded-xl bg-[#06070a]/50 border border-white/5">
+                    <p className="font-mono text-[10px] text-[#6b7280] tracking-[0.2em] uppercase mb-2">Proficiency</p>
+                    <div className="flex items-center gap-1.5">
+                      {[1, 2, 3, 4, 5].map((dot) => (
+                        <div key={dot} className="h-2 flex-1 rounded-full transition-colors" style={{
+                          background: dot <= skill.level ? activeColor : "rgba(255,255,255,0.1)",
+                          boxShadow: dot <= skill.level ? `0 0 8px ${activeColor}80` : "none",
+                        }} />
+                      ))}
+                      <span className="font-mono text-xs ml-2" style={{ color: activeColor }}>{skill.level}/5</span>
+                    </div>
+                  </div>
+                  <div className="p-3 rounded-xl bg-[#06070a]/50 border border-white/5">
+                    <p className="font-mono text-[10px] text-[#6b7280] tracking-[0.2em] uppercase mb-2">Experience</p>
+                    <p className="font-display text-lg" style={{ color: activeColor }}>{skill.years}</p>
+                  </div>
+                </div>
+
+                <p className="text-[#d1d5db] text-sm leading-relaxed font-sans">{skill.desc}</p>
+              </div>
+            </motion.div>
+          );
+        })()}
+      </AnimatePresence>
     </Section>
+  );
+}
+
+// Skill card component — extracted for clarity
+function SkillCard({ skill, index, color, isSelected, onClick }) {
+  return (
+    <motion.button
+      onClick={onClick}
+      initial={{ opacity: 0, scale: 0.92 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: index * 0.04 }}
+      whileHover={{ y: -4 }}
+      whileTap={{ scale: 0.98 }}
+      className="group relative p-4 rounded-xl text-left transition-all overflow-hidden bg-[#13141a] border"
+      style={{
+        borderColor: isSelected ? color : "rgba(255,255,255,0.08)",
+        boxShadow: isSelected ? `0 0 30px ${color}25, inset 0 0 0 1px ${color}40` : "none",
+      }}>
+      {/* Hover gradient sweep */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+        style={{ background: `radial-gradient(circle at 50% 0%, ${color}15 0%, transparent 70%)` }} />
+
+      {/* Selected state corner accent */}
+      {isSelected && (
+        <div className="absolute top-0 right-0 w-12 h-12 pointer-events-none" style={{
+          background: `linear-gradient(135deg, transparent 50%, ${color}30 50%)`,
+        }} />
+      )}
+
+      <div className="relative z-10 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          {/* Glowing dot */}
+          <span className="inline-block w-2 h-2 rounded-full shrink-0 transition-all group-hover:scale-150" style={{
+            background: color,
+            boxShadow: `0 0 10px ${color}, 0 0 20px ${color}40`,
+          }} />
+          <span className="text-sm text-white font-sans truncate">{skill.name}</span>
+        </div>
+
+        {/* Mini level indicator */}
+        <div className="flex gap-0.5 shrink-0">
+          {[1, 2, 3, 4, 5].map((dot) => (
+            <div key={dot} className="w-1 h-3 rounded-full transition-all" style={{
+              background: dot <= skill.level ? color : "rgba(255,255,255,0.1)",
+              opacity: dot <= skill.level ? 1 : 0.3,
+            }} />
+          ))}
+        </div>
+      </div>
+
+      {/* Expand chevron */}
+      <div className="relative z-10 flex items-center gap-2 mt-2 opacity-50 group-hover:opacity-100 transition-opacity">
+        <span className="font-mono text-[9px] tracking-[0.2em] uppercase" style={{ color: isSelected ? color : "#6b7280" }}>
+          {isSelected ? "Hide details" : "Click to read more"}
+        </span>
+        <motion.span animate={{ rotate: isSelected ? 90 : 0 }} transition={{ duration: 0.2 }}
+          className="text-xs" style={{ color: isSelected ? color : "#6b7280" }}>▸</motion.span>
+      </div>
+    </motion.button>
   );
 }
 
