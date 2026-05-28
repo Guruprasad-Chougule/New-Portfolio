@@ -19,6 +19,8 @@
     "react-dom": "^18.2.0",
     "three": "^0.160.0",
     "react-intersection-observer": "^9.5.3"
+    "@vercel/analytics": "^1.5.0",
+   "@vercel/speed-insights": "^1.2.0",
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
