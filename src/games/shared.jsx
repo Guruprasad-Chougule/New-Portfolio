@@ -2,20 +2,20 @@
 // SHARED GAME COMPONENTS
 // ════════════════════════════════════════════════════════════════════════════
 import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
 
 // ── GameModal: accessible modal wrapper used by every game ─────────────────
+// Renders via React Portal at document.body so it escapes any parent
+// transform/filter/contain context that would break `position: fixed`.
 export function GameModal({ title, color, onClose, children }) {
   const modalRef = useRef(null);
   const previouslyFocused = useRef(null);
 
   useEffect(() => {
-    // Save previously focused element so we can restore it on close
     previouslyFocused.current = document.activeElement;
-    // Move focus into the modal for screen readers + keyboard users
     modalRef.current?.focus();
 
-    // Escape to close
     const handleKey = (e) => {
       if (e.key === "Escape") {
         e.preventDefault();
@@ -24,26 +24,25 @@ export function GameModal({ title, color, onClose, children }) {
     };
     window.addEventListener("keydown", handleKey);
 
-    // Lock body scroll while modal open
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
     return () => {
       window.removeEventListener("keydown", handleKey);
       document.body.style.overflow = prevOverflow;
-      // Restore focus to whoever opened the modal
       previouslyFocused.current?.focus?.();
     };
   }, [onClose]);
 
-  return (
+  const modal = (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-labelledby="game-modal-title"
-      className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+      className="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-md flex items-start sm:items-center justify-center p-4 overflow-y-auto"
+      style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}>
       <motion.div
         ref={modalRef}
         initial={{ scale: 0.92, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.92, y: 20 }}
@@ -65,6 +64,10 @@ export function GameModal({ title, color, onClose, children }) {
       </motion.div>
     </motion.div>
   );
+
+  // Portal to body — escapes any stacking/transform context from parent sections
+  if (typeof document === "undefined") return null;
+  return createPortal(modal, document.body);
 }
 
 // ── GameOverScreen: shared end-of-game UI ──────────────────────────────────
