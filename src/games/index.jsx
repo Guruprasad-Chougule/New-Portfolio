@@ -13,6 +13,10 @@ import { SnakeGame } from "./SnakeGame.jsx";
 import { TicTacToeGame } from "./TicTacToeGame.jsx";
 import { Game2048 } from "./Game2048.jsx";
 import { MemoryGame } from "./MemoryGame.jsx";
+import { WhackABugGame } from "./WhackABugGame.jsx";
+import { RockPaperScissorsGame } from "./RockPaperScissorsGame.jsx";
+import { DiceDuelGame } from "./DiceDuelGame.jsx";
+import { HigherLowerGame } from "./HigherLowerGame.jsx";
 
 const QA_GAMES = [
   { id: "bug-hunter", title: "Bug Hunter", icon: "🐛", desc: "Spot 5 hidden bugs in a fake login screen before time runs out.", color: "#f06b8b", difficulty: "Easy · 60s" },
@@ -25,6 +29,10 @@ const FUN_GAMES = [
   { id: "tictactoe", title: "Tic-Tac-Toe", icon: "⭕", tag: "vs AI" },
   { id: "2048", title: "2048", icon: "🔢", tag: "Puzzle" },
   { id: "memory", title: "Memory", icon: "🧠", tag: "Flip cards" },
+  { id: "whack-bug", title: "Whack-a-Bug", icon: "🎯", tag: "Reflex" },
+  { id: "rps", title: "Rock·Paper·Scissors", icon: "🪨", tag: "vs AI" },
+  { id: "dice", title: "Dice Duel", icon: "🎲", tag: "Best of 5" },
+  { id: "higher-lower", title: "Higher/Lower", icon: "🎴", tag: "Card guess" },
 ];
 
 const GURU_BESTS = { "bug-hunter": 5, "test-match": 20, "pass-fail": 25 };
@@ -155,6 +163,10 @@ export function Games({ Section, Heading }) {
         {activeGame === "tictactoe" && <TicTacToeGame onClose={() => setActiveGame(null)} />}
         {activeGame === "2048" && <Game2048 onClose={() => setActiveGame(null)} onScore={(s) => updateHighScore("2048", s)} highScore={highScores["2048"] || 0} />}
         {activeGame === "memory" && <MemoryGame onClose={() => setActiveGame(null)} onScore={(s) => updateHighScore("memory", s)} bestTime={highScores.memory || 0} />}
+        {activeGame === "whack-bug" && <WhackABugGame onClose={() => setActiveGame(null)} onScore={(s) => updateHighScore("whack-bug", s)} highScore={highScores["whack-bug"] || 0} />}
+        {activeGame === "rps" && <RockPaperScissorsGame onClose={() => setActiveGame(null)} />}
+        {activeGame === "dice" && <DiceDuelGame onClose={() => setActiveGame(null)} />}
+        {activeGame === "higher-lower" && <HigherLowerGame onClose={() => setActiveGame(null)} onScore={(s) => updateHighScore("higher-lower", s)} highScore={highScores["higher-lower"] || 0} />}
       </AnimatePresence>
     </Section>
   );
