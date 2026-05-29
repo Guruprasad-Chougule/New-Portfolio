@@ -1495,15 +1495,55 @@ function Games() {
         })}
       </div>
 
-      {/* Game modal */}
+      {/* ─── Just For Fun subsection ───────────────────────────────────── */}
+      <div className="mt-14 pt-10 border-t border-white/5">
+        <div className="flex items-center gap-3 mb-6">
+          <span className="text-2xl">🕹️</span>
+          <h3 className="font-display text-xl text-white">Just For Fun</h3>
+          <span className="font-mono text-[9px] text-[#6b7280] tracking-[0.3em] uppercase">while you're here</span>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {FUN_GAMES.map((game, i) => (
+            <motion.button
+              key={game.id}
+              onClick={() => setActiveGame(game.id)}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.05 }}
+              whileHover={{ y: -3, scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              className="group p-4 bg-[#13141a]/60 border border-white/5 rounded-2xl hover:border-white/20 transition-all text-center">
+              <div className="text-3xl mb-2 group-hover:scale-110 transition-transform">{game.icon}</div>
+              <p className="font-display text-sm text-white mb-0.5">{game.title}</p>
+              <p className="font-mono text-[9px] text-[#6b7280] tracking-wider uppercase">{game.tag}</p>
+            </motion.button>
+          ))}
+        </div>
+      </div>
+
+      {/* Game modals — QA games */}
       <AnimatePresence>
         {activeGame === "bug-hunter" && <BugHunterGame onClose={() => setActiveGame(null)} onScore={(s) => updateHighScore("bug-hunter", s)} />}
         {activeGame === "test-match" && <TestMatchGame onClose={() => setActiveGame(null)} onScore={(s) => updateHighScore("test-match", s)} />}
         {activeGame === "pass-fail" && <PassFailGame onClose={() => setActiveGame(null)} onScore={(s) => updateHighScore("pass-fail", s)} />}
+        {/* Classic games */}
+        {activeGame === "snake" && <SnakeGame onClose={() => setActiveGame(null)} onScore={(s) => updateHighScore("snake", s)} highScore={highScores.snake || 0} />}
+        {activeGame === "tictactoe" && <TicTacToeGame onClose={() => setActiveGame(null)} />}
+        {activeGame === "2048" && <Game2048 onClose={() => setActiveGame(null)} onScore={(s) => updateHighScore("2048", s)} highScore={highScores["2048"] || 0} />}
+        {activeGame === "memory" && <MemoryGame onClose={() => setActiveGame(null)} onScore={(s) => updateHighScore("memory", s)} bestTime={highScores.memory || 0} />}
       </AnimatePresence>
     </Section>
   );
 }
+
+const FUN_GAMES = [
+  { id: "snake", title: "Snake", icon: "🐍", tag: "Classic" },
+  { id: "tictactoe", title: "Tic-Tac-Toe", icon: "⭕", tag: "vs AI" },
+  { id: "2048", title: "2048", icon: "🔢", tag: "Puzzle" },
+  { id: "memory", title: "Memory", icon: "🧠", tag: "Flip cards" },
+];
 
 // ─── GAME 1: BUG HUNTER ──────────────────────────────────────────────────────
 function BugHunterGame({ onClose, onScore }) {
@@ -1936,6 +1976,563 @@ function GameOverScreen({ score, total, color, message, onClose, onRetry, gameId
   );
 }
 
+// ─── CLASSIC GAME 1: SNAKE ───────────────────────────────────────────────────
+function SnakeGame({ onClose, onScore, highScore }) {
+  const GRID = 15;
+  const [snake, setSnake] = useState([{ x: 7, y: 7 }]);
+  const [food, setFood] = useState({ x: 10, y: 10 });
+  const [dir, setDir] = useState({ x: 0, y: 0 });
+  const [score, setScore] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
+  const [started, setStarted] = useState(false);
+  const dirRef = useRef(dir);
+
+  useEffect(() => { dirRef.current = dir; }, [dir]);
+
+  const placeFood = useCallback((snakeBody) => {
+    let f;
+    do { f = { x: Math.floor(Math.random() * GRID), y: Math.floor(Math.random() * GRID) }; }
+    while (snakeBody.some(s => s.x === f.x && s.y === f.y));
+    return f;
+  }, []);
+
+  // Game loop
+  useEffect(() => {
+    if (!started || gameOver) return;
+    const interval = setInterval(() => {
+      setSnake((prev) => {
+        const d = dirRef.current;
+        if (d.x === 0 && d.y === 0) return prev;
+        const head = { x: prev[0].x + d.x, y: prev[0].y + d.y };
+
+        // Wall collision
+        if (head.x < 0 || head.x >= GRID || head.y < 0 || head.y >= GRID) {
+          setGameOver(true);
+          return prev;
+        }
+        // Self collision
+        if (prev.some(s => s.x === head.x && s.y === head.y)) {
+          setGameOver(true);
+          return prev;
+        }
+
+        const newSnake = [head, ...prev];
+        // Eat food
+        if (head.x === food.x && head.y === food.y) {
+          setScore((s) => s + 1);
+          setFood(placeFood(newSnake));
+        } else {
+          newSnake.pop();
+        }
+        return newSnake;
+      });
+    }, 150);
+    return () => clearInterval(interval);
+  }, [started, gameOver, food, placeFood]);
+
+  // Save score when game ends
+  useEffect(() => {
+    if (gameOver) onScore(score);
+  }, [gameOver, score, onScore]);
+
+  // Keyboard controls
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (!started) setStarted(true);
+      const d = dirRef.current;
+      if (["ArrowUp", "w", "W"].includes(e.key) && d.y !== 1) setDir({ x: 0, y: -1 });
+      if (["ArrowDown", "s", "S"].includes(e.key) && d.y !== -1) setDir({ x: 0, y: 1 });
+      if (["ArrowLeft", "a", "A"].includes(e.key) && d.x !== 1) setDir({ x: -1, y: 0 });
+      if (["ArrowRight", "d", "D"].includes(e.key) && d.x !== -1) setDir({ x: 1, y: 0 });
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [started]);
+
+  const restart = () => {
+    setSnake([{ x: 7, y: 7 }]); setFood(placeFood([{ x: 7, y: 7 }]));
+    setDir({ x: 0, y: 0 }); setScore(0); setGameOver(false); setStarted(false);
+  };
+
+  const move = (newDir) => {
+    if (!started) setStarted(true);
+    const d = dirRef.current;
+    if (newDir.x !== 0 && d.x === -newDir.x) return;
+    if (newDir.y !== 0 && d.y === -newDir.y) return;
+    setDir(newDir);
+  };
+
+  return (
+    <GameModal title="🐍 Snake" color="#7af0c8" onClose={onClose}>
+      <div className="flex justify-between items-center mb-4 px-1">
+        <div className="font-mono text-xs text-[#9ca3af] tracking-wider">SCORE: <span className="text-[#7af0c8] font-bold">{score}</span></div>
+        <div className="font-mono text-xs text-[#9ca3af] tracking-wider">BEST: <span className="text-[#d4af37] font-bold">{Math.max(highScore, score)}</span></div>
+      </div>
+
+      {/* Game grid */}
+      <div className="relative bg-[#06070a] border border-[#7af0c8]/20 rounded-2xl p-2 mx-auto" style={{ width: "fit-content" }}>
+        <div className="grid gap-px" style={{ gridTemplateColumns: `repeat(${GRID}, 18px)`, gridTemplateRows: `repeat(${GRID}, 18px)` }}>
+          {Array.from({ length: GRID * GRID }).map((_, i) => {
+            const x = i % GRID, y = Math.floor(i / GRID);
+            const isSnake = snake.some(s => s.x === x && s.y === y);
+            const isHead = snake[0]?.x === x && snake[0]?.y === y;
+            const isFood = food.x === x && food.y === y;
+            return (
+              <div key={i} className="rounded-sm" style={{
+                background: isHead ? "#7af0c8" : isSnake ? "#5dd9b0" : isFood ? "#f06b8b" : "#13141a",
+                boxShadow: isFood ? "0 0 8px #f06b8b" : isHead ? "0 0 6px #7af0c8" : "none",
+              }} />
+            );
+          })}
+        </div>
+
+        {/* Start overlay */}
+        {!started && !gameOver && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/70 rounded-2xl">
+            <div className="text-center">
+              <p className="font-display text-xl text-white mb-2">Ready?</p>
+              <p className="font-mono text-[10px] text-[#9ca3af]">Arrow keys or buttons below</p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Game over */}
+      {gameOver && (
+        <div className="mt-4">
+          <GameOverScreen score={score} total={null} color="#7af0c8"
+            message={score > highScore ? "🎯 New high score!" : "Game over"}
+            onClose={onClose} onRetry={restart} gameId="snake" />
+        </div>
+      )}
+
+      {/* Mobile D-pad controls */}
+      {!gameOver && (
+        <div className="mt-5 flex flex-col items-center gap-2">
+          <button onClick={() => move({ x: 0, y: -1 })} className="w-12 h-12 bg-[#13141a] border border-white/15 rounded-xl text-white text-xl active:bg-[#7af0c8]/20">↑</button>
+          <div className="flex gap-2">
+            <button onClick={() => move({ x: -1, y: 0 })} className="w-12 h-12 bg-[#13141a] border border-white/15 rounded-xl text-white text-xl active:bg-[#7af0c8]/20">←</button>
+            <button onClick={() => move({ x: 0, y: 1 })} className="w-12 h-12 bg-[#13141a] border border-white/15 rounded-xl text-white text-xl active:bg-[#7af0c8]/20">↓</button>
+            <button onClick={() => move({ x: 1, y: 0 })} className="w-12 h-12 bg-[#13141a] border border-white/15 rounded-xl text-white text-xl active:bg-[#7af0c8]/20">→</button>
+          </div>
+          <p className="mt-2 font-mono text-[9px] text-[#6b7280] tracking-wider">USE ARROWS · WASD · OR BUTTONS</p>
+        </div>
+      )}
+    </GameModal>
+  );
+}
+
+// ─── CLASSIC GAME 2: TIC-TAC-TOE (vs AI) ─────────────────────────────────────
+function TicTacToeGame({ onClose }) {
+  const [board, setBoard] = useState(Array(9).fill(null));
+  const [isPlayerTurn, setIsPlayerTurn] = useState(true);
+  const [winner, setWinner] = useState(null);
+  const [stats, setStats] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("ttt-stats") || '{"wins":0,"losses":0,"draws":0}'); }
+    catch { return { wins: 0, losses: 0, draws: 0 }; }
+  });
+
+  const WINNING_LINES = [
+    [0,1,2],[3,4,5],[6,7,8], // rows
+    [0,3,6],[1,4,7],[2,5,8], // cols
+    [0,4,8],[2,4,6],         // diagonals
+  ];
+
+  const checkWinner = useCallback((b) => {
+    for (const [a,bi,c] of WINNING_LINES) {
+      if (b[a] && b[a] === b[bi] && b[bi] === b[c]) return { player: b[a], line: [a,bi,c] };
+    }
+    if (b.every(cell => cell !== null)) return { player: "draw", line: [] };
+    return null;
+  }, []);
+
+  // Minimax AI — unbeatable
+  const minimax = useCallback((b, isMaximizing) => {
+    const result = checkWinner(b);
+    if (result) {
+      if (result.player === "O") return 10;
+      if (result.player === "X") return -10;
+      return 0;
+    }
+    if (isMaximizing) {
+      let best = -Infinity;
+      for (let i = 0; i < 9; i++) {
+        if (b[i] === null) {
+          b[i] = "O";
+          best = Math.max(best, minimax(b, false));
+          b[i] = null;
+        }
+      }
+      return best;
+    } else {
+      let best = Infinity;
+      for (let i = 0; i < 9; i++) {
+        if (b[i] === null) {
+          b[i] = "X";
+          best = Math.min(best, minimax(b, true));
+          b[i] = null;
+        }
+      }
+      return best;
+    }
+  }, [checkWinner]);
+
+  const findBestMove = useCallback((b) => {
+    let bestVal = -Infinity, bestMove = -1;
+    for (let i = 0; i < 9; i++) {
+      if (b[i] === null) {
+        b[i] = "O";
+        const moveVal = minimax(b, false);
+        b[i] = null;
+        if (moveVal > bestVal) { bestVal = moveVal; bestMove = i; }
+      }
+    }
+    return bestMove;
+  }, [minimax]);
+
+  // AI's turn
+  useEffect(() => {
+    if (!isPlayerTurn && !winner) {
+      const t = setTimeout(() => {
+        const newBoard = [...board];
+        const move = findBestMove([...newBoard]);
+        if (move !== -1) {
+          newBoard[move] = "O";
+          setBoard(newBoard);
+          const w = checkWinner(newBoard);
+          if (w) handleEnd(w);
+          else setIsPlayerTurn(true);
+        }
+      }, 500);
+      return () => clearTimeout(t);
+    }
+  }, [isPlayerTurn, board, winner, checkWinner, findBestMove]);
+
+  const handleEnd = (result) => {
+    setWinner(result);
+    setStats((prev) => {
+      const next = { ...prev };
+      if (result.player === "X") next.wins++;
+      else if (result.player === "O") next.losses++;
+      else next.draws++;
+      try { localStorage.setItem("ttt-stats", JSON.stringify(next)); } catch {}
+      return next;
+    });
+  };
+
+  const handleCellClick = (i) => {
+    if (board[i] || winner || !isPlayerTurn) return;
+    const newBoard = [...board];
+    newBoard[i] = "X";
+    setBoard(newBoard);
+    const w = checkWinner(newBoard);
+    if (w) handleEnd(w);
+    else setIsPlayerTurn(false);
+  };
+
+  const restart = () => { setBoard(Array(9).fill(null)); setIsPlayerTurn(true); setWinner(null); };
+
+  return (
+    <GameModal title="⭕ Tic-Tac-Toe · vs AI" color="#8b7fe5" onClose={onClose}>
+      <div className="flex justify-around mb-4 text-center">
+        <div><p className="font-mono text-[9px] text-[#6b7280] tracking-wider">WINS</p><p className="font-display text-xl text-[#7af0c8]">{stats.wins}</p></div>
+        <div><p className="font-mono text-[9px] text-[#6b7280] tracking-wider">LOSSES</p><p className="font-display text-xl text-[#f06b8b]">{stats.losses}</p></div>
+        <div><p className="font-mono text-[9px] text-[#6b7280] tracking-wider">DRAWS</p><p className="font-display text-xl text-white">{stats.draws}</p></div>
+      </div>
+
+      <div className="grid grid-cols-3 gap-2 max-w-xs mx-auto mb-4">
+        {board.map((cell, i) => {
+          const isWinning = winner?.line?.includes(i);
+          return (
+            <button key={i} onClick={() => handleCellClick(i)}
+              disabled={!isPlayerTurn || winner}
+              className={`aspect-square text-4xl font-display font-bold rounded-2xl border-2 transition-all ${
+                isWinning ? "bg-[#7af0c8]/30 border-[#7af0c8]" : "bg-[#13141a] border-white/10 hover:border-[#8b7fe5]/50"
+              } ${cell === "X" ? "text-[#7af0c8]" : "text-[#8b7fe5]"}`}>
+              {cell}
+            </button>
+          );
+        })}
+      </div>
+
+      {winner ? (
+        <div className="text-center">
+          <p className="font-display text-xl mb-3" style={{ color: winner.player === "X" ? "#7af0c8" : winner.player === "O" ? "#f06b8b" : "#fff" }}>
+            {winner.player === "X" ? "🏆 You won!" : winner.player === "O" ? "🤖 AI won" : "🤝 Draw"}
+          </p>
+          <button onClick={restart} className="px-6 py-3 rounded-full font-mono text-xs tracking-[0.25em] uppercase font-bold bg-[#8b7fe5] text-[#0a0a0c] hover:scale-105 transition-transform">↻ Play Again</button>
+        </div>
+      ) : (
+        <p className="text-center font-mono text-[10px] text-[#6b7280] tracking-wider">
+          {isPlayerTurn ? "YOUR TURN · YOU ARE X" : "AI THINKING..."}
+        </p>
+      )}
+    </GameModal>
+  );
+}
+
+// ─── CLASSIC GAME 3: 2048 ────────────────────────────────────────────────────
+function Game2048({ onClose, onScore, highScore }) {
+  const SIZE = 4;
+  const [grid, setGrid] = useState(() => initGrid());
+  const [score, setScore] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
+  const [won, setWon] = useState(false);
+
+  function initGrid() {
+    let g = Array(SIZE).fill(null).map(() => Array(SIZE).fill(0));
+    g = addRandomTile(g);
+    g = addRandomTile(g);
+    return g;
+  }
+
+  function addRandomTile(g) {
+    const empty = [];
+    for (let r = 0; r < SIZE; r++) for (let c = 0; c < SIZE; c++) if (g[r][c] === 0) empty.push([r, c]);
+    if (empty.length === 0) return g;
+    const [r, c] = empty[Math.floor(Math.random() * empty.length)];
+    const newG = g.map(row => [...row]);
+    newG[r][c] = Math.random() < 0.9 ? 2 : 4;
+    return newG;
+  }
+
+  const slideRow = (row) => {
+    const filtered = row.filter(v => v !== 0);
+    let gained = 0;
+    for (let i = 0; i < filtered.length - 1; i++) {
+      if (filtered[i] === filtered[i+1]) {
+        filtered[i] *= 2;
+        gained += filtered[i];
+        filtered[i+1] = 0;
+      }
+    }
+    const merged = filtered.filter(v => v !== 0);
+    while (merged.length < SIZE) merged.push(0);
+    return { row: merged, gained };
+  };
+
+  const move = useCallback((direction) => {
+    if (gameOver) return;
+    let newGrid = grid.map(r => [...r]);
+    let totalGained = 0;
+    let moved = false;
+    const oldStr = JSON.stringify(grid);
+
+    if (direction === "left") {
+      newGrid = newGrid.map(r => { const { row, gained } = slideRow(r); totalGained += gained; return row; });
+    } else if (direction === "right") {
+      newGrid = newGrid.map(r => { const { row, gained } = slideRow([...r].reverse()); totalGained += gained; return row.reverse(); });
+    } else if (direction === "up") {
+      for (let c = 0; c < SIZE; c++) {
+        const col = newGrid.map(r => r[c]);
+        const { row, gained } = slideRow(col);
+        totalGained += gained;
+        for (let r = 0; r < SIZE; r++) newGrid[r][c] = row[r];
+      }
+    } else if (direction === "down") {
+      for (let c = 0; c < SIZE; c++) {
+        const col = newGrid.map(r => r[c]).reverse();
+        const { row, gained } = slideRow(col);
+        totalGained += gained;
+        const reversed = row.reverse();
+        for (let r = 0; r < SIZE; r++) newGrid[r][c] = reversed[r];
+      }
+    }
+
+    moved = JSON.stringify(newGrid) !== oldStr;
+    if (moved) {
+      newGrid = addRandomTile(newGrid);
+      setGrid(newGrid);
+      setScore(s => s + totalGained);
+      if (newGrid.some(r => r.includes(2048)) && !won) setWon(true);
+      if (isGameOver(newGrid)) { setGameOver(true); onScore(score + totalGained); }
+    }
+  }, [grid, gameOver, won, score, onScore]);
+
+  const isGameOver = (g) => {
+    for (let r = 0; r < SIZE; r++) for (let c = 0; c < SIZE; c++) {
+      if (g[r][c] === 0) return false;
+      if (c < SIZE - 1 && g[r][c] === g[r][c+1]) return false;
+      if (r < SIZE - 1 && g[r][c] === g[r+1][c]) return false;
+    }
+    return true;
+  };
+
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (["ArrowLeft", "a"].includes(e.key)) { e.preventDefault(); move("left"); }
+      if (["ArrowRight", "d"].includes(e.key)) { e.preventDefault(); move("right"); }
+      if (["ArrowUp", "w"].includes(e.key)) { e.preventDefault(); move("up"); }
+      if (["ArrowDown", "s"].includes(e.key)) { e.preventDefault(); move("down"); }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [move]);
+
+  // Touch swipe
+  useEffect(() => {
+    let startX = 0, startY = 0;
+    const onTouchStart = (e) => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; };
+    const onTouchEnd = (e) => {
+      const dx = e.changedTouches[0].clientX - startX;
+      const dy = e.changedTouches[0].clientY - startY;
+      if (Math.abs(dx) < 30 && Math.abs(dy) < 30) return;
+      if (Math.abs(dx) > Math.abs(dy)) move(dx > 0 ? "right" : "left");
+      else move(dy > 0 ? "down" : "up");
+    };
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+    return () => { window.removeEventListener("touchstart", onTouchStart); window.removeEventListener("touchend", onTouchEnd); };
+  }, [move]);
+
+  const restart = () => { setGrid(initGrid()); setScore(0); setGameOver(false); setWon(false); };
+
+  const tileColor = (v) => {
+    const colors = { 2: "#3a3b42", 4: "#4a4b52", 8: "#f06b8b", 16: "#ff9d5c", 32: "#ffaa6e", 64: "#ffd700",
+      128: "#7af0c8", 256: "#5dd9b0", 512: "#5ec8ff", 1024: "#8b7fe5", 2048: "#d4af37" };
+    return colors[v] || "#13141a";
+  };
+
+  return (
+    <GameModal title="🔢 2048" color="#d4af37" onClose={onClose}>
+      <div className="flex justify-between items-center mb-4">
+        <div>
+          <p className="font-mono text-[9px] text-[#6b7280] tracking-wider">SCORE</p>
+          <p className="font-display text-2xl text-[#d4af37]">{score}</p>
+        </div>
+        <div className="text-right">
+          <p className="font-mono text-[9px] text-[#6b7280] tracking-wider">BEST</p>
+          <p className="font-display text-2xl text-white">{Math.max(highScore, score)}</p>
+        </div>
+      </div>
+
+      <div className="bg-[#06070a] border border-[#d4af37]/20 rounded-2xl p-2 mx-auto" style={{ width: "fit-content" }}>
+        <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${SIZE}, 60px)`, gridTemplateRows: `repeat(${SIZE}, 60px)` }}>
+          {grid.flat().map((v, i) => (
+            <div key={i} className="rounded-xl flex items-center justify-center font-display font-bold transition-all"
+              style={{
+                background: v === 0 ? "#13141a" : tileColor(v),
+                color: v === 0 ? "transparent" : v <= 4 ? "#9ca3af" : "#0a0a0c",
+                fontSize: v >= 1024 ? "16px" : v >= 128 ? "18px" : "22px",
+                boxShadow: v >= 128 ? `0 0 12px ${tileColor(v)}80` : "none",
+              }}>
+              {v || ""}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {won && !gameOver && (
+        <div className="mt-3 text-center font-mono text-xs text-[#d4af37]">🎯 You reached 2048! Keep going for higher.</div>
+      )}
+
+      {gameOver && (
+        <div className="mt-4">
+          <GameOverScreen score={score} total={null} color="#d4af37"
+            message={score > highScore ? "🎯 New high score!" : "No more moves!"}
+            onClose={onClose} onRetry={restart} gameId="2048" />
+        </div>
+      )}
+
+      {!gameOver && (
+        <p className="mt-3 text-center font-mono text-[9px] text-[#6b7280] tracking-wider">ARROW KEYS · WASD · OR SWIPE</p>
+      )}
+    </GameModal>
+  );
+}
+
+// ─── CLASSIC GAME 4: MEMORY (FLIP CARDS) ─────────────────────────────────────
+function MemoryGame({ onClose, onScore, bestTime }) {
+  const ICONS = useMemo(() => ["🐛", "🧪", "⚡", "🛡️", "🎯", "🚀", "💡", "🤖"], []);
+  const [cards, setCards] = useState([]);
+  const [flipped, setFlipped] = useState([]);
+  const [matched, setMatched] = useState(new Set());
+  const [moves, setMoves] = useState(0);
+  const [seconds, setSeconds] = useState(0);
+  const [started, setStarted] = useState(false);
+  const [done, setDone] = useState(false);
+
+  // Initialize shuffled deck
+  const initDeck = useCallback(() => {
+    const deck = [...ICONS, ...ICONS]
+      .map((icon, i) => ({ id: i, icon, key: Math.random() }))
+      .sort((a, b) => a.key - b.key);
+    setCards(deck);
+    setFlipped([]); setMatched(new Set()); setMoves(0); setSeconds(0); setStarted(false); setDone(false);
+  }, [ICONS]);
+
+  useEffect(() => { initDeck(); }, [initDeck]);
+
+  // Timer
+  useEffect(() => {
+    if (!started || done) return;
+    const t = setInterval(() => setSeconds(s => s + 1), 1000);
+    return () => clearInterval(t);
+  }, [started, done]);
+
+  const handleFlip = (idx) => {
+    if (!started) setStarted(true);
+    if (flipped.length === 2 || flipped.includes(idx) || matched.has(cards[idx].icon)) return;
+    const newFlipped = [...flipped, idx];
+    setFlipped(newFlipped);
+
+    if (newFlipped.length === 2) {
+      setMoves(m => m + 1);
+      const [a, b] = newFlipped;
+      if (cards[a].icon === cards[b].icon) {
+        // Match!
+        setTimeout(() => {
+          setMatched(prev => {
+            const next = new Set([...prev, cards[a].icon]);
+            if (next.size === ICONS.length) {
+              setDone(true);
+              // Lower time = better; we store negative for high-score sort, or just use raw seconds
+              if (bestTime === 0 || seconds < bestTime) onScore(seconds);
+            }
+            return next;
+          });
+          setFlipped([]);
+        }, 400);
+      } else {
+        // No match — flip back after delay
+        setTimeout(() => setFlipped([]), 800);
+      }
+    }
+  };
+
+  return (
+    <GameModal title="🧠 Memory" color="#5ec8ff" onClose={onClose}>
+      <div className="flex justify-around mb-4 text-center">
+        <div><p className="font-mono text-[9px] text-[#6b7280] tracking-wider">MOVES</p><p className="font-display text-xl text-[#5ec8ff]">{moves}</p></div>
+        <div><p className="font-mono text-[9px] text-[#6b7280] tracking-wider">TIME</p><p className="font-display text-xl text-white">{seconds}s</p></div>
+        <div><p className="font-mono text-[9px] text-[#6b7280] tracking-wider">BEST</p><p className="font-display text-xl text-[#d4af37]">{bestTime ? `${bestTime}s` : "—"}</p></div>
+      </div>
+
+      <div className="grid grid-cols-4 gap-2 max-w-sm mx-auto">
+        {cards.map((card, i) => {
+          const isFlipped = flipped.includes(i) || matched.has(card.icon);
+          return (
+            <button key={card.id} onClick={() => handleFlip(i)}
+              className={`aspect-square text-3xl rounded-xl border-2 transition-all ${
+                isFlipped ? "bg-[#5ec8ff]/15 border-[#5ec8ff]/50 scale-100" : "bg-[#13141a] border-white/10 hover:border-white/30 hover:scale-95"
+              }`}>
+              {isFlipped ? card.icon : "?"}
+            </button>
+          );
+        })}
+      </div>
+
+      {done && (
+        <div className="mt-5 text-center">
+          <p className="font-display text-xl text-[#7af0c8] mb-1">🎉 Done in {seconds}s · {moves} moves!</p>
+          {bestTime > 0 && seconds < bestTime && <p className="font-mono text-xs text-[#d4af37] mb-3">New best time!</p>}
+          <button onClick={initDeck} className="mt-3 px-6 py-3 rounded-full font-mono text-xs tracking-[0.25em] uppercase font-bold bg-[#5ec8ff] text-[#0a0a0c] hover:scale-105 transition-transform">↻ Play Again</button>
+        </div>
+      )}
+    </GameModal>
+  );
+}
+
 function BlogCard({ post, index }) {
   const [expanded, setExpanded] = useState(false);
   return (
@@ -2132,6 +2729,8 @@ export default function App() {
       {/* Vercel Analytics — tracks visitors, page views, top referrers (free, GDPR-friendly) */}
       <VercelAnalytics />
       <VercelSpeedInsights />
+      {/* Easter egg: type 'arcade' anywhere to unlock a fun toast */}
+      <ArcadeEasterEgg />
     </div>
   );
 }
@@ -2139,6 +2738,59 @@ export default function App() {
 // Vercel Analytics + Speed Insights — lazy loaded so they don't slow first paint.
 // Free tier: 2,500 events/month (plenty for portfolio). Enable in Vercel dashboard.
 // Using string concat for module paths so Vite doesn't fail the build if packages aren't installed.
+// ─── EASTER EGG: type 'arcade' to unlock a fun toast notification ───────────
+function ArcadeEasterEgg() {
+  const [unlocked, setUnlocked] = useState(false);
+  const [show, setShow] = useState(false);
+  const bufferRef = useRef("");
+
+  useEffect(() => {
+    if (sessionStorage.getItem("arcade-unlocked")) return; // only once per session
+    const handleKey = (e) => {
+      // ignore typing inside inputs/textareas
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+      bufferRef.current = (bufferRef.current + e.key.toLowerCase()).slice(-6);
+      if (bufferRef.current.endsWith("arcade")) {
+        setUnlocked(true);
+        setShow(true);
+        sessionStorage.setItem("arcade-unlocked", "1");
+        setTimeout(() => setShow(false), 6000);
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, []);
+
+  if (!unlocked) return null;
+
+  return (
+    <AnimatePresence>
+      {show && (
+        <motion.div
+          initial={{ opacity: 0, y: 80, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 80, scale: 0.9 }}
+          transition={{ type: "spring", stiffness: 260, damping: 20 }}
+          className="fixed bottom-28 md:bottom-8 left-1/2 -translate-x-1/2 z-[60]">
+          <div className="px-5 py-4 bg-gradient-to-r from-[#7af0c8]/20 via-[#d4af37]/20 to-[#8b7fe5]/20 backdrop-blur-xl border border-[#d4af37]/40 rounded-2xl shadow-[0_0_40px_rgba(212,175,55,0.4)]">
+            <div className="flex items-center gap-3">
+              <motion.span animate={{ rotate: [0, 15, -15, 0] }} transition={{ repeat: Infinity, duration: 1.2 }} className="text-2xl">🕹️</motion.span>
+              <div>
+                <p className="font-display text-sm text-white">Easter egg unlocked!</p>
+                <p className="font-mono text-[10px] text-[#d4af37] tracking-wider">
+                  Find the classic arcade in the Games section <span aria-hidden="true">↓</span>
+                </p>
+              </div>
+              <button onClick={() => setShow(false)} className="ml-2 text-[#9ca3af] hover:text-white text-xl leading-none">×</button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// ─── Vercel Analytics + Speed Insights ──────────────────────────────────────
 function VercelAnalytics() {
   useEffect(() => {
     const pkg = "@vercel/" + "analytics/react";
