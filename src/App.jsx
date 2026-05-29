@@ -10,7 +10,7 @@ import {
 //  All resume data lives in src/resume.js — update there, redeploy, done.
 // ════════════════════════════════════════════════════════════════════════════
 
-const NAV_LINKS = ["About", "Skills", "Experience", "Projects", "Certifications", "Testimonials", "Blog", "Contact"];
+const NAV_LINKS = ["About", "Skills", "Experience", "Projects", "Certifications", "Testimonials", "Games", "Blog", "Contact"];
 
 const QAIX_SCRIPT = [
   { t: 0,     text: "Initializing QAIX.", voice: "Initializing." },
@@ -1374,6 +1374,568 @@ function Testimonials() {
   );
 }
 
+// ─── GAMES SECTION ───────────────────────────────────────────────────────────
+// 3 QA-themed mini-games. Each opens in a modal. High scores saved to localStorage.
+
+const GAMES_LIST = [
+  {
+    id: "bug-hunter",
+    title: "Bug Hunter",
+    icon: "🐛",
+    desc: "Spot 5 hidden bugs in a fake login screen before time runs out.",
+    color: "#f06b8b",
+    difficulty: "Easy · 60s",
+  },
+  {
+    id: "test-match",
+    title: "Test Case Match",
+    icon: "🧪",
+    desc: "Drag each test case to the correct testing category. How fast can you go?",
+    color: "#8b7fe5",
+    difficulty: "Medium · No time limit",
+  },
+  {
+    id: "pass-fail",
+    title: "Pass/Fail Reflex",
+    icon: "⚡",
+    desc: "Test results flash by — click PASS or FAIL fast! Don't let the bugs through.",
+    color: "#d4af37",
+    difficulty: "Hard · Reflex test",
+  },
+];
+
+function Games() {
+  const [activeGame, setActiveGame] = useState(null);
+  const [highScores, setHighScores] = useState({});
+
+  // Load high scores from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("portfolio-high-scores") || "{}");
+      setHighScores(saved);
+    } catch (e) { /* ignore */ }
+  }, []);
+
+  // Update high score if user beats it
+  const updateHighScore = (gameId, score) => {
+    setHighScores((prev) => {
+      const current = prev[gameId] || 0;
+      if (score > current) {
+        const next = { ...prev, [gameId]: score };
+        try { localStorage.setItem("portfolio-high-scores", JSON.stringify(next)); } catch (e) { /* ignore */ }
+        return next;
+      }
+      return prev;
+    });
+  };
+
+  // Guru's personal best — "beat me" challenge
+  const GURU_BESTS = { "bug-hunter": 5, "test-match": 20, "pass-fail": 25 };
+
+  return (
+    <Section id="games">
+      <Heading label="07 — Play" title="Wanna test your QA reflexes?"
+        subtitle="Three mini-games inspired by real QA work. See if you can beat my high scores 😉" />
+
+      <div className="grid md:grid-cols-3 gap-5">
+        {GAMES_LIST.map((game, i) => {
+          const myScore = highScores[game.id] || 0;
+          const guruScore = GURU_BESTS[game.id];
+          const beat = myScore > guruScore;
+          return (
+            <motion.button
+              key={game.id}
+              onClick={() => setActiveGame(game.id)}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              whileHover={{ y: -6 }}
+              whileTap={{ scale: 0.97 }}
+              className="group relative text-left p-6 bg-gradient-to-br from-[#13141a] to-[#0c0d11] border border-white/5 rounded-3xl overflow-hidden transition-all"
+              style={{ borderColor: `${game.color}30` }}>
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                style={{ background: `radial-gradient(circle at 50% 0%, ${game.color}15 0%, transparent 70%)` }} />
+
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-4xl">{game.icon}</span>
+                  <span className="font-mono text-[9px] tracking-[0.25em] uppercase px-2 py-1 rounded-full"
+                    style={{ background: `${game.color}15`, color: game.color }}>
+                    {game.difficulty}
+                  </span>
+                </div>
+                <h3 className="font-display text-xl text-white mb-2">{game.title}</h3>
+                <p className="text-sm text-[#9ca3af] mb-5 leading-relaxed">{game.desc}</p>
+
+                <div className="flex items-center justify-between pt-4 border-t border-white/5">
+                  <div>
+                    <p className="font-mono text-[9px] text-[#6b7280] tracking-wider uppercase">Your Best</p>
+                    <p className="font-display text-2xl" style={{ color: game.color }}>{myScore}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-mono text-[9px] text-[#6b7280] tracking-wider uppercase">Guru's Best</p>
+                    <p className="font-display text-2xl text-white">{guruScore}</p>
+                  </div>
+                </div>
+
+                {beat && (
+                  <div className="mt-3 px-3 py-1.5 rounded-full text-center" style={{ background: `${game.color}20` }}>
+                    <p className="font-mono text-[10px] tracking-wider uppercase" style={{ color: game.color }}>👑 You beat me!</p>
+                  </div>
+                )}
+
+                <div className="mt-4 flex items-center gap-2 font-mono text-[10px] tracking-[0.2em] uppercase opacity-60 group-hover:opacity-100" style={{ color: game.color }}>
+                  <span>Play now</span>
+                  <span className="group-hover:translate-x-1 transition-transform">→</span>
+                </div>
+              </div>
+            </motion.button>
+          );
+        })}
+      </div>
+
+      {/* Game modal */}
+      <AnimatePresence>
+        {activeGame === "bug-hunter" && <BugHunterGame onClose={() => setActiveGame(null)} onScore={(s) => updateHighScore("bug-hunter", s)} />}
+        {activeGame === "test-match" && <TestMatchGame onClose={() => setActiveGame(null)} onScore={(s) => updateHighScore("test-match", s)} />}
+        {activeGame === "pass-fail" && <PassFailGame onClose={() => setActiveGame(null)} onScore={(s) => updateHighScore("pass-fail", s)} />}
+      </AnimatePresence>
+    </Section>
+  );
+}
+
+// ─── GAME 1: BUG HUNTER ──────────────────────────────────────────────────────
+function BugHunterGame({ onClose, onScore }) {
+  const [bugsFound, setBugsFound] = useState(new Set());
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [gameOver, setGameOver] = useState(false);
+  const [missClicks, setMissClicks] = useState(0);
+
+  // The 5 hidden bugs — described as positions on a fake login form
+  const BUGS = [
+    { id: "spell", x: 50, y: 8, label: "Typo: 'Welcom' instead of 'Welcome'", hint: "the page title" },
+    { id: "missing-asterisk", x: 28, y: 32, label: "Required field with no asterisk", hint: "the email label" },
+    { id: "wrong-color", x: 28, y: 55, label: "Wrong button color contrast (a11y issue)", hint: "the Sign In button" },
+    { id: "broken-link", x: 50, y: 78, label: "Broken link: 'Frgot password?' typo", hint: "the forgot password link" },
+    { id: "alignment", x: 50, y: 88, label: "Misaligned 'Sign Up' link", hint: "bottom of form" },
+  ];
+
+  useEffect(() => {
+    if (gameOver) return;
+    if (timeLeft === 0) { setGameOver(true); onScore(bugsFound.size); return; }
+    const t = setTimeout(() => setTimeLeft((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [timeLeft, gameOver, bugsFound.size, onScore]);
+
+  useEffect(() => {
+    if (bugsFound.size === BUGS.length && !gameOver) {
+      setGameOver(true);
+      onScore(bugsFound.size);
+    }
+  }, [bugsFound, gameOver, onScore]);
+
+  const findBug = (bugId) => {
+    if (gameOver) return;
+    setBugsFound((prev) => new Set([...prev, bugId]));
+  };
+
+  const handleMissClick = (e) => {
+    if (gameOver) return;
+    e.stopPropagation();
+    setMissClicks((m) => m + 1);
+  };
+
+  return (
+    <GameModal title="🐛 Bug Hunter" color="#f06b8b" onClose={onClose}>
+      <div className="flex justify-between items-center mb-4 px-1">
+        <div className="font-mono text-xs text-[#9ca3af] tracking-wider">
+          BUGS FOUND: <span className="text-[#f06b8b] font-bold">{bugsFound.size}/{BUGS.length}</span>
+        </div>
+        <div className="font-mono text-xs text-[#9ca3af] tracking-wider">
+          TIME: <span className={timeLeft < 15 ? "text-[#f06b8b] font-bold" : "text-white"}>{timeLeft}s</span>
+        </div>
+      </div>
+
+      {gameOver ? (
+        <GameOverScreen
+          score={bugsFound.size}
+          total={BUGS.length}
+          color="#f06b8b"
+          message={bugsFound.size === BUGS.length ? "🎯 All bugs caught!" : timeLeft === 0 ? "⏰ Time's up!" : "Game over"}
+          onClose={onClose}
+          onRetry={() => { setBugsFound(new Set()); setTimeLeft(60); setGameOver(false); setMissClicks(0); }}
+          gameId="bug-hunter"
+        />
+      ) : (
+        <div className="relative bg-white rounded-xl p-6 select-none cursor-crosshair" style={{ minHeight: 360 }} onClick={handleMissClick}>
+          {/* Fake login form with hidden bugs */}
+          <div className="text-center mb-4">
+            <h3 className="text-2xl font-bold text-gray-800">
+              {/* BUG #1: typo */}
+              <span onClick={(e) => { e.stopPropagation(); findBug("spell"); }} className={bugsFound.has("spell") ? "bg-[#7af0c8]/40 rounded px-1" : ""}>Welcom</span> back
+            </h3>
+            <p className="text-gray-500 text-sm">Sign in to continue</p>
+          </div>
+
+          <div className="space-y-3 max-w-xs mx-auto">
+            <div>
+              <label className="block text-xs text-gray-700 mb-1">
+                Email
+                {/* BUG #2: missing asterisk */}
+                <span onClick={(e) => { e.stopPropagation(); findBug("missing-asterisk"); }} className={`inline-block w-3 h-3 ml-1 ${bugsFound.has("missing-asterisk") ? "bg-[#7af0c8]/40 rounded" : ""}`}></span>
+              </label>
+              <input type="email" className="w-full px-3 py-2 border border-gray-300 rounded text-gray-800 text-sm" placeholder="you@example.com" onClick={(e) => e.stopPropagation()} />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-700 mb-1">Password <span className="text-red-500">*</span></label>
+              <input type="password" className="w-full px-3 py-2 border border-gray-300 rounded text-gray-800 text-sm" placeholder="••••••••" onClick={(e) => e.stopPropagation()} />
+            </div>
+            {/* BUG #3: bad contrast button */}
+            <button
+              onClick={(e) => { e.stopPropagation(); findBug("wrong-color"); }}
+              className={`w-full py-2 rounded text-sm font-bold ${bugsFound.has("wrong-color") ? "bg-[#7af0c8] text-black" : "bg-yellow-200 text-yellow-300"}`}>
+              Sign In
+            </button>
+
+            <div className="text-center text-xs">
+              {/* BUG #4: typo on link */}
+              <a onClick={(e) => { e.stopPropagation(); findBug("broken-link"); }} className={`text-blue-500 hover:underline cursor-pointer ${bugsFound.has("broken-link") ? "bg-[#7af0c8]/40 rounded px-1" : ""}`}>
+                Frgot password?
+              </a>
+            </div>
+
+            {/* BUG #5: misaligned */}
+            <div onClick={(e) => { e.stopPropagation(); findBug("alignment"); }} className={`text-xs text-gray-500 ${bugsFound.has("alignment") ? "text-center bg-[#7af0c8]/40 rounded" : "text-left pl-12"}`}>
+              Don't have an account? <span className="text-blue-500 cursor-pointer">Sign Up</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {!gameOver && (
+        <div className="mt-3 text-center">
+          <p className="font-mono text-[10px] text-[#6b7280] tracking-wider">CLICK ANY ELEMENT YOU SUSPECT IS BUGGED · 5 BUGS HIDDEN</p>
+          {missClicks > 0 && <p className="font-mono text-[10px] text-[#f06b8b] mt-1">Misses: {missClicks}</p>}
+        </div>
+      )}
+    </GameModal>
+  );
+}
+
+// ─── GAME 2: TEST CASE MATCH ─────────────────────────────────────────────────
+function TestMatchGame({ onClose, onScore }) {
+  const [score, setScore] = useState(0);
+  const [currentCase, setCurrentCase] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
+  const [feedback, setFeedback] = useState(null);
+
+  const TEST_CASES = useMemo(() => [
+    { case: "Verify login works with valid credentials", correct: "Functional" },
+    { case: "Check button alignment on mobile screens", correct: "UI/UX" },
+    { case: "Test app behavior under 10,000 concurrent users", correct: "Performance" },
+    { case: "Verify SQL injection in search field is blocked", correct: "Security" },
+    { case: "Ensure database transactions roll back on error", correct: "Functional" },
+    { case: "Test screen reader compatibility for forms", correct: "Accessibility" },
+    { case: "Verify color contrast meets WCAG AA standards", correct: "Accessibility" },
+    { case: "Check response time of /api/users endpoint", correct: "Performance" },
+    { case: "Test that audit logs capture all CRUD operations", correct: "Compliance" },
+    { case: "Verify 21 CFR Part 11 e-signature workflow", correct: "Compliance" },
+    { case: "Check password is hashed with bcrypt", correct: "Security" },
+    { case: "Test form validation messages display correctly", correct: "UI/UX" },
+    { case: "Verify checkout flow completes end-to-end", correct: "Functional" },
+    { case: "Test app under low bandwidth (3G simulation)", correct: "Performance" },
+    { case: "Verify GAMP 5 validation artifacts are stored", correct: "Compliance" },
+    { case: "Test keyboard-only navigation through menus", correct: "Accessibility" },
+    { case: "Check CSRF token is validated on all POST requests", correct: "Security" },
+    { case: "Verify tooltips appear on hover", correct: "UI/UX" },
+    { case: "Test API rate limiting (100 req/min)", correct: "Performance" },
+    { case: "Verify ALCOA Plus data integrity rules", correct: "Compliance" },
+  ], []);
+
+  const CATEGORIES = ["Functional", "Performance", "Security", "UI/UX", "Accessibility", "Compliance"];
+
+  useEffect(() => {
+    if (currentCase >= TEST_CASES.length && !gameOver) {
+      setGameOver(true);
+      onScore(score);
+    }
+  }, [currentCase, gameOver, score, onScore, TEST_CASES.length]);
+
+  const handlePick = (category) => {
+    if (gameOver || feedback) return;
+    const correct = TEST_CASES[currentCase].correct === category;
+    setFeedback({ correct, picked: category });
+    if (correct) setScore((s) => s + 1);
+    setTimeout(() => {
+      setFeedback(null);
+      setCurrentCase((c) => c + 1);
+    }, 800);
+  };
+
+  return (
+    <GameModal title="🧪 Test Case Match" color="#8b7fe5" onClose={onClose}>
+      <div className="flex justify-between items-center mb-4 px-1">
+        <div className="font-mono text-xs text-[#9ca3af] tracking-wider">
+          SCORE: <span className="text-[#8b7fe5] font-bold">{score}/{TEST_CASES.length}</span>
+        </div>
+        <div className="font-mono text-xs text-[#9ca3af] tracking-wider">
+          CASE: <span className="text-white">{Math.min(currentCase + 1, TEST_CASES.length)}/{TEST_CASES.length}</span>
+        </div>
+      </div>
+
+      {gameOver ? (
+        <GameOverScreen
+          score={score}
+          total={TEST_CASES.length}
+          color="#8b7fe5"
+          message={score >= 18 ? "🎯 Excellent QA instincts!" : score >= 14 ? "👍 Good work!" : "Keep practicing!"}
+          onClose={onClose}
+          onRetry={() => { setScore(0); setCurrentCase(0); setGameOver(false); setFeedback(null); }}
+          gameId="test-match"
+        />
+      ) : (
+        <>
+          <div className="bg-[#13141a] border border-[#8b7fe5]/30 rounded-2xl p-6 mb-5 min-h-[120px] flex items-center justify-center">
+            <p className="font-display text-base md:text-lg text-white text-center">"{TEST_CASES[currentCase]?.case}"</p>
+          </div>
+
+          <p className="font-mono text-[10px] text-[#6b7280] tracking-wider uppercase mb-3 text-center">Which type of testing is this?</p>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5">
+            {CATEGORIES.map((cat) => {
+              const isPicked = feedback?.picked === cat;
+              const isCorrect = TEST_CASES[currentCase]?.correct === cat;
+              let style = "border-white/10 bg-[#13141a] text-[#d1d5db] hover:border-[#8b7fe5]/50 hover:text-[#8b7fe5]";
+              if (feedback) {
+                if (isPicked && feedback.correct) style = "border-[#7af0c8] bg-[#7af0c8]/20 text-[#7af0c8]";
+                else if (isPicked && !feedback.correct) style = "border-[#f06b8b] bg-[#f06b8b]/20 text-[#f06b8b]";
+                else if (!isPicked && isCorrect) style = "border-[#7af0c8]/50 bg-[#7af0c8]/10 text-[#7af0c8]";
+              }
+              return (
+                <button key={cat} onClick={() => handlePick(cat)} disabled={!!feedback}
+                  className={`px-4 py-3 rounded-xl border font-mono text-xs tracking-wider transition-all ${style}`}>
+                  {cat}
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
+    </GameModal>
+  );
+}
+
+// ─── GAME 3: PASS/FAIL REFLEX ────────────────────────────────────────────────
+function PassFailGame({ onClose, onScore }) {
+  const [score, setScore] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [maxStreak, setMaxStreak] = useState(0);
+  const [lives, setLives] = useState(3);
+  const [gameOver, setGameOver] = useState(false);
+  const [currentTest, setCurrentTest] = useState(null);
+  const [feedback, setFeedback] = useState(null);
+
+  // Test cases: "result" is what the system reports, "shouldBe" is what user should click
+  const TESTS = useMemo(() => [
+    { name: "Login with valid credentials", actual: "✓ Success", shouldBe: "PASS" },
+    { name: "Login with valid credentials", actual: "✗ 500 Error", shouldBe: "FAIL" },
+    { name: "Submit empty form", actual: "Validation error shown", shouldBe: "PASS" },
+    { name: "Submit empty form", actual: "Form submitted with empty values", shouldBe: "FAIL" },
+    { name: "Password masking", actual: "•••••••", shouldBe: "PASS" },
+    { name: "Password masking", actual: "mypassword123", shouldBe: "FAIL" },
+    { name: "Add item to cart", actual: "Cart count: 1", shouldBe: "PASS" },
+    { name: "Add item to cart", actual: "Cart count: 0", shouldBe: "FAIL" },
+    { name: "API response time", actual: "234ms", shouldBe: "PASS" },
+    { name: "API response time", actual: "8.5 seconds", shouldBe: "FAIL" },
+    { name: "Logout", actual: "Session cleared", shouldBe: "PASS" },
+    { name: "Logout", actual: "User still logged in", shouldBe: "FAIL" },
+    { name: "SQL injection ' OR 1=1--", actual: "Input rejected", shouldBe: "PASS" },
+    { name: "SQL injection ' OR 1=1--", actual: "All records returned", shouldBe: "FAIL" },
+    { name: "Mobile responsive layout", actual: "Properly stacked", shouldBe: "PASS" },
+    { name: "Mobile responsive layout", actual: "Horizontal scroll appears", shouldBe: "FAIL" },
+  ], []);
+
+  // Generate next random test
+  const nextTest = useCallback(() => {
+    const t = TESTS[Math.floor(Math.random() * TESTS.length)];
+    setCurrentTest(t);
+    setFeedback(null);
+  }, [TESTS]);
+
+  useEffect(() => {
+    if (!gameOver) nextTest();
+  }, [gameOver, nextTest]);
+
+  useEffect(() => {
+    if (lives <= 0 && !gameOver) {
+      setGameOver(true);
+      onScore(score);
+    }
+  }, [lives, gameOver, score, onScore]);
+
+  // Auto-advance after no decision in 4 seconds (treat as wrong)
+  useEffect(() => {
+    if (gameOver || !currentTest || feedback) return;
+    const t = setTimeout(() => {
+      setFeedback({ correct: false, missed: true });
+      setStreak(0);
+      setLives((l) => l - 1);
+      setTimeout(nextTest, 700);
+    }, 4000);
+    return () => clearTimeout(t);
+  }, [currentTest, gameOver, feedback, nextTest]);
+
+  const handlePick = (choice) => {
+    if (gameOver || feedback || !currentTest) return;
+    const correct = currentTest.shouldBe === choice;
+    setFeedback({ correct, picked: choice });
+    if (correct) {
+      setScore((s) => s + 1);
+      setStreak((s) => {
+        const next = s + 1;
+        setMaxStreak((m) => Math.max(m, next));
+        return next;
+      });
+    } else {
+      setStreak(0);
+      setLives((l) => l - 1);
+    }
+    setTimeout(nextTest, 600);
+  };
+
+  return (
+    <GameModal title="⚡ Pass/Fail Reflex" color="#d4af37" onClose={onClose}>
+      <div className="flex justify-between items-center mb-4 px-1 gap-3 flex-wrap">
+        <div className="font-mono text-xs text-[#9ca3af] tracking-wider">
+          SCORE: <span className="text-[#d4af37] font-bold">{score}</span>
+        </div>
+        <div className="font-mono text-xs text-[#9ca3af] tracking-wider">
+          STREAK: <span className="text-[#7af0c8] font-bold">{streak}</span>
+        </div>
+        <div className="font-mono text-xs text-[#9ca3af] tracking-wider">
+          LIVES: <span className="text-[#f06b8b] font-bold">{"❤".repeat(Math.max(0, lives))}</span>
+        </div>
+      </div>
+
+      {gameOver ? (
+        <GameOverScreen
+          score={score}
+          total={null}
+          color="#d4af37"
+          message={`Top streak: ${maxStreak}`}
+          onClose={onClose}
+          onRetry={() => { setScore(0); setStreak(0); setMaxStreak(0); setLives(3); setGameOver(false); setFeedback(null); nextTest(); }}
+          gameId="pass-fail"
+        />
+      ) : currentTest ? (
+        <>
+          <motion.div key={currentTest.name + currentTest.actual + score}
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+            className="bg-[#13141a] border border-[#d4af37]/30 rounded-2xl p-6 mb-5 min-h-[160px]">
+            <p className="font-mono text-[10px] text-[#6b7280] tracking-[0.3em] uppercase mb-2">Test Name</p>
+            <p className="font-display text-lg text-white mb-4">{currentTest.name}</p>
+            <p className="font-mono text-[10px] text-[#6b7280] tracking-[0.3em] uppercase mb-2">Actual Result</p>
+            <p className="font-mono text-base text-[#d4af37]">{currentTest.actual}</p>
+          </motion.div>
+
+          <p className="font-mono text-[10px] text-[#6b7280] tracking-wider uppercase mb-3 text-center">Quick! Mark this test:</p>
+
+          <div className="grid grid-cols-2 gap-3">
+            <button onClick={() => handlePick("PASS")} disabled={!!feedback}
+              className={`py-4 rounded-2xl font-display font-bold text-base tracking-wider transition-all ${
+                feedback?.picked === "PASS" && feedback.correct ? "bg-[#7af0c8] text-[#0a0a0c] scale-95" :
+                feedback?.picked === "PASS" && !feedback.correct ? "bg-[#f06b8b] text-white scale-95" :
+                "bg-[#7af0c8]/10 border-2 border-[#7af0c8]/40 text-[#7af0c8] hover:bg-[#7af0c8]/20 active:scale-95"
+              }`}>
+              ✓ PASS
+            </button>
+            <button onClick={() => handlePick("FAIL")} disabled={!!feedback}
+              className={`py-4 rounded-2xl font-display font-bold text-base tracking-wider transition-all ${
+                feedback?.picked === "FAIL" && feedback.correct ? "bg-[#7af0c8] text-[#0a0a0c] scale-95" :
+                feedback?.picked === "FAIL" && !feedback.correct ? "bg-[#f06b8b] text-white scale-95" :
+                "bg-[#f06b8b]/10 border-2 border-[#f06b8b]/40 text-[#f06b8b] hover:bg-[#f06b8b]/20 active:scale-95"
+              }`}>
+              ✗ FAIL
+            </button>
+          </div>
+
+          {feedback?.missed && (
+            <p className="mt-3 text-center font-mono text-xs text-[#f06b8b]">⏱ Too slow!</p>
+          )}
+        </>
+      ) : null}
+    </GameModal>
+  );
+}
+
+// ─── SHARED GAME COMPONENTS ──────────────────────────────────────────────────
+function GameModal({ title, color, onClose, children }) {
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      onClick={onClose}
+      className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+      <motion.div initial={{ scale: 0.92, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.92, y: 20 }}
+        transition={{ type: "spring", stiffness: 280, damping: 25 }}
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-2xl bg-gradient-to-br from-[#13141a] to-[#0a0a0c] border rounded-3xl p-5 md:p-7 my-8"
+        style={{ borderColor: `${color}30`, boxShadow: `0 0 60px ${color}25` }}>
+        <div className="flex justify-between items-center mb-5 pb-4 border-b border-white/5">
+          <h3 className="font-display text-xl md:text-2xl text-white">{title}</h3>
+          <button onClick={onClose}
+            className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-[#9ca3af] hover:text-white transition-colors text-xl leading-none">×</button>
+        </div>
+        {children}
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function GameOverScreen({ score, total, color, message, onClose, onRetry, gameId }) {
+  const shareText = total
+    ? `I just scored ${score}/${total} on Guruprasad's QA portfolio game! Can you beat me? 🎯`
+    : `I just scored ${score} on Guruprasad's QA portfolio reflex game! 🎯`;
+  const shareUrl = "https://guruprasadchougule.vercel.app#games";
+
+  const handleShare = async () => {
+    const fullText = `${shareText}\n\n${shareUrl}`;
+    if (navigator.share) {
+      try { await navigator.share({ title: "QA Portfolio Game", text: shareText, url: shareUrl }); } catch (e) { /* user cancelled */ }
+    } else {
+      try {
+        await navigator.clipboard.writeText(fullText);
+        alert("Score copied to clipboard! Paste it anywhere to share.");
+      } catch (e) { /* ignore */ }
+    }
+  };
+
+  return (
+    <div className="text-center py-6">
+      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 200 }}>
+        <p className="font-display text-5xl mb-2" style={{ color }}>{score}{total !== null && total !== undefined ? `/${total}` : ""}</p>
+        <p className="font-mono text-[10px] text-[#6b7280] tracking-[0.3em] uppercase mb-4">Final Score</p>
+        <p className="font-display text-xl text-white mb-2">{message}</p>
+      </motion.div>
+
+      <div className="flex flex-wrap gap-3 justify-center mt-6">
+        <button onClick={onRetry}
+          className="px-6 py-3 rounded-full font-mono text-xs tracking-[0.25em] uppercase font-bold transition-all hover:scale-105"
+          style={{ background: color, color: "#0a0a0c" }}>
+          ↻ Try Again
+        </button>
+        <button onClick={handleShare}
+          className="px-6 py-3 rounded-full font-mono text-xs tracking-[0.25em] uppercase bg-white/5 border border-white/15 text-white hover:bg-white/10 transition-all">
+          ⤴ Share Score
+        </button>
+        <button onClick={onClose}
+          className="px-6 py-3 rounded-full font-mono text-xs tracking-[0.25em] uppercase bg-white/5 border border-white/15 text-[#9ca3af] hover:text-white transition-all">
+          Close
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function BlogCard({ post, index }) {
   const [expanded, setExpanded] = useState(false);
   return (
@@ -1428,7 +1990,7 @@ function BlogCard({ post, index }) {
 function Blog() {
   return (
     <Section id="blog">
-      <Heading label="07 — Blog" title="Problems I fixed." subtitle="Real war stories from the trenches of QA engineering — broken down into problem, root cause, and the exact fix." />
+      <Heading label="08 — Blog" title="Problems I fixed." subtitle="Real war stories from the trenches of QA engineering — broken down into problem, root cause, and the exact fix." />
       <div className="grid md:grid-cols-2 gap-5">
         {BLOG_POSTS.map((post, i) => <BlogCard key={post.id} post={post} index={i} />)}
       </div>
@@ -1486,7 +2048,7 @@ function Contact() {
   ];
   return (
     <Section id="contact">
-      <Heading label="08 — Contact" title="Let's talk." subtitle="Open to QA Engineer, Senior QA, QA Lead, Test Automation, and Validation Engineer roles across all domains — Product, SaaS, FinTech, Healthcare, Pharma, Insurance, or anywhere quality matters." />
+      <Heading label="09 — Contact" title="Let's talk." subtitle="Open to QA Engineer, Senior QA, QA Lead, Test Automation, and Validation Engineer roles across all domains — Product, SaaS, FinTech, Healthcare, Pharma, Insurance, or anywhere quality matters." />
       <div className="grid md:grid-cols-2 gap-12 md:gap-16">
         <div>
           <div className="space-y-3 mb-8">
@@ -1557,6 +2119,7 @@ export default function App() {
       <Projects />
       <Certifications />
       <Testimonials />
+      <Games />
       <Blog />
       <Contact />
       <Footer />
